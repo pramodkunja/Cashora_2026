@@ -2,43 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
+import 'package:get/get.dart';
+
 class AppTextStyles {
   // Headings
   static TextStyle get h1 => GoogleFonts.inter(
     fontSize: 28,
     fontWeight: FontWeight.w700,
-    color: AppColors.textDark,
+    color: Get.theme.textTheme.bodyLarge?.color,
   );
 
   static TextStyle get h2 => GoogleFonts.inter(
     fontSize: 24,
     fontWeight: FontWeight.w700,
-    color: AppColors.textDark,
+    color: Get.theme.textTheme.bodyLarge?.color,
   );
 
   static TextStyle get h3 => GoogleFonts.inter(
     fontSize: 20,
     fontWeight: FontWeight.w700,
-    color: AppColors.textDark,
+    color: Get.theme.textTheme.bodyLarge?.color,
   );
 
   // Body
   static TextStyle get bodyLarge => GoogleFonts.inter(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    color: AppColors.textDark, // Default to dark, override if needed
+    color: Get.theme.textTheme.bodyMedium?.color, 
   );
 
   static TextStyle get bodyMedium => GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.normal,
-    color: AppColors.textSlate,
+    color: Get.theme.textTheme.bodyMedium?.color?.withOpacity(0.7) ?? AppColors.textSlate, 
   );
 
   static TextStyle get bodySmall => GoogleFonts.inter(
     fontSize: 12,
     fontWeight: FontWeight.normal,
-    color: AppColors.textSlate,
+    color: Get.theme.textTheme.bodySmall?.color ?? AppColors.textLight,
   );
   
   static TextStyle get buttonText => GoogleFonts.inter(
@@ -51,7 +53,7 @@ class AppTextStyles {
   static TextStyle get amountDisplay => GoogleFonts.inter(
     fontSize: 36,
     fontWeight: FontWeight.w800,
-    color: AppColors.textDark,
+    color: Get.theme.primaryColor, // Use primary color for money or theme text
   );
   
   static TextStyle get hintText => GoogleFonts.inter(

@@ -7,6 +7,28 @@ import '../modules/admin/views/admin_success_view.dart';
 import '../modules/admin/controllers/admin_dashboard_controller.dart';
 import '../modules/admin/controllers/admin_approvals_controller.dart';
 import '../modules/admin/controllers/admin_request_details_controller.dart';
+import '../modules/admin/controllers/admin_request_details_controller.dart';
+import '../modules/admin/views/admin_rejection_success_view.dart';
+import '../modules/admin/views/admin_clarification_view.dart';
+import '../modules/admin/views/admin_clarification_success_view.dart';
+import '../modules/admin/views/admin_history_view.dart';
+
+import '../modules/admin/views/admin_clarification_status_view.dart';
+import '../modules/admin/controllers/admin_clarification_status_controller.dart';
+import '../modules/admin/controllers/admin_history_controller.dart';
+import '../modules/profile/views/profile_view.dart';
+import '../modules/profile/views/settings_view.dart';
+import '../modules/profile/controllers/profile_controller.dart';
+import '../modules/profile/controllers/settings_controller.dart';
+import '../modules/settings/views/notifications_view.dart';
+import '../modules/settings/views/appearance_view.dart';
+import '../modules/settings/views/change_password_view.dart';
+import '../modules/admin/views/user_management/admin_user_list_view.dart';
+import '../modules/admin/views/user_management/admin_add_user_view.dart';
+import '../modules/admin/views/user_management/admin_edit_user_view.dart';
+import '../modules/admin/views/user_management/admin_deactivate_user_view.dart';
+import '../modules/admin/views/user_management/admin_user_success_view.dart';
+import '../modules/admin/controllers/admin_user_controller.dart';
 import 'app_routes.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
@@ -162,6 +184,100 @@ class AppPages {
     GetPage(
       name: AppRoutes.ADMIN_SUCCESS,
       page: () => const AdminSuccessView(),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_REJECTION_SUCCESS,
+      page: () => const AdminRejectionSuccessView(),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_CLARIFICATION,
+      page: () => const AdminClarificationView(),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_CLARIFICATION_SUCCESS,
+      page: () => const AdminClarificationSuccessView(),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_HISTORY,
+      page: () => const AdminHistoryView(),
+      binding: BindingsBuilder(() {
+        Get.put(AdminHistoryController());
+      }),
+    ),
+
+    GetPage(
+      name: AppRoutes.ADMIN_CLARIFICATION_STATUS,
+      page: () => const AdminClarificationStatusView(),
+      binding: BindingsBuilder(() {
+        Get.put(AdminClarificationStatusController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.PROFILE,
+      page: () => const ProfileView(),
+      binding: BindingsBuilder(() {
+        Get.put(ProfileController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.SETTINGS,
+      page: () => const SettingsView(),
+      binding: BindingsBuilder(() {
+        Get.put(SettingsController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.SETTINGS_NOTIFICATIONS,
+      page: () => const NotificationsView(),
+      binding: BindingsBuilder(() {
+        Get.put(SettingsController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.SETTINGS_APPEARANCE,
+      page: () => const AppearanceView(),
+      binding: BindingsBuilder(() {
+        Get.put(SettingsController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.SETTINGS_CHANGE_PASSWORD,
+      page: () => const ChangePasswordView(),
+      binding: BindingsBuilder(() {
+        Get.put(SettingsController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_USER_LIST,
+      page: () => const AdminUserListView(),
+      binding: BindingsBuilder(() {
+        Get.put(AdminUserController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_ADD_USER,
+      page: () => const AdminAddUserView(),
+       binding: BindingsBuilder(() {
+        Get.put(AdminUserController()); // Reuse controller
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_EDIT_USER,
+      page: () => const AdminEditUserView(),
+       binding: BindingsBuilder(() {
+        Get.put(AdminUserController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_DEACTIVATE_USER,
+      page: () => const AdminDeactivateUserView(),
+       binding: BindingsBuilder(() {
+        Get.put(AdminUserController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_USER_SUCCESS,
+      page: () => const AdminUserSuccessView(),
     ),
   ];
 }

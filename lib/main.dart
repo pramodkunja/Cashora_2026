@@ -7,11 +7,25 @@ import 'core/services/auth_service.dart';
 import 'data/repositories/auth_repository.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
+import 'utils/app_theme.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
-  runApp(const MyApp());
+  
+  // Read theme
+  final storage = Get.find<StorageService>();
+  String? themeIndex = await storage.read('theme_mode');
+  ThemeMode initialTheme = ThemeMode.system;
+  if (themeIndex != null) {
+    switch (int.parse(themeIndex)) {
+      case 0: initialTheme = ThemeMode.light; break;
+      case 1: initialTheme = ThemeMode.dark; break;
+      case 2: initialTheme = ThemeMode.system; break;
+    }
+  }
+
+  runApp(MyApp(initialTheme: initialTheme));
 }
 
 Future<void> initServices() async {
@@ -22,19 +36,18 @@ Future<void> initServices() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ThemeMode initialTheme;
+  const MyApp({super.key, required this.initialTheme});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Petty Cash',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: const Color(0xFFF5F9FA), // Off-white bluish bg
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: initialTheme, 
+
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );

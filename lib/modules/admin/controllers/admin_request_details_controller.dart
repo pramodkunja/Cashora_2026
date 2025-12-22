@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../routes/app_routes.dart';
+import '../views/widgets/admin_rejection_dialog.dart';
 
 class AdminRequestDetailsController extends GetxController {
   final request = {}.obs;
+  final clarificationController = TextEditingController();
 
   @override
   void onInit() {
@@ -13,18 +15,42 @@ class AdminRequestDetailsController extends GetxController {
     }
   }
 
+  @override
+  void onClose() {
+    clarificationController.dispose();
+    super.onClose();
+  }
+
   void approveRequest() {
     // Logic to update backend
     Get.toNamed(AppRoutes.ADMIN_SUCCESS);
   }
 
   void rejectRequest() {
-    // Logic to update backend
-    Get.back(); // or show snackbar
+    Get.bottomSheet(
+      AdminRejectionDialog(
+        onConfirm: (reason) {
+          // Logic to update backend with rejection reason
+          Get.back(); // Close bottom sheet
+          Get.toNamed(AppRoutes.ADMIN_REJECTION_SUCCESS);
+        },
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
   }
 
   void askClarification() {
-    // Logic for clarification
+    Get.toNamed(AppRoutes.ADMIN_CLARIFICATION);
+  }
+
+  void submitClarification() {
+    if (clarificationController.text.isNotEmpty) {
+      // Logic to send clarification
+      Get.toNamed(AppRoutes.ADMIN_CLARIFICATION_SUCCESS);
+    } else {
+      Get.snackbar('Error', 'Please enter your question or comment');
+    }
   }
 
   void viewAttachment() {

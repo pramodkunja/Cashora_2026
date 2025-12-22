@@ -13,7 +13,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -57,7 +57,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textSlate,
+                    color: AppTextStyles.bodyMedium.color,
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -68,6 +68,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 _buildTextField(
                   controller: controller.orgNameController,
                   hint: AppText.hintOrgName,
+                  context: context,
                 ),
                 const SizedBox(height: 20),
 
@@ -76,7 +77,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 Obx(() => Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9), // Light grey background for readonly
+                    color: Theme.of(context).cardColor, // Light grey background for readonly
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -85,7 +86,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                       Text(
                         controller.orgCode.value,
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSlate,
+                          color: AppTextStyles.bodyMedium.color,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -101,7 +102,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textSlate,
+                    color: AppTextStyles.bodyMedium.color,
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -112,6 +113,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 _buildTextField(
                   controller: controller.fullNameController,
                   hint: AppText.hintAdminName,
+                  context: context,
                 ),
                 const SizedBox(height: 20),
 
@@ -120,6 +122,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 _buildTextField(
                   controller: controller.emailController,
                   hint: AppText.hintAdminEmail,
+                  context: context,
                 ),
                 const SizedBox(height: 24),
 
@@ -127,9 +130,9 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.infoBg,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFBAE6FD)),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +143,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                         child: Text(
                           AppText.adminCredentialsInfo,
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSlate,
+                            color: AppTextStyles.bodyMedium.color,
                             fontSize: 14,
                             height: 1.4,
                           ),
@@ -214,7 +217,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
         Text(
           label,
           style: AppTextStyles.bodyMedium.copyWith(
-            color: isActive ? AppColors.textDark : AppColors.textLight,
+            color: isActive ? AppColors.textDark : AppTextStyles.bodyMedium.color,
             fontWeight: FontWeight.w500,
             fontSize: 14,
           ),
@@ -229,27 +232,27 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
       style: AppTextStyles.bodyMedium.copyWith(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: AppColors.textDark,
+        color: AppTextStyles.h3.color,
       ),
     );
   }
 
-  Widget _buildTextField({required TextEditingController controller, required String hint}) {
+  Widget _buildTextField({required BuildContext context, required TextEditingController controller, required String hint}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: AppTextStyles.hintText,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).cardColor,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.borderLight),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.borderLight),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

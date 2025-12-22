@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_text.dart';
+import '../../../../utils/app_text_styles.dart';
 
 class RequestDetailsReadView extends StatelessWidget {
   const RequestDetailsReadView({Key? key}) : super(key: key);
@@ -25,14 +26,14 @@ class RequestDetailsReadView extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(AppText.requestDetails, style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w700)),
+        title: Text(AppText.requestDetails, style: TextStyle(color: AppTextStyles.h3.color, fontWeight: FontWeight.w700)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Color(0xFF0F172A)),
+          icon: Icon(Icons.arrow_back_ios_new, size: 20, color: AppTextStyles.h3.color),
           onPressed: () => Get.back(),
         ),
       ),
@@ -46,12 +47,12 @@ class RequestDetailsReadView extends StatelessWidget {
                Container(
                  width: double.infinity,
                  padding: const EdgeInsets.symmetric(vertical: 32),
-                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+                 decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(24)),
                  child: Column(
                    children: [
                      Text(request['title'] ?? 'Request', style: const TextStyle(fontSize: 14, color: Color(0xFF64748B))),
                      const SizedBox(height: 8),
-                     Text('₹${(request['amount'] as double? ?? 0.0).toStringAsFixed(2)}', style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+                     Text('₹${(request['amount'] as double? ?? 0.0).toStringAsFixed(2)}', style: TextStyle(fontSize: 36, fontWeight: FontWeight.w800, color: AppTextStyles.h1.color)),
                      const SizedBox(height: 16),
                      Container(
                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -66,7 +67,7 @@ class RequestDetailsReadView extends StatelessWidget {
                // Details Card
                Container(
                  padding: const EdgeInsets.all(24),
-                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+                 decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(24)),
                  child: Column(
                    children: [
                      _buildDetailRow(Icons.category, AppText.category, request['category'] ?? 'N/A'),
@@ -78,21 +79,21 @@ class RequestDetailsReadView extends StatelessWidget {
                const SizedBox(height: 24),
 
                // Description
-               Text(AppText.description, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+               Text(AppText.description, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppTextStyles.h3.color)),
                const SizedBox(height: 12),
                Container(
                  width: double.infinity,
                  padding: const EdgeInsets.all(20),
-                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                 decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(20)),
                  child: Text(
                    request['description'] ?? AppText.noDescription,
-                   style: const TextStyle(fontSize: 14, color: Color(0xFF334155), height: 1.5),
+                   style: TextStyle(fontSize: 14, color: AppTextStyles.bodyMedium.color, height: 1.5),
                  ),
                ),
                const SizedBox(height: 24),
 
                // Attachments
-               Text(AppText.attachments, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+               Text(AppText.attachments, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppTextStyles.h3.color)),
                const SizedBox(height: 12),
                if (request['attachments'] != null && (request['attachments'] as List).isNotEmpty)
                  ListView.separated(
@@ -105,7 +106,7 @@ class RequestDetailsReadView extends StatelessWidget {
                      bool isImage = file['type'] == 'image';
                      return Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                        decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
                         child: Row(
                           children: [
                             Container(
@@ -118,7 +119,7 @@ class RequestDetailsReadView extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(file['name'], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
+                                  Text(file['name'], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTextStyles.h3.color)),
                                   const SizedBox(height: 2),
                                   Text(file['size'], style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
                                 ],
@@ -134,7 +135,7 @@ class RequestDetailsReadView extends StatelessWidget {
                  Container(
                    width: double.infinity,
                    padding: const EdgeInsets.all(20),
-                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                   decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(20)),
                    child: Text(AppText.noAttachments, style: const TextStyle(color: Colors.grey)),
                  ),
                const SizedBox(height: 40),
@@ -152,7 +153,7 @@ class RequestDetailsReadView extends StatelessWidget {
         const SizedBox(width: 12),
         Text(label, style: const TextStyle(fontSize: 14, color: Color(0xFF64748B))),
         const Spacer(),
-        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
+        Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTextStyles.h3.color)),
       ],
     );
   }

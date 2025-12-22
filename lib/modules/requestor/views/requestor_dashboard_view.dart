@@ -15,7 +15,7 @@ class RequestorView extends GetView<RequestorController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 40.0), // Added bottom padding
@@ -24,12 +24,12 @@ class RequestorView extends GetView<RequestorController> {
             children: [
               _buildTopBar(),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Hello, Alex',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF0F172A),
+                  color: AppTextStyles.h1.color,
                 ),
               ),
               const SizedBox(height: 24),
@@ -39,12 +39,12 @@ class RequestorView extends GetView<RequestorController> {
               const SizedBox(height: 24),
               _buildPendingRequestsCard(),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Recent Requests',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF0F172A),
+                  color: AppTextStyles.h2.color,
                 ),
               ),
               const SizedBox(height: 16),
@@ -78,7 +78,7 @@ class RequestorView extends GetView<RequestorController> {
         ),
         Stack(
           children: [
-            const Icon(Icons.notifications, size: 28, color: Color(0xFF0F172A)),
+            Icon(Icons.notifications, size: 28, color: AppTextStyles.h3.color),
             // Optional: red dot
             // Positioned(right: 0, top: 0, child: Container(width: 10, height: 10, decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle)))
           ],
@@ -116,7 +116,7 @@ class RequestorView extends GetView<RequestorController> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -131,7 +131,7 @@ class RequestorView extends GetView<RequestorController> {
         children: [
           Text(
             AppText.monthlyExpense,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontWeight: FontWeight.w500),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
           Text(
@@ -185,7 +185,7 @@ class RequestorView extends GetView<RequestorController> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -246,7 +246,7 @@ class RequestorView extends GetView<RequestorController> {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -280,7 +280,7 @@ class RequestorView extends GetView<RequestorController> {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0F172A),
+                          color: AppTextStyles.h3.color,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -302,7 +302,7 @@ class RequestorView extends GetView<RequestorController> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF0F172A),
+                        color: AppTextStyles.h3.color,
                       ),
                     ),
                     const SizedBox(height: 4),

@@ -60,6 +60,14 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
         'status': AppText.statusApproved,
       },
       {
+        'id': 'REQ-006',
+        'title': 'Conference Ticket',
+        'user': 'James Wilson',
+        'date': 'Oct 29, 2023',
+        'amount': '300.00',
+        'status': AppText.clarification,
+      },
+      {
         'id': 'REQ-005',
         'title': 'Travel Reimbursement',
         'user': 'Isabella Garcia',
@@ -79,15 +87,17 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
   List<Map<String, dynamic>> get rejectedRequests => 
       requests.where((r) => r['status'] == AppText.statusRejected).toList();
 
+  List<Map<String, dynamic>> get clarificationRequests => 
+      requests.where((r) => r['status'] == AppText.clarification).toList();
+
   void navigateToDetails(Map<String, dynamic> request) {
-    Get.toNamed(AppRoutes.ADMIN_REQUEST_DETAILS, arguments: request);
+    if (request['status'] == AppText.clarification) {
+      Get.toNamed(AppRoutes.ADMIN_CLARIFICATION_STATUS, arguments: request);
+    } else {
+      Get.toNamed(AppRoutes.ADMIN_REQUEST_DETAILS, arguments: request);
+    }
   }
 
-  void changeTabIndex(int index) {
-      selectedIndex.value = index;
-      if (index == 0) {
-        Get.offNamed(AppRoutes.ADMIN_DASHBOARD);
-      }
-      // Handle other navs
-  }
+  // No longer needed for bottom bar, logic moved to view
+  // void changeTabIndex(int index) ... 
 }

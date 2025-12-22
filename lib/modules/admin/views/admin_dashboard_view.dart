@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../routes/app_routes.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../controllers/admin_dashboard_controller.dart';
 import 'widgets/admin_bottom_bar.dart';
+import 'widgets/admin_action_card.dart';
+import 'widgets/admin_overview_card.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
   const AdminDashboardView({Key? key}) : super(key: key);
@@ -12,37 +15,37 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      // backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              backgroundColor: AppColors.backgroundLight,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               pinned: true,
               elevation: 0,
               automaticallyImplyLeading: false,
-              toolbarHeight: 70, // Height to fit the custom row comfortably
+              toolbarHeight: 70,
               titleSpacing: 24,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppColors.primaryBlue,
-                        child: Icon(Icons.person, color: Colors.white),
+                      GestureDetector(
+                        onTap: () => Get.toNamed(AppRoutes.PROFILE),
+                        child: const CircleAvatar(
+                          radius: 20,
+                          backgroundColor: AppColors.primaryBlue,
+                          child: Icon(Icons.person, color: Colors.white),
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      // Empty container or small column if we want the "Dashboard" here? 
-                      // User said "dashboard title should be there onoly".
-                      // Original design had "Dashboard" center or part of row.
-                      // Let's stick to the previous Row layout but inside the Title.
+                      const SizedBox(width: 8),
                     ],
                   ),
                   Text(AppText.dashboard, style: AppTextStyles.h3),
                   IconButton(
-                    icon: const Icon(Icons.settings, color: AppColors.textDark),
+                    icon: Icon(Icons.settings, color: AppTextStyles.h3.color),
                     onPressed: () {},
                   ),
                 ],
@@ -61,11 +64,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                     Text(AppText.overview, style: AppTextStyles.h3),
                     const SizedBox(height: 16),
 
-                    // Overview Cards
                     Row(
                       children: [
                         Expanded(
-                          child: _buildOverviewCard(
+                          child: AdminOverviewCard(
                             title: AppText.pending,
                             count: '12',
                             isMoney: false,
@@ -73,7 +75,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildOverviewCard(
+                          child: AdminOverviewCard(
                             title: AppText.approved,
                             count: '\$1,250',
                             isMoney: true,
@@ -86,25 +88,38 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                     Text(AppText.actions, style: AppTextStyles.h3),
                     const SizedBox(height: 16),
 
-                    // Action Cards
-                    _buildActionCard(
+                    AdminActionCard(
                       icon: Icons.hourglass_empty_rounded,
-                      iconBg: const Color(0xFFE0F2FE), // Light Blue
+                      iconBg: AppColors.primaryBlue, // Pass opaque, Card handles opacity
                       iconColor: AppColors.primaryBlue,
                       title: AppText.reviewPending,
                       subtitle: AppText.viewAllRequests,
                       onTap: controller.navigateToApprovals,
                     ),
                     const SizedBox(height: 16),
-                    _buildActionCard(
+                    AdminActionCard(
                       icon: Icons.history_rounded,
-                      iconBg: const Color(0xFFE0F2FE),
+                      iconBg: AppColors.primaryBlue, // Pass opaque
                       iconColor: AppColors.primaryBlue,
                       title: AppText.viewHistory,
                       subtitle: AppText.pastApprovals,
-                      onTap: () {}, // TODO
+                      onTap: () {
+                         Get.toNamed(AppRoutes.ADMIN_HISTORY);
+                      },
                     ),
-                    const SizedBox(height: 32), // Bottom spacing
+                    const SizedBox(height: 16),
+                    // Add New User (Placed 3rd as requested "under view history")
+                    AdminActionCard(
+                      icon: Icons.person_add_alt_1_rounded,
+                      iconBg: AppColors.primaryBlue, // Match theme
+                      iconColor: AppColors.primaryBlue,
+                      title: AppText.addNewUser,
+                      subtitle: AppText.createNewAccount,
+                      onTap: () {
+                         Get.toNamed(AppRoutes.ADMIN_ADD_USER);
+                      },
+                    ),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -115,93 +130,13 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       bottomNavigationBar: AdminBottomBar(
         currentIndex: 0,
         onTap: (index) {
-          if (index != 0) controller.changeTabIndex(index);
+          if (index == 0) return;
+          switch (index) {
+            case 1: Get.offNamed(AppRoutes.ADMIN_APPROVALS); break;
+            case 2: Get.offNamed(AppRoutes.ADMIN_HISTORY); break;
+            case 3: Get.offNamed(AppRoutes.PROFILE); break;
+          }
         },
-      ),
-    );
-  }
-
-  Widget _buildOverviewCard({required String title, required String count, required bool isMoney}) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08), // Slightly darker shadow
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            count,
-            style: AppTextStyles.h1.copyWith(
-              color: isMoney ? AppColors.primaryBlue : AppColors.textDark,
-              fontSize: 28,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionCard({
-    required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08), // Slightly darker shadow
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: iconBg,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: iconColor, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                  const SizedBox(height: 2),
-                  Text(subtitle, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_rounded, color: AppColors.textSlate, size: 20),
-          ],
-        ),
       ),
     );
   }

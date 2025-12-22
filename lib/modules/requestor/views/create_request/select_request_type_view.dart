@@ -13,7 +13,7 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(AppText.selectRequestType, style: AppTextStyles.h3),
         centerTitle: true,
@@ -38,12 +38,13 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
             children: [
               Text(
                 AppText.approvalTime, // TODO: Add to AppText if generic
-                style: AppTextStyles.h3,
+                style: AppTextStyles.h3.copyWith(color: AppTextStyles.h3.color),
               ),
               const SizedBox(height: 16),
               
               // Pre-approved Option
               Obx(() => _buildOptionCard(
+                context,
                 title: AppText.preApproved,
                 subtitle: AppText.preApprovedDesc,
                 value: AppText.preApproved,
@@ -56,6 +57,7 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
 
               // Post-approved Option
               Obx(() => _buildOptionCard(
+                context,
                 title: AppText.postApproved,
                 subtitle: AppText.postApprovedDesc,
                 value: AppText.postApproved,
@@ -82,7 +84,8 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
     );
   }
 
-  Widget _buildOptionCard({
+  Widget _buildOptionCard(
+    BuildContext context, {
     required String title,
     required String subtitle,
     required String value,
@@ -96,8 +99,8 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFE0F2FE) : Colors.white,
-          border: Border.all(color: isSelected ? const Color(0xFF0EA5E9) : Colors.transparent),
+          color: isSelected ? const Color(0xFFE0F2FE) : Theme.of(context).cardColor,
+          border: Border.all(color: isSelected ? const Color(0xFF0EA5E9) : Theme.of(context).dividerColor),
           borderRadius: BorderRadius.circular(16),
            boxShadow: [
             if (!isSelected)
@@ -116,9 +119,9 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Color(0xFF0F172A))),
+                  Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppTextStyles.h3.color)),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                  Text(subtitle, style: TextStyle(fontSize: 13, color: AppTextStyles.bodyMedium.color)),
                 ],
               ),
             ),

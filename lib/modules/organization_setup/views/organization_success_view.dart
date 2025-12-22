@@ -13,7 +13,7 @@ class OrganizationSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -29,7 +29,7 @@ class OrganizationSuccessView extends StatelessWidget {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
+                      color: Theme.of(context).cardColor,
                       shape: BoxShape.circle,
                       border: Border.all(color: const Color(0xFFDCFCE7), width: 8),
                     ),
@@ -56,7 +56,7 @@ class OrganizationSuccessView extends StatelessWidget {
                 Text(
                   AppText.secureWorkspaceReady,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+                  style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, height: 1.5),
                 ),
                 const SizedBox(height: 40),
 
@@ -64,17 +64,17 @@ class OrganizationSuccessView extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundLight,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFF1F5F9)),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(Icons.mail_outline_rounded, color: AppColors.primaryBlue, size: 20),
@@ -86,12 +86,12 @@ class OrganizationSuccessView extends StatelessWidget {
                           children: [
                             Text(
                               AppText.checkInbox,
-                              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textDark),
+                              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppTextStyles.h3.color),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               AppText.checkInboxDesc,
-                              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13, height: 1.4),
+                              style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, fontSize: 13, height: 1.4),
                             ),
                           ],
                         ),
@@ -117,7 +117,7 @@ class OrganizationSuccessView extends StatelessWidget {
                      children: [
                          Text(
                            AppText.didntReceiveEmail,
-                         style: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 13),
+                         style: GoogleFonts.inter(color: AppTextStyles.bodySmall.color, fontSize: 13),
                        ),
                        GestureDetector(
                          onTap: () {},

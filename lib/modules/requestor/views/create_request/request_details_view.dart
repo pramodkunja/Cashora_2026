@@ -16,7 +16,7 @@ class RequestDetailsView extends GetView<CreateRequestController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(AppText.requestDetails, style: AppTextStyles.h3),
         centerTitle: true,
@@ -33,7 +33,7 @@ class RequestDetailsView extends GetView<CreateRequestController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppText.amount, style: AppTextStyles.h2),
+              Text(AppText.amount, style: AppTextStyles.h2.copyWith(color: AppTextStyles.h2.color)),
               const SizedBox(height: 12),
               TextField(
                 controller: controller.amountController,
@@ -49,14 +49,14 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                   ),
                   prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 ),
               ),
               const SizedBox(height: 24),
 
-              Text(AppText.requestType, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
+              Text(AppText.requestType, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTextStyles.h3.color)),
               const SizedBox(height: 8),
               Obx(() => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -110,9 +110,9 @@ class RequestDetailsView extends GetView<CreateRequestController> {
               Obx(() => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.borderLight),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.02),
@@ -128,7 +128,7 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textSlate),
                     borderRadius: BorderRadius.circular(16),
-                    dropdownColor: Colors.white,
+                    dropdownColor: Theme.of(context).cardColor,
                     items: controller.expenseCategories.map((cat) {
                       return DropdownMenuItem<Map<String, dynamic>>(
                         value: cat,
@@ -143,7 +143,7 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                               child: Icon(cat['icon'], color: AppColors.primaryBlue, size: 18),
                             ),
                             const SizedBox(width: 12),
-                            Text(cat['name'], style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDark)),
+                            Text(cat['name'], style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.h3.color)),
                           ],
                         ),
                       );
@@ -161,7 +161,7 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                 decoration: InputDecoration(
                   hintText: AppText.purposeHint,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   contentPadding: const EdgeInsets.all(16),
                 ),
@@ -176,7 +176,7 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                 decoration: InputDecoration(
                   hintText: AppText.descriptionPlaceholder,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   contentPadding: const EdgeInsets.all(16),
                 ),
@@ -211,12 +211,12 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey[200]!)),
+                        decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12), border: Border.all(color: Theme.of(context).dividerColor)),
                         child: Row(
                           children: [
                             const Icon(Icons.description, color: Color(0xFF64748B), size: 20),
                             const SizedBox(width: 8),
-                            Expanded(child: Text(file.name, style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A)), overflow: TextOverflow.ellipsis)),
+                            Expanded(child: Text(file.name, style: TextStyle(fontSize: 13, color: AppTextStyles.bodyMedium.color), overflow: TextOverflow.ellipsis)),
                             IconButton(
                               icon: const Icon(Icons.close, color: Colors.red, size: 20),
                               onPressed: () => controller.removeFile(idx),

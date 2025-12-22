@@ -14,7 +14,7 @@ class LoginView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F8FC), // Light blueish grey background
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Dynamic background
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -31,7 +31,9 @@ class LoginView extends GetView<AuthController> {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0F2FE),
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? AppColors.primaryBlue.withOpacity(0.2) 
+                          : const Color(0xFFE0F2FE),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
@@ -58,7 +60,7 @@ class LoginView extends GetView<AuthController> {
                 // Email Input
                 Text(
                   AppText.emailAddress,
-                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textDark),
+                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppTextStyles.bodyMedium.color),
                 ),
                 const SizedBox(height: 8),
                 TextField(
@@ -68,7 +70,7 @@ class LoginView extends GetView<AuthController> {
                     hintStyle: AppTextStyles.hintText,
                     prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textLight),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).cardColor,
                     contentPadding: const EdgeInsets.symmetric(vertical: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -76,7 +78,7 @@ class LoginView extends GetView<AuthController> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.borderLight),
+                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -89,7 +91,7 @@ class LoginView extends GetView<AuthController> {
                 // Password Input
                 Text(
                   AppText.password,
-                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppColors.textDark),
+                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppTextStyles.bodyMedium.color),
                 ),
                 const SizedBox(height: 8),
                 Obx(() => TextField(
@@ -109,7 +111,7 @@ class LoginView extends GetView<AuthController> {
                       onPressed: controller.togglePasswordVisibility,
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).cardColor,
                     contentPadding: const EdgeInsets.symmetric(vertical: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -117,7 +119,7 @@ class LoginView extends GetView<AuthController> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.borderLight),
+                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../utils/app_text.dart';
+import '../../../../utils/app_text_styles.dart';
 import '../controllers/otp_verification_controller.dart';
 
 class OtpVerificationView extends GetView<OtpVerificationController> {
@@ -11,19 +12,19 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF0F172A), size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppTextStyles.h3.color, size: 20),
           onPressed: () => Get.back(),
         ),
         title: Text(
           AppText.otpVerification,
           style: GoogleFonts.inter(
-            color: const Color(0xFF0F172A),
+            color: AppTextStyles.h3.color,
             fontWeight: FontWeight.w600,
             fontSize: 18,
           ),
@@ -45,7 +46,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                   style: GoogleFonts.inter(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF0F172A),
+                    color: AppTextStyles.h1.color,
                     height: 1.2,
                   ),
                 ),
@@ -55,7 +56,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     fontSize: 16,
-                    color: const Color(0xFF64748B),
+                    color: AppTextStyles.bodyMedium.color,
                     height: 1.5,
                   ),
                 ),
@@ -107,7 +108,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 Obx(() => Text(
                   '${AppText.resendCodeIn} ${controller.formattedTime}',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF64748B),
+                    color: AppTextStyles.bodyMedium.color,
                     fontSize: 14,
                   ),
                 )),
@@ -152,9 +153,9 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
       width: 48, 
       height: 56, 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFFCBD5E1).withOpacity(0.1),
@@ -173,7 +174,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF0F172A),
+            color: AppTextStyles.h3.color,
           ),
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,

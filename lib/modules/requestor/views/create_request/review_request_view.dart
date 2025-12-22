@@ -15,7 +15,7 @@ class ReviewRequestView extends GetView<CreateRequestController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(AppText.reviewRequest, style: AppTextStyles.h3),
         centerTitle: true,
@@ -31,7 +31,7 @@ class ReviewRequestView extends GetView<CreateRequestController> {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-               Text(AppText.totalRequestedAmount, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+               Text(AppText.totalRequestedAmount, style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color)),
                const SizedBox(height: 4),
                Obx(() => Text('₹${controller.amount.value.toStringAsFixed(2)}', style: AppTextStyles.h1.copyWith(fontSize: 40))),
                const SizedBox(height: 32),
@@ -39,7 +39,7 @@ class ReviewRequestView extends GetView<CreateRequestController> {
                Container(
                  padding: const EdgeInsets.all(24),
                  decoration: BoxDecoration(
-                   color: Colors.white,
+                   color: Theme.of(context).cardColor,
                    borderRadius: BorderRadius.circular(24),
                  ),
                  child: Column(
@@ -72,7 +72,7 @@ class ReviewRequestView extends GetView<CreateRequestController> {
                Container(
                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                   color: Colors.white,
+                   color: Theme.of(context).cardColor,
                    borderRadius: BorderRadius.circular(24),
                  ),
                  child: Column(
@@ -92,7 +92,7 @@ class ReviewRequestView extends GetView<CreateRequestController> {
                                 onTap: () => _showImagePreview(context, file),
                                 child: Container(
                                   padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(border: Border.all(color: AppColors.borderLight), borderRadius: BorderRadius.circular(16)),
+                                  decoration: BoxDecoration(border: Border.all(color: Theme.of(context).dividerColor), borderRadius: BorderRadius.circular(16)),
                                   child: Row(
                                     children: [
                                       Container(
@@ -141,7 +141,7 @@ class ReviewRequestView extends GetView<CreateRequestController> {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
               ),
               clipBehavior: Clip.hardEdge,
               child: Image.file(
@@ -179,9 +179,9 @@ class ReviewRequestView extends GetView<CreateRequestController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(title, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
+               Text(title, style: TextStyle(color: AppTextStyles.bodyMedium.color, fontSize: 13)),
                const SizedBox(height: 4),
-               Text(value.isEmpty ? '-' : value, style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600, fontSize: 16)),
+               Text(value.isEmpty ? '-' : value, style: TextStyle(color: AppTextStyles.h3.color, fontWeight: FontWeight.w600, fontSize: 16)),
             ],
           ),
         ),

@@ -15,6 +15,24 @@ abstract class AppRoutes {
   static const ADMIN_APPROVALS = '/admin/approvals';
   static const ADMIN_REQUEST_DETAILS = '/admin/request-details';
   static const ADMIN_SUCCESS = '/admin/success';
+  static const ADMIN_REJECTION_SUCCESS = '/admin/rejection-success';
+  static const ADMIN_CLARIFICATION = '/admin/clarification';
+  static const ADMIN_CLARIFICATION_SUCCESS = '/admin/clarification-success';
+  static const ADMIN_CLARIFICATION_STATUS = '/admin/clarification-status';
+  static const ADMIN_HISTORY = '/admin/history';
+
+  static const ADMIN_USER_LIST = '/admin/users';
+  static const ADMIN_ADD_USER = '/admin/users/add';
+  static const ADMIN_EDIT_USER = '/admin/users/edit';
+  static const ADMIN_DEACTIVATE_USER = '/admin/users/deactivate';
+  static const ADMIN_USER_SUCCESS = '/admin/users/success';
+
+  static const PROFILE = '/profile';
+  static const SETTINGS = '/settings';
+  static const SETTINGS_NOTIFICATIONS = '/settings/notifications';
+  static const SETTINGS_APPEARANCE = '/settings/appearance';
+  static const SETTINGS_CHANGE_PASSWORD = '/settings/change-password';
+
   static const REQUESTOR = '/requestor';
   static const CREATE_REQUEST_TYPE = '/create-request/type';
   static const CREATE_REQUEST_DETAILS = '/create-request/details';

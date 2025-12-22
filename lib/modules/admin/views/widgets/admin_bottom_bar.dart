@@ -18,7 +18,7 @@ class AdminBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -31,9 +31,9 @@ class AdminBottomBar extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: onTap,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         selectedItemColor: AppColors.primaryBlue,
-        unselectedItemColor: AppColors.textSlate,
+        unselectedItemColor: AppTextStyles.bodySmall.color,
         selectedLabelStyle: AppTextStyles.bodyMedium.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
         unselectedLabelStyle: AppTextStyles.bodyMedium.copyWith(fontSize: 12),
         elevation: 0,

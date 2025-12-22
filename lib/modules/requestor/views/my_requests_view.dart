@@ -5,6 +5,8 @@ import '../controllers/my_requests_controller.dart';
 import '../../../../core/widgets/common_search_bar.dart';
 import 'widgets/requestor_bottom_bar.dart'; 
 import '../../../../utils/app_text.dart'; 
+import '../../../../utils/app_text_styles.dart';
+import '../../../../utils/app_colors.dart'; 
 
 class MyRequestsView extends GetView<MyRequestsController> {
   const MyRequestsView({Key? key}) : super(key: key);
@@ -17,9 +19,9 @@ class MyRequestsView extends GetView<MyRequestsController> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(AppText.myRequests, style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w700)),
+        title: Text(AppText.myRequests, style: TextStyle(color: AppTextStyles.h3.color, fontWeight: FontWeight.w700)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -43,15 +45,15 @@ class MyRequestsView extends GetView<MyRequestsController> {
               height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFE2E8F0),
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.black26 : const Color(0xFFE2E8F0),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Obx(() => Row(
                 children: [
-                  _buildTab(AppText.filterAll, 0),
-                  _buildTab(AppText.filterPending, 1),
-                  _buildTab(AppText.filterApproved, 2),
-                  _buildTab(AppText.filterRejected, 3),
+                  _buildTab(context, AppText.filterAll, 0),
+                  _buildTab(context, AppText.filterPending, 1),
+                  _buildTab(context, AppText.filterApproved, 2),
+                  _buildTab(context, AppText.filterRejected, 3),
                 ],
               )),
             ),
@@ -64,7 +66,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final req = controller.filteredRequests[index];
-                  return _buildRequestCard(req);
+                  return _buildRequestCard(context, req);
                 },
               )),
             ),
@@ -91,7 +93,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
     );
   }
 
-  Widget _buildTab(String title, int index) {
+  Widget _buildTab(BuildContext context, String title, int index) {
     bool isSelected = controller.currentTab.value == index;
     return Expanded(
       child: GestureDetector(
@@ -99,7 +101,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
         child: Container(
           margin: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? Theme.of(context).cardColor : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : [],
           ),
@@ -109,7 +111,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected ? const Color(0xFF0EA5E9) : const Color(0xFF64748B),
+              color: isSelected ? AppColors.primaryBlue : AppTextStyles.bodyMedium.color,
             ),
           ),
         ),
@@ -117,7 +119,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
     );
   }
 
-  Widget _buildRequestCard(Map<String, dynamic> req) {
+  Widget _buildRequestCard(BuildContext context, Map<String, dynamic> req) {
     Color statusColor;
     Color statusBg;
     
@@ -144,7 +146,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
         ),
@@ -169,7 +171,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('₹${req['amount'].toStringAsFixed(2)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                Text('₹${req['amount'].toStringAsFixed(2)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppTextStyles.h3.color)),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
