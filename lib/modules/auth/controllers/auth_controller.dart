@@ -30,8 +30,19 @@ class AuthController extends BaseController {
 
     await performAsyncOperation(() async {
       await _authService.login(email, password);
-      // For now, navigate to Requestor Dashboard as per user request
-      Get.offAllNamed(AppRoutes.REQUESTOR);
+      
+      final user = _authService.currentUser.value;
+      if (user != null) {
+        if (user.role.toLowerCase() == 'admin' || user.role.toLowerCase() == 'super_admin') {
+          Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD);
+        } else if (user.role.toLowerCase() == 'accountant') {
+          Get.offAllNamed(AppRoutes.ACCOUNTANT_DASHBOARD);
+        } else {
+           Get.offAllNamed(AppRoutes.REQUESTOR);
+        }
+      } else {
+         Get.offAllNamed(AppRoutes.REQUESTOR);
+      }
     });
   }
 

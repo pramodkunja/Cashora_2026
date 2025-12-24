@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/network_service.dart';
 import 'core/services/auth_service.dart';
+import 'core/services/biometric_service.dart';
+import 'core/managers/app_lifecycle_manager.dart';
 import 'data/repositories/auth_repository.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
@@ -33,6 +35,8 @@ Future<void> initServices() async {
   await Get.putAsync(() => NetworkService().init());
   Get.lazyPut(() => AuthRepository(Get.find<NetworkService>()));
   await Get.putAsync(() => AuthService(Get.find<AuthRepository>(), Get.find<StorageService>()).init());
+  await Get.putAsync(() => BiometricService().init());
+  Get.put(AppLifecycleManager());
 }
 
 class MyApp extends StatelessWidget {

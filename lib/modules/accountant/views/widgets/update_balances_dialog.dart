@@ -21,9 +21,10 @@ class UpdateBalancesDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       backgroundColor: Colors.white,
       elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
@@ -109,6 +110,7 @@ class UpdateBalancesDialog extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

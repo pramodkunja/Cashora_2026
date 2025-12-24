@@ -7,6 +7,8 @@ import '../controllers/profile_controller.dart';
 import '../../../../utils/widgets/buttons/primary_button.dart';
 import '../../../../routes/app_routes.dart';
 import '../../admin/views/widgets/admin_bottom_bar.dart';
+import '../../requestor/views/widgets/requestor_bottom_bar.dart';
+import '../../../../core/services/auth_service.dart';
 // Needs custom layout for list items as per image (Icon box left, Text, Arrow)
 
 class ProfileView extends GetView<ProfileController> {
@@ -26,21 +28,15 @@ class ProfileView extends GetView<ProfileController> {
         centerTitle: true,
         title: Text(AppText.myProfile, style: AppTextStyles.h3),
         actions: [
+          // Only show Edit if Admin or Super Admin
+          if (['admin', 'super_admin'].contains(Get.find<AuthService>().currentUser.value?.role.toLowerCase()))
           TextButton(
             onPressed: controller.editProfile,
             child: Text(AppText.edit, style: AppTextStyles.buttonText.copyWith(color: AppColors.primaryBlue)),
           )
         ],
       ),
-      bottomNavigationBar: AdminBottomBar(
-        currentIndex: 3, 
-        onTap: (index) {
-          if (index == 0) Get.offNamed(AppRoutes.ADMIN_DASHBOARD);
-          if (index == 1) Get.offNamed(AppRoutes.ADMIN_APPROVALS);
-          if (index == 2) Get.offNamed(AppRoutes.ADMIN_HISTORY);
-          if (index == 3) { /* Current Page */ } 
-        }
-      ), // Profile Tab
+      bottomNavigationBar: _buildBottomBar(), 
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
@@ -110,27 +106,28 @@ class ProfileView extends GetView<ProfileController> {
               ),
             ),
 
-            const SizedBox(height: 24),
-
-            Container(
-                 decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(24),
+            if (['admin', 'super_admin'].contains(Get.find<AuthService>().currentUser.value?.role.toLowerCase())) ...[
+              const SizedBox(height: 24),
+              Container(
+                   decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    _buildActionTile(
+                        icon: Icons.people_outline_rounded,
+                        iconBg: const Color(0xFFF0FDF4), // Light Green
+                        iconColor: const Color(0xFF16A34A), // Green
+                        title: AppText.manageUsers,
+                        onTap: controller.navigateToManageUsers,
+                      ),
+                  ],
+                ),
+                
               ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  _buildActionTile(
-                      icon: Icons.people_outline_rounded,
-                      iconBg: const Color(0xFFF0FDF4), // Light Green
-                      iconColor: const Color(0xFF16A34A), // Green
-                      title: AppText.manageUsers,
-                      onTap: controller.navigateToManageUsers,
-                    ),
-                ],
-              ),
-              
-            ),
+            ],
             const SizedBox(height: 24),
 
             
@@ -239,5 +236,32 @@ class ProfileView extends GetView<ProfileController> {
         ],
       ),
     );
+  }
+
+  Widget _buildBottomBar() {
+    final userRole = Get.find<AuthService>().currentUser.value?.role.toLowerCase();
+
+    // Explicitly check for Admin/Approver
+    if (userRole == 'admin' || userRole == 'super_admin') {
+      return AdminBottomBar(
+        currentIndex: 3, 
+        onTap: (index) {
+          if (index == 0) Get.offNamed(AppRoutes.ADMIN_DASHBOARD);
+          if (index == 1) Get.offNamed(AppRoutes.ADMIN_APPROVALS);
+          if (index == 2) Get.offNamed(AppRoutes.ADMIN_HISTORY);
+          if (index == 3) { /* Current Page */ } 
+        },
+      );
+    } else {
+      // Default to Requestor for any other role (including 'requestor', 'user', null)
+      return RequestorBottomBar(
+        currentIndex: 2, 
+        onTap: (index) {
+          if (index == 0) Get.offNamed(AppRoutes.REQUESTOR);
+          if (index == 1) Get.offNamed(AppRoutes.MY_REQUESTS);
+          if (index == 2) { /* Current Page */ }
+        },
+      );
+    }
   }
 }

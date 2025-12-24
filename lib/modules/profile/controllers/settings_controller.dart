@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../../core/services/biometric_service.dart';
 
 class SettingsController extends GetxController {
   final StorageService _storage = Get.find<StorageService>();
@@ -28,6 +29,7 @@ class SettingsController extends GetxController {
   void onInit() {
     super.onInit();
     loadTheme();
+    loadFaceIdPreference();
     
     // Listen to password changes for UI indicators
     newPasswordController.addListener(_validatePasswordRules);
@@ -70,8 +72,36 @@ class SettingsController extends GetxController {
     Get.back(); // Go back after saving
   }
 
-  void toggleFaceId(bool value) {
-    rxFaceIdEnabled.value = value;
+  void toggleFaceId(bool value) async {
+    if (value) {
+      // Enabling
+      final biometricService = Get.find<BiometricService>();
+      if (!biometricService.isSupported.value) {
+        Get.snackbar('Not Supported', 'Biometric authentication is not supported on this device.',
+            backgroundColor: Colors.red.shade100, colorText: Colors.red);
+        rxFaceIdEnabled.value = false;
+        return;
+      }
+      
+      bool authenticated = await biometricService.authenticate();
+      if (authenticated) {
+        rxFaceIdEnabled.value = true;
+        _storage.write('face_id_enabled', 'true');
+      } else {
+        rxFaceIdEnabled.value = false; // Revert
+        Get.snackbar('Authentication Failed', 'Could not enable Face ID.',
+            backgroundColor: Colors.red.shade100, colorText: Colors.red);
+      }
+    } else {
+      // Disabling
+      rxFaceIdEnabled.value = false;
+      _storage.write('face_id_enabled', 'false');
+    }
+  }
+
+  Future<void> loadFaceIdPreference() async {
+    String? enabled = await _storage.read('face_id_enabled');
+    rxFaceIdEnabled.value = enabled == 'true';
   }
 
   void navigateToChangePassword() {

@@ -9,8 +9,8 @@ import '../../../../utils/widgets/buttons/secondary_button.dart';
 import '../controllers/requestor_controller.dart';
 import 'widgets/requestor_bottom_bar.dart';
 
-class RequestorView extends GetView<RequestorController> {
-  const RequestorView({Key? key}) : super(key: key);
+class RequestorDashboardView extends GetView<RequestorController> {
+  const RequestorDashboardView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +24,20 @@ class RequestorView extends GetView<RequestorController> {
             children: [
               _buildTopBar(),
               const SizedBox(height: 16),
-              Text(
-                'Hello, Alex',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: AppTextStyles.h1.color,
-                ),
-              ),
+                Obx(() => Text(
+                  'Hello, ${controller.userName}',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: AppTextStyles.h1.color,
+                  ),
+                )),
               const SizedBox(height: 24),
               _buildActionButtons(),
               const SizedBox(height: 24),
-              _buildMonthlyExpenseCard(),
+              _buildMonthlyExpenseCard(context),
               const SizedBox(height: 24),
-              _buildPendingRequestsCard(),
+              _buildPendingRequestsCard(context),
               const SizedBox(height: 24),
               Text(
                 'Recent Requests',
@@ -59,8 +59,7 @@ class RequestorView extends GetView<RequestorController> {
           if (index == 0) return; // Already here
           if (index == 1) Get.toNamed(AppRoutes.MY_REQUESTS);
           if (index == 2) {
-             // Placeholder for Profile
-             Get.snackbar('Coming Soon', 'Profile screen is under construction');
+             Get.toNamed(AppRoutes.PROFILE);
           }
         },
       ),
@@ -112,7 +111,7 @@ class RequestorView extends GetView<RequestorController> {
     );
   }
 
-  Widget _buildMonthlyExpenseCard() {
+  Widget _buildMonthlyExpenseCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -179,7 +178,7 @@ class RequestorView extends GetView<RequestorController> {
     );
   }
 
-  Widget _buildPendingRequestsCard() {
+  Widget _buildPendingRequestsCard(BuildContext context) {
     return GestureDetector(
       onTap: () => Get.toNamed(AppRoutes.MY_REQUESTS, arguments: {'filter': 'Pending'}),
       child: Container(
@@ -243,87 +242,90 @@ class RequestorView extends GetView<RequestorController> {
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final item = controller.recentRequests[index];
-          return Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: item['color'] as Color, // e.g., Colors.blue[100]
-                    shape: BoxShape.circle,
+          return GestureDetector(
+            onTap: () => Get.toNamed(AppRoutes.REQUEST_DETAILS_READ, arguments: item),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                  child: Icon(
-                    item['icon'] as IconData,
-                    color: item['iconColor'] as Color,
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: item['color'] as Color, // e.g., Colors.blue[100]
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      item['icon'] as IconData,
+                      color: item['iconColor'] as Color,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item['title'] as String,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppTextStyles.h3.color,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item['date'] as String,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        item['title'] as String,
-                        style: const TextStyle(
+                        '₹${(item['amount'] as double).toStringAsFixed(2)}',
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppTextStyles.h3.color,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        item['date'] as String,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF64748B),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(item['status'] as String).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          item['status'] as String,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: _getStatusColor(item['status'] as String),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      item['amount'] as String,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppTextStyles.h3.color,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(item['status'] as String).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        item['status'] as String,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: _getStatusColor(item['status'] as String),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

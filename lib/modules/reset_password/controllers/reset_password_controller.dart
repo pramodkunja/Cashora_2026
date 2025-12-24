@@ -6,6 +6,12 @@ class ResetPasswordController extends GetxController {
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  final isNewPasswordHidden = true.obs;
+  final isConfirmPasswordHidden = true.obs;
+
+  void toggleNewPasswordVisibility() => isNewPasswordHidden.value = !isNewPasswordHidden.value;
+  void toggleConfirmPasswordVisibility() => isConfirmPasswordHidden.value = !isConfirmPasswordHidden.value;
+
   void resetPassword() {
     // Mock API call
     Get.offNamed(AppRoutes.RESET_PASSWORD_SUCCESS);

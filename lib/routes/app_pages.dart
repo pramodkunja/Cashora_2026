@@ -48,7 +48,7 @@ import '../modules/reset_password/bindings/reset_password_binding.dart';
 import '../modules/reset_password/views/reset_password_view.dart';
 import '../modules/reset_password/views/reset_password_success_view.dart';
 import '../modules/requestor/bindings/requestor_binding.dart';
-// import '../modules/requestor/views/requestor_view.dart';
+import '../modules/requestor/views/requestor_dashboard_view.dart';
 import '../modules/requestor/bindings/create_request_binding.dart';
 import '../modules/requestor/views/create_request/select_request_type_view.dart';
 import '../modules/requestor/views/create_request/request_details_view.dart';
@@ -91,7 +91,20 @@ class AuthMiddleware extends GetMiddleware {
 class RouteGuard extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
-    return const RouteSettings(name: AppRoutes.REQUESTOR);
+     final authService = Get.find<AuthService>();
+    if (authService.isLoggedIn) {
+       final user = authService.currentUser.value;
+       if (user != null) {
+        if (user.role.toLowerCase() == 'admin' || user.role.toLowerCase() == 'super_admin') {
+          return const RouteSettings(name: AppRoutes.ADMIN_DASHBOARD);
+        } else if (user.role.toLowerCase() == 'accountant') {
+          return const RouteSettings(name: AppRoutes.ACCOUNTANT_DASHBOARD);
+        }
+      }
+      return const RouteSettings(name: AppRoutes.REQUESTOR);
+    } else {
+      return const RouteSettings(name: AppRoutes.LOGIN);
+    }
   }
 }
 
@@ -155,11 +168,11 @@ class AppPages {
       name: AppRoutes.RESET_PASSWORD_SUCCESS,
       page: () => const ResetPasswordSuccessView(),
     ),
-    // GetPage(
-    //   name: AppRoutes.REQUESTOR,
-    //   page: () => const RequestorView(),
-    //   binding: RequestorBinding(),
-    // ),
+    GetPage(
+      name: AppRoutes.REQUESTOR,
+      page: () => const RequestorDashboardView(),
+      binding: RequestorBinding(),
+    ),
     GetPage(
       name: AppRoutes.CREATE_REQUEST_TYPE,
       page: () => const SelectRequestTypeView(),
@@ -186,6 +199,10 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.put(MyRequestsController());
       }),
+    ),
+    GetPage(
+      name: AppRoutes.REQUEST_DETAILS_READ,
+      page: () => const RequestDetailsReadView(),
     ),
     GetPage(
       name: AppRoutes.MONTHLY_SPENT,

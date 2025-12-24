@@ -17,7 +17,7 @@ class AuthService extends GetxService {
     if (token != null) {
       // For now, we simulate a restored user session. 
       // ideally verify token with API.
-      currentUser.value = User(id: '1', name: 'User', email: 'user@example.com', role: 'admin'); 
+      currentUser.value = User(id: '1', name: 'User', email: 'user@example.com', role: 'requestor'); 
     }
     return this;
   }

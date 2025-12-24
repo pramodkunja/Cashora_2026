@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../lock/views/lock_view.dart';
 
 class SplashController extends GetxController with GetSingleTickerProviderStateMixin {
   final AuthService _authService = Get.find<AuthService>();
@@ -41,7 +42,21 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
   void _navigateToNextScreen() async {
     // 1. Check if logged in
     if (_authService.isLoggedIn) {
-      Get.offAllNamed(AppRoutes.REQUESTOR); 
+      final storage = Get.find<StorageService>();
+      String? enabled = await storage.read('face_id_enabled');
+      
+      if (enabled == 'true') {
+        // Navigate to LockView if enabled
+        // We need to import LockView or use a named route.
+        // Since we don't have a named route for LockView (it was pushed directly in LifecycleManager),
+        // we can add it to routes or import it here. 
+        // Ideally, adding AppRoutes.LOCK is cleaner, but for now importing view directly is faster 
+        // and acceptable as it's a special utility view.
+        // Wait, we need to import it.
+        Get.offAll(() => const LockView());
+      } else {
+        Get.offAllNamed(AppRoutes.REQUESTOR);
+      }
     } 
     // 2. Check if onboarding seen
     else {

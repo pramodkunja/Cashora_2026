@@ -15,7 +15,17 @@ class AuthRepository {
       
       // Simulated delay
       await Future.delayed(const Duration(seconds: 2));
-      return User(id: '1', email: email, name: 'John Doe', role: 'admin');
+
+      if (email == 'admin@test.com') {
+         return User(id: '1', email: email, name: 'Admin User', role: 'admin');
+      } else if (email == 'accountant@test.com') {
+         return User(id: '2', email: email, name: 'Accountant User', role: 'accountant');
+      } else if (email == 'requestor@test.com') {
+         return User(id: '3', email: email, name: 'Requestor User', role: 'employee');
+      }
+
+      // Default fallback
+      return User(id: '0', email: email, name: 'Generic User', role: 'employee');
     } catch (e) {
       rethrow;
     }
