@@ -18,7 +18,11 @@ class ChangePasswordView extends GetView<SettingsController> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textDark, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.textDark,
+            size: 20,
+          ),
           onPressed: () => Get.back(),
         ),
       ),
@@ -27,49 +31,120 @@ class ChangePasswordView extends GetView<SettingsController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Text('Your new password must be different from previous used passwords.', 
-                style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color)),
-             const SizedBox(height: 24),
+            Text(
+              'Your new password must be different from previous used passwords.',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppTextStyles.bodyMedium.color,
+              ),
+            ),
+            const SizedBox(height: 24),
 
-             _buildLabel(AppText.currentPassword),
-             _buildPasswordField(context, AppText.enterCurrentPassword, controller.currentPasswordController),
-             const SizedBox(height: 20),
+            _buildLabel(AppText.currentPassword),
+            Obx(
+              () => _buildPasswordField(
+                context,
+                AppText.enterCurrentPassword,
+                controller.currentPasswordController,
+                isVisible: controller.rxCurrentPasswordVisible.value,
+                onToggleVisibility: controller.toggleCurrentPasswordVisibility,
+                showHighlightError: controller.rxCurrentPasswordError.value,
+              ),
+            ),
+            const SizedBox(height: 20),
 
-             _buildLabel(AppText.newPassword),
-             _buildPasswordField(context, AppText.enterNewPassword, controller.newPasswordController),
-             const SizedBox(height: 6),
-             Obx(() => Row(
-               children: [
-                 Icon(
-                   controller.rxPasswordLength.value ? Icons.check_circle : Icons.info, 
-                   size: 14, 
-                   color: controller.rxPasswordLength.value ? Colors.green : AppColors.textSlate
-                 ),
-                 const SizedBox(width: 6),
-                 Text(AppText.mustBeAtLeast8Chars, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: controller.rxPasswordLength.value ? Colors.green : AppColors.textSlate)),
-               ],
-             )),
+            _buildLabel(AppText.newPassword),
+            Obx(
+              () => _buildPasswordField(
+                context,
+                AppText.enterNewPassword,
+                controller.newPasswordController,
+                isVisible: controller.rxNewPasswordVisible.value,
+                onToggleVisibility: controller.toggleNewPasswordVisibility,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Obx(
+              () => Row(
+                children: [
+                  Icon(
+                    controller.rxPasswordLength.value
+                        ? Icons.check_circle
+                        : Icons.info,
+                    size: 14,
+                    color: controller.rxPasswordLength.value
+                        ? Colors.green
+                        : AppColors.textSlate,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    AppText.mustBeAtLeast8Chars,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontSize: 12,
+                      color: controller.rxPasswordLength.value
+                          ? Colors.green
+                          : AppColors.textSlate,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-             const SizedBox(height: 20),
-             _buildLabel(AppText.confirmNewPassword),
-             _buildPasswordField(context, AppText.reEnterNewPassword, controller.confirmPasswordController),
-             const SizedBox(height: 6),
-             Obx(() => Row(
-               children: [
-                 Icon(
-                   controller.rxPasswordMatch.value ? Icons.check_circle : Icons.info, 
-                   size: 14, 
-                   color: controller.rxPasswordMatch.value ? Colors.green : AppColors.textSlate
-                 ), 
-                 const SizedBox(width: 6),
-                 Text(AppText.bothPasswordsMatch, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: controller.rxPasswordMatch.value ? Colors.green : AppColors.textSlate)),
-               ],
-             )),
+            const SizedBox(height: 20),
+            _buildLabel(AppText.confirmNewPassword),
+            Obx(
+              () => _buildPasswordField(
+                context,
+                AppText.reEnterNewPassword,
+                controller.confirmPasswordController,
+                isVisible: controller.rxConfirmPasswordVisible.value,
+                onToggleVisibility: controller.toggleConfirmPasswordVisibility,
+                showHighlightError: controller.rxConfirmPasswordError.value,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Obx(
+              () => Row(
+                children: [
+                  Icon(
+                    controller.rxPasswordMatch.value
+                        ? Icons.check_circle
+                        : Icons.info,
+                    size: 14,
+                    color: controller.rxPasswordMatch.value
+                        ? Colors.green
+                        : AppColors.textSlate,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    AppText.bothPasswordsMatch,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontSize: 12,
+                      color: controller.rxPasswordMatch.value
+                          ? Colors.green
+                          : AppColors.textSlate,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-             const SizedBox(height: 48),
-             PrimaryButton(text: AppText.updatePassword, onPressed: controller.changePassword),
-             const SizedBox(height: 16),
-             Center(child: TextButton(onPressed: (){}, child: Text(AppText.forgotPasswordQuestion, style: AppTextStyles.buttonText.copyWith(color: AppColors.primaryBlue)))),
+            const SizedBox(height: 48),
+            PrimaryButton(
+              text: AppText.updatePassword,
+              onPressed: controller.changePassword,
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: TextButton(
+                onPressed: () {},
+                child: Text(
+                  AppText.forgotPasswordQuestion,
+                  style: AppTextStyles.buttonText.copyWith(
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -77,28 +152,53 @@ class ChangePasswordView extends GetView<SettingsController> {
   }
 
   Widget _buildLabel(String text) {
-     return Padding(
-       padding: const EdgeInsets.only(bottom: 8.0, left: 4),
-       child: Text(text, style: AppTextStyles.h3.copyWith(fontSize: 14)),
-     );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4),
+      child: Text(text, style: AppTextStyles.h3.copyWith(fontSize: 14)),
+    );
   }
 
-  Widget _buildPasswordField(BuildContext context, String hint, TextEditingController fieldController) {
+  Widget _buildPasswordField(
+    BuildContext context,
+    String hint,
+    TextEditingController fieldController, {
+    required VoidCallback onToggleVisibility,
+    required bool isVisible,
+    bool showHighlightError = false,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: AppColors.borderLight),
+        border: Border.all(
+          color: showHighlightError
+              ? Colors.red
+              : AppColors.borderLight, // Highlight red on error
+          width: showHighlightError ? 1.5 : 1.0,
+        ),
       ),
       child: TextField(
         controller: fieldController,
-        obscureText: true,
+        obscureText: !isVisible, // Use visibility state
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textLight),
+          hintStyle: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textLight,
+          ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          suffixIcon: const Icon(Icons.visibility_off_outlined, color: AppColors.textLight),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 16,
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              isVisible
+                  ? Icons.visibility_outlined
+                  : Icons.visibility_off_outlined,
+              color: AppColors.textLight,
+            ),
+            onPressed: onToggleVisibility,
+          ),
         ),
       ),
     );

@@ -24,17 +24,11 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
     // Step 1: Initialize (0-30%)
     await Future.delayed(const Duration(milliseconds: 500)); 
 
-    // FORCE RESET FOR DEMO/TESTING: Clear session to ensure Splash -> Onboarding -> Login flow
-    // as requested by user. 
-    final storage = Get.find<StorageService>();
-    await storage.delete('auth_token');
-    await storage.delete('has_seen_onboarding');
-    await _authService.logout(); // Ensure AuthService state is also reset
-
+    // FORCE RESET REMOVED: Implementation of persistent options
     progress.value = 0.3;
     
     // Step 2: Check Auth / Load Resources (30-80%)
-    await Future.delayed(const Duration(milliseconds: 2000));
+    await Future.delayed(const Duration(milliseconds: 1000));
     progress.value = 0.8;
     
     // Step 3: Finalizing (80-100%)
@@ -60,17 +54,8 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
         // Overlay the LockView
         Get.to(() => const LockView(), opaque: false, fullscreenDialog: true);
       }
-    } 
-    // 2. Check if onboarding seen
-    else {
-      final storage = Get.find<StorageService>(); // Ensure Storage is available
-      String? hasSeenOnboarding = await storage.read('has_seen_onboarding');
-      
-      if (hasSeenOnboarding == 'true') {
-        Get.offAllNamed(AppRoutes.LOGIN);
-      } else {
-        Get.offAllNamed(AppRoutes.ONBOARDING);
-      }
+    } else {
+      Get.offAllNamed(AppRoutes.LOGIN);
     }
   }
 }

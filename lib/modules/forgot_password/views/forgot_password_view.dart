@@ -96,11 +96,11 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                     const SizedBox(height: 40), 
                     
                     // Send OTP Button
-                    SizedBox(
+                    Obx(() => SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: controller.sendCode,
+                        onPressed: controller.isLoading ? null : controller.sendCode,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
@@ -108,16 +108,22 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Send OTP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: controller.isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              )
+                            : const Text(
+                                'Send OTP',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
-                    ),
+                    )),
                     
                     const SizedBox(height: 32),
                     

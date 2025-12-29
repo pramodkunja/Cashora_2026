@@ -20,10 +20,7 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textDark, size: 20.sp),
-            onPressed: () => Get.back(),
-          ),
+         
           centerTitle: true,
           title: Text(AppText.approvalsTitle, style: AppTextStyles.h3),
           actions: [

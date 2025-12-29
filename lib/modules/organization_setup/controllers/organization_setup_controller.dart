@@ -5,10 +5,22 @@ import '../../../core/base/base_controller.dart';
 import '../../../routes/app_routes.dart';
 import 'package:flutter/services.dart';
 
+import 'package:dio/dio.dart';
+import '../../../data/repositories/organization_repository.dart';
+
 class OrganizationSetupController extends BaseController {
+  final OrganizationRepository _repository;
+
+  OrganizationSetupController(this._repository);
+
   final TextEditingController orgNameController = TextEditingController();
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController(); // Can be removed if using only IntlPhoneField's internal state, but keep for safety/migration.
+  
+  final RxString fullPhoneNumber = ''.obs;
+  final RxBool isPhoneValid = false.obs;
   
   final RxString orgCode = ''.obs;
 
@@ -44,25 +56,43 @@ class OrganizationSetupController extends BaseController {
 
   void createOrganization() async {
     if (orgNameController.text.isEmpty || 
-        fullNameController.text.isEmpty || 
-        emailController.text.isEmpty) {
+        firstNameController.text.isEmpty || 
+        lastNameController.text.isEmpty || 
+        emailController.text.isEmpty ||
+        fullPhoneNumber.value.isEmpty) { // Check fullPhoneNumber
       Get.snackbar('Error', 'Please fill all fields');
       return;
     }
+    
+    // basic length check or rely on widget's visual feedback. 
+    // Ideally duplicate validation here or trust the user if the field didn't error visually.
 
     await performAsyncOperation(() async {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-      // Get.snackbar('Success', 'Organization Created Successfully');
-      Get.offNamed(AppRoutes.ORGANIZATION_SUCCESS); // Navigate to success
+      try {
+        await _repository.createOrganization(
+          orgName: orgNameController.text,
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          email: emailController.text,
+          phoneNumber: fullPhoneNumber.value, // Send complete number with country code
+        );
+        Get.offNamed(AppRoutes.ORGANIZATION_SUCCESS); // Navigate to success
+      } on DioException catch (e) {
+        final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'An error occurred';
+        Get.snackbar('Error', message.toString(), backgroundColor: Colors.redAccent, colorText: Colors.white);
+      } catch (e) {
+        Get.snackbar('Error', 'Something went wrong', backgroundColor: Colors.redAccent, colorText: Colors.white);
+      }
     });
   }
 
   @override
   void onClose() {
     orgNameController.dispose();
-    fullNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     emailController.dispose();
+    phoneController.dispose();
     super.onClose();
   }
 }

@@ -7,6 +7,8 @@ import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../controllers/accountant_dashboard_controller.dart';
 import 'cash_flow_history_view.dart';
+import '../../admin/views/widgets/welcome_message.dart';
+import '../../../../utils/date_helper.dart';
 
 class AccountantHomeView extends GetView<AccountantDashboardController> {
   const AccountantHomeView({Key? key}) : super(key: key);
@@ -25,15 +27,26 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Row(
+                  Row(
                     children: [
-                      Flexible(child: Text('${AppText.goodMorning},', style: AppTextStyles.h3)),
+                      Flexible(child: Text('Hello,', style: AppTextStyles.h3)),
                       SizedBox(width: 4.w),
-                      Flexible(child: Text(AppText.mockAccountantName, style: AppTextStyles.h3)),
+                      // Dynamic user greeting
+                      Flexible(
+                        child: Obx(
+                          () => Text(
+                            '${controller.shortName}!',
+                            style: AppTextStyles.h3,
+                          ),
+                        ),
+                      ),
                     ],
-                   ),
+                  ),
                   SizedBox(height: 4.h),
-                  Text(AppText.mockDate, style: AppTextStyles.bodySmall),
+                  Text(
+                    DateHelper.getFormattedDate(),
+                    style: AppTextStyles.bodySmall.copyWith(fontSize: 12.sp),
+                  ),
                 ],
               ),
             ),
@@ -52,7 +65,11 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                     ),
                   ],
                 ),
-                child: Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color, size: 24.sp),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: Theme.of(context).iconTheme.color,
+                  size: 24.sp,
+                ),
               ),
             ),
           ],
@@ -63,6 +80,11 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            WelcomeMessage(
+              name: controller.shortName,
+              showWelcome: controller.showWelcome,
+            ),
+            SizedBox(height: 24.h),
             // In-Hand Cash Card
             Container(
               width: double.infinity,
@@ -96,12 +118,18 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 20.sp),
+                        child: Icon(
+                          Icons.account_balance_wallet_outlined,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
                       ),
                       SizedBox(width: 12.w),
                       Text(
                         AppText.inHandCash,
-                        style: AppTextStyles.bodyMedium.copyWith(color: Colors.white.withOpacity(0.9)),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                        ),
                       ),
                     ],
                   ),
@@ -110,12 +138,15 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                     fit: BoxFit.scaleDown,
                     child: Text(
                       '₹4,250.00',
-                      style: AppTextStyles.h1.copyWith(color: Colors.white), 
+                      style: AppTextStyles.h1.copyWith(color: Colors.white),
                     ),
                   ),
                   SizedBox(height: 12.h),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20.r),
@@ -123,24 +154,30 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                         Icon(Icons.trending_up, color: Colors.white, size: 16.sp),
-                         SizedBox(width: 4.w),
-                         Flexible(
-                           child: Text(
+                        Icon(
+                          Icons.trending_up,
+                          color: Colors.white,
+                          size: 16.sp,
+                        ),
+                        SizedBox(width: 4.w),
+                        Flexible(
+                          child: Text(
                             '+2.4% ${AppText.vsYesterday}',
-                            style: AppTextStyles.bodySmall.copyWith(color: Colors.white),
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                            ),
                             overflow: TextOverflow.ellipsis,
-                           ),
-                         ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             SizedBox(height: 24.h),
-            
+
             // Balance Cards Row
             Row(
               children: [
@@ -161,16 +198,16 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                     title: AppText.closingBalance,
                     amount: '₹4,250.00',
                     icon: Icons.lock_outline,
-                    iconBg: Theme.of(context).primaryColor.withOpacity(0.1), 
+                    iconBg: Theme.of(context).primaryColor.withOpacity(0.1),
                     iconColor: Theme.of(context).primaryColor,
                   ),
                 ),
               ],
             ),
-            
+
             SizedBox(height: 16.h),
 
-             // Amount In/Out Row
+            // Amount In/Out Row
             Container(
               padding: EdgeInsets.all(20.r),
               decoration: BoxDecoration(
@@ -179,25 +216,29 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
               ),
               child: Row(
                 children: [
-                   Expanded(
-                     child: _buildTransactionSummary(
-                       icon: Icons.south_west_rounded,
-                       iconBg: AppColors.successGreen.withOpacity(0.15),
-                       iconColor: AppColors.successGreen,
-                       label: AppText.amountIn,
-                       amount: '+₹500.00',
-                     ),
-                   ),
-                   Container(height: 40.h, width: 1.w, color: Theme.of(context).dividerColor),
-                   Expanded(
-                     child: _buildTransactionSummary(
-                       icon: Icons.north_east_rounded,
-                       iconBg: AppColors.errorRed.withOpacity(0.15),
-                       iconColor: AppColors.errorRed,
-                       label: AppText.amountOut,
-                       amount: '-₹1,250.00',
-                     ),
-                   ),
+                  Expanded(
+                    child: _buildTransactionSummary(
+                      icon: Icons.south_west_rounded,
+                      iconBg: AppColors.successGreen.withOpacity(0.15),
+                      iconColor: AppColors.successGreen,
+                      label: AppText.amountIn,
+                      amount: '+₹500.00',
+                    ),
+                  ),
+                  Container(
+                    height: 40.h,
+                    width: 1.w,
+                    color: Theme.of(context).dividerColor,
+                  ),
+                  Expanded(
+                    child: _buildTransactionSummary(
+                      icon: Icons.north_east_rounded,
+                      iconBg: AppColors.errorRed.withOpacity(0.15),
+                      iconColor: AppColors.errorRed,
+                      label: AppText.amountOut,
+                      amount: '-₹1,250.00',
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -210,8 +251,11 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(24.r),
-                 border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.3), width: 1.w),
-                  boxShadow: [
+                border: Border.all(
+                  color: Theme.of(context).primaryColor.withOpacity(0.3),
+                  width: 1.w,
+                ),
+                boxShadow: [
                   BoxShadow(
                     color: Theme.of(context).primaryColor.withOpacity(0.05),
                     blurRadius: 20.r,
@@ -229,19 +273,33 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(AppText.pendingPayments, style: AppTextStyles.h3),
+                            Text(
+                              AppText.pendingPayments,
+                              style: AppTextStyles.h3,
+                            ),
                             SizedBox(height: 4.h),
-                            Text('5 ${AppText.paymentsNeedProcessing}', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate)),
+                            Text(
+                              '5 ${AppText.paymentsNeedProcessing}',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSlate,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withOpacity(0.1),
+                          color: Theme.of(
+                            context,
+                          ).primaryColor.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.payments_rounded, color: Theme.of(context).primaryColor, size: 24.sp),
+                        child: Icon(
+                          Icons.payments_rounded,
+                          color: Theme.of(context).primaryColor,
+                          size: 24.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -249,18 +307,26 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => controller.changeTabIndex(1), // Use tab switch
+                      onPressed: () =>
+                          controller.changeTabIndex(1), // Use tab switch
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 16.h),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                         elevation: 0,
                       ),
                       child: Row(
-                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(AppText.processPayments, style: AppTextStyles.buttonText.copyWith(color: Colors.white)),
+                          Text(
+                            AppText.processPayments,
+                            style: AppTextStyles.buttonText.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                           SizedBox(width: 8.w),
                           Icon(Icons.arrow_forward_rounded, size: 20.sp),
                         ],
@@ -277,44 +343,57 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(child: Text(AppText.todayTransactions, style: AppTextStyles.h3, overflow: TextOverflow.ellipsis)),
+                Flexible(
+                  child: Text(
+                    AppText.todayTransactions,
+                    style: AppTextStyles.h3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 TextButton(
-                  onPressed: () => Get.to(() => const CashFlowHistoryView()), // Still pushed
-                  child: Text(AppText.viewAll, style: AppTextStyles.buttonText.copyWith(color: AppColors.primaryBlue)),
+                  onPressed: () =>
+                      Get.to(() => const CashFlowHistoryView()), // Still pushed
+                  child: Text(
+                    AppText.viewAll,
+                    style: AppTextStyles.buttonText.copyWith(
+                      color: AppColors.primaryBlue,
+                    ),
+                  ),
                 ),
               ],
             ),
             SizedBox(height: 16.h),
-             _buildTransactionItem(
-               context,
-               title: 'Office Supplies',
-               subtitle: 'Staples • 10:45 AM',
-               amount: '-₹45.00',
-               icon: Icons.print_rounded, 
-             ),
-             SizedBox(height: 16.h),
-             _buildTransactionItem(
-               context,
-               title: 'Client Lunch',
-               subtitle: 'Panera • 12:30 PM',
-               amount: '-₹85.00',
-               icon: Icons.restaurant_rounded,
-             ),
-             SizedBox(height: 16.h),
-             _buildTransactionItem(
-               context,
-               title: 'Travel Expense',
-               subtitle: 'Uber • 2:15 PM',
-               amount: '-₹22.50',
-               icon: Icons.directions_car_rounded,
-             ),
+            _buildTransactionItem(
+              context,
+              title: 'Office Supplies',
+              subtitle: 'Staples • 10:45 AM',
+              amount: '-₹45.00',
+              icon: Icons.print_rounded,
+            ),
+            SizedBox(height: 16.h),
+            _buildTransactionItem(
+              context,
+              title: 'Client Lunch',
+              subtitle: 'Panera • 12:30 PM',
+              amount: '-₹85.00',
+              icon: Icons.restaurant_rounded,
+            ),
+            SizedBox(height: 16.h),
+            _buildTransactionItem(
+              context,
+              title: 'Travel Expense',
+              subtitle: 'Uber • 2:15 PM',
+              amount: '-₹22.50',
+              icon: Icons.directions_car_rounded,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBalanceCard(BuildContext context, {
+  Widget _buildBalanceCard(
+    BuildContext context, {
     required String title,
     required String amount,
     required IconData icon,
@@ -332,14 +411,18 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
         children: [
           Container(
             padding: EdgeInsets.all(10.r),
-            decoration: BoxDecoration(
-              color: iconBg,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
             child: Icon(icon, color: iconColor, size: 20.sp),
           ),
           SizedBox(height: 16.h),
-          Text(title, style: AppTextStyles.bodySmall.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+          Text(
+            title,
+            style: AppTextStyles.bodySmall.copyWith(
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
           SizedBox(height: 4.h),
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -359,29 +442,35 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
   }) {
     return Column(
       children: [
-         Container(
-            padding: EdgeInsets.all(8.r),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Icon(icon, color: iconColor, size: 16.sp),
+        Container(
+          padding: EdgeInsets.all(8.r),
+          decoration: BoxDecoration(
+            color: iconBg,
+            borderRadius: BorderRadius.circular(8.r),
           ),
-          SizedBox(height: 8.h),
-          Text(label, style: AppTextStyles.bodySmall),
-          SizedBox(height: 4.h),
-          FittedBox(fit: BoxFit.scaleDown, child: Text(amount, style: AppTextStyles.h3.copyWith(fontSize: 16.sp))),
+          child: Icon(icon, color: iconColor, size: 16.sp),
+        ),
+        SizedBox(height: 8.h),
+        Text(label, style: AppTextStyles.bodySmall),
+        SizedBox(height: 4.h),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            amount,
+            style: AppTextStyles.h3.copyWith(fontSize: 16.sp),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildTransactionItem(
-      BuildContext context, {
-      required String title,
-      required String subtitle,
-      required String amount,
-      required IconData icon,
-    }) {
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String amount,
+    required IconData icon,
+  }) {
     return Container(
       padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
@@ -393,12 +482,18 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
           Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark 
-                ? Colors.white.withOpacity(0.05) 
-                : const Color(0xFFF1F5F9),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.05)
+                  : const Color(0xFFF1F5F9),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: Theme.of(context).iconTheme.color?.withOpacity(0.5) ?? AppColors.textSlate, size: 24.sp),
+            child: Icon(
+              icon,
+              color:
+                  Theme.of(context).iconTheme.color?.withOpacity(0.5) ??
+                  AppColors.textSlate,
+              size: 24.sp,
+            ),
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -409,18 +504,25 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                   title,
                   style: AppTextStyles.bodyLarge,
                   overflow: TextOverflow.ellipsis, // Prevent Title Overflow
-                ), 
+                ),
                 SizedBox(height: 4.h),
                 Text(
                   subtitle,
-                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSlate,
+                  ),
                   overflow: TextOverflow.ellipsis, // Prevent Subtitle Overflow
                 ),
               ],
             ),
           ),
           SizedBox(width: 8.w),
-          Text(amount, style: AppTextStyles.bodyLarge.copyWith(color: Theme.of(context).textTheme.bodyLarge?.color)),
+          Text(
+            amount,
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+          ),
         ],
       ),
     );

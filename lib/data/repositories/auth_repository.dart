@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../../core/services/network_service.dart';
 import '../models/user_model.dart';
 
@@ -7,31 +6,206 @@ class AuthRepository {
 
   AuthRepository(this._networkService);
 
-  Future<User> login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      // Mocking API call for demonstration as the goal is architecture
-      // final response = await _networkService.post('/auth/login', data: {'email': email, 'password': password});
-      // return User.fromJson(response.data['user']);
-      
-      // Simulated delay
-      await Future.delayed(const Duration(seconds: 2));
+      final response = await _networkService.post(
+        '/auth/login',
+        data: {'email': email, 'password': password},
+      );
 
-      if (email == 'admin@test.com') {
-         return User(id: '1', email: email, name: 'Admin User', role: 'admin');
-      } else if (email == 'accountant@test.com') {
-         return User(id: '2', email: email, name: 'Accountant User', role: 'accountant');
-      } else if (email == 'requestor@test.com') {
-         return User(id: '3', email: email, name: 'Requestor User', role: 'employee');
+      final data = response.data;
+      User user;
+      String? token;
+
+      if (data is Map<String, dynamic>) {
+        if (data.containsKey('user')) {
+          user = User.fromJson(data['user']);
+        } else {
+          user = User.fromJson(data);
+        }
+
+        // Extract token from various possible keys
+        token = data['token'] ?? data['access_token'] ?? data['auth_token'];
+      } else {
+        throw Exception('Invalid response format');
       }
 
-      // Default fallback
-      return User(id: '0', email: email, name: 'Generic User', role: 'employee');
+      return {'user': user, 'token': token};
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _networkService.post(
+        '/auth/forgot-password',
+        data: {'email': email},
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> verifyOtp(String email, String otp) async {
+    try {
+      await _networkService.post(
+        '/auth/verify-otp',
+        data: {'email': email, 'otp': otp},
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> resetPassword(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
+    try {
+      await _networkService.post(
+        '/auth/reset-password',
+        data: {
+          'email': email,
+          'otp':
+              otp, // Sending OTP again or a token if the previous step returned one. Assuming OTP for now.
+          'new_password': newPassword,
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      await _networkService.post(
+        '/users/change-password',
+        data: {
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        },
+      );
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> logout() async {
-     // await _networkService.post('/auth/logout');
+    // await _networkService.post('/auth/logout');
+  }
+
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    try {
+      final response = await _networkService.get('/auth/users');
+      final data = response.data;
+
+      if (data is List) {
+        return data.map((user) => user as Map<String, dynamic>).toList();
+      } else if (data is Map<String, dynamic> && data.containsKey('users')) {
+        final users = data['users'];
+        if (users is List) {
+          return users.map((user) => user as Map<String, dynamic>).toList();
+        }
+      }
+
+      return [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> addStaff({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String role,
+  }) async {
+    try {
+      final response = await _networkService.post(
+        '/auth/add-staff',
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+          'email': email,
+          'phone_number': phone,
+          'role': role,
+        },
+      );
+
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> updateUser({
+    required String userId,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String role,
+    required bool isActive,
+  }) async {
+    try {
+      final response = await _networkService.patch(
+        '/users/update/$userId',
+        data: {
+          'first_name': firstName,
+          'last_name': lastName,
+          'email': email,
+          'phone_number': phone,
+          'role': role,
+          'is_active': isActive,
+        },
+      );
+
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> deactivateUser({required String userId}) async {
+    try {
+      final response = await _networkService.patch(
+        '/users/update/$userId',
+        data: {'is_active': false},
+      );
+
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<User?> getCurrentUser() async {
+    try {
+      // In a real app, you would call an endpoint like /auth/me
+      // final response = await _networkService.get('/auth/me');
+      // return User.fromJson(response.data);
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      // For now, we unfortunately can't recover the exact user without an API.
+      // But we will return a generic authenticated user to allow the flow to proceed
+      // if a token exists (validation happens in AuthService).
+      return User(
+        id: '1',
+        email: 'restored@example.com',
+        name: 'Restored User',
+        role: 'requestor',
+        orgName: 'Restored Org',
+        orgCode: 'ORG-0000',
+        phoneNumber: '+919999999999',
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }

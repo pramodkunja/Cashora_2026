@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 
 class BaseController extends GetxController {
   final RxBool _isLoading = false.obs;
@@ -17,8 +18,22 @@ class BaseController extends GetxController {
 
   void handleError(dynamic error) {
     hideLoading();
-    _errorMessage.value = error.toString();
-    Get.snackbar('Error', _errorMessage.value, snackPosition: SnackPosition.BOTTOM);
+    String message = 'An unexpected error occurred';
+    if (error is DioException) {
+      if (error.response?.data != null) {
+          if (error.response!.data is Map) {
+             message = error.response!.data['detail'] ?? error.response!.data['message'] ?? error.message ?? 'Server error';
+          } else {
+             message = error.response!.data.toString();
+          }
+      } else {
+         message = error.message ?? 'Network error';
+      }
+    } else {
+      message = error.toString();
+    }
+    _errorMessage.value = message;
+    Get.snackbar('Error', message, snackPosition: SnackPosition.BOTTOM, backgroundColor: Get.theme.colorScheme.error, colorText: Get.theme.colorScheme.onError);
   }
   
   Future<void> performAsyncOperation(Future<void> Function() operation) async {

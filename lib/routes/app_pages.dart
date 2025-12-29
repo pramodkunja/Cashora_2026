@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/splash/controllers/splash_controller.dart';
-import '../modules/onboarding/views/onboarding_view.dart';
-import '../modules/onboarding/controllers/onboarding_controller.dart';
+import '../modules/splash/controllers/splash_controller.dart';
 import '../modules/admin/views/admin_dashboard_view.dart';
 import '../modules/admin/views/admin_main_view.dart';
 import '../modules/admin/views/admin_approvals_view.dart';
@@ -126,13 +125,7 @@ class AppPages {
         Get.put(SplashController());
       }),
     ),
-    GetPage(
-      name: AppRoutes.ONBOARDING,
-      page: () => const OnboardingView(),
-      binding: BindingsBuilder(() {
-        Get.put(OnboardingController());
-      }),
-    ),
+
     GetPage(
       name: AppRoutes.INITIAL, // '/'
       page: () => const SizedBox(), 

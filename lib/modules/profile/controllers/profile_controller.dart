@@ -6,10 +6,12 @@ import '../../../../data/models/user_model.dart';
 
 class ProfileController extends GetxController {
   // Mock Data matching image
-  final rxName = 'Alex Morgan'.obs;
-  final rxEmail = 'alex.morgan@company.com'.obs;
-  final rxPhone = '+1 123-456-7890'.obs;
-  final rxRole = 'Team Member'.obs; // Or Approver/Admin based on context
+  final rxName = ''.obs;
+  final rxEmail = ''.obs;
+  final rxPhone = ''.obs;
+  final rxRole = ''.obs;
+  final rxOrgName = ''.obs;
+  final rxOrgCode = ''.obs;
 
   // Form Controllers
   final nameController = TextEditingController();
@@ -22,14 +24,25 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    final user = Get.find<AuthService>().currentUser.value;
+    final authService = Get.find<AuthService>();
+    
+    // Initial load
+    _updateUser(authService.currentUser.value);
+
+    // Listen to changes
+    ever(authService.currentUser, _updateUser);
+  }
+
+  void _updateUser(User? user) {
     if (user != null) {
       rxName.value = user.name;
       rxEmail.value = user.email;
       rxRole.value = user.role;
-      // rxPhone is not in User model yet, keep default or mock
+      rxOrgName.value = user.orgName;
+      rxOrgCode.value = user.orgCode;
+      rxPhone.value = user.phoneNumber;
+      _updateControllers();
     }
-    _updateControllers();
   }
 
   void _updateControllers() {

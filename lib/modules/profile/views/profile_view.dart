@@ -50,12 +50,41 @@ class ProfileView extends GetView<ProfileController> {
               child: const CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.orangeAccent,
-               // backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=alex'), // Mock
-                // child: Icon(Icons.person, size: 50, color: Colors.white),
+                child: Icon(Icons.person, size: 50, color: Colors.white),
               ),
             ),
             const SizedBox(height: 16),
-            Obx(() => Text(controller.rxName.value, style: AppTextStyles.h2)),
+            Obx(() => Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min, // Prevent taking full width
+              children: [
+                Flexible( // allow text to shrink
+                  child: Text(
+                    controller.rxName.value, 
+                    style: AppTextStyles.h2,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    controller.rxRole.value.toUpperCase(),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+              ],
+            )),
             const SizedBox(height: 4),
             Obx(() => Text(controller.rxEmail.value, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate))),
             
@@ -70,20 +99,20 @@ class ProfileView extends GetView<ProfileController> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  _buildInfoTile(
-                    icon: Icons.person,
+                   _buildInfoTile(
+                    icon: Icons.business,
                     iconBg: AppColors.infoBg,
                     iconColor: AppColors.primary,
-                    label: AppText.fullName,
-                    value: controller.rxName.value,
+                    label: 'Organization Name',
+                    value: controller.rxOrgName.value,
                   ),
                   const Divider(height: 24),
-                  _buildInfoTile(
-                    icon: Icons.email,
+                   _buildInfoTile(
+                    icon: Icons.qr_code,
                     iconBg: AppColors.infoBg,
                     iconColor: AppColors.primary,
-                    label: AppText.emailAddress, // Or 'Email'
-                    value: controller.rxEmail.value,
+                    label: 'Organization Code',
+                    value: controller.rxOrgCode.value,
                   ),
                   const Divider(height: 24),
                   _buildInfoTile(

@@ -8,6 +8,8 @@ import '../../../../utils/widgets/buttons/primary_button.dart';
 import '../../../../utils/widgets/buttons/secondary_button.dart';
 import '../controllers/requestor_controller.dart';
 import 'widgets/requestor_bottom_bar.dart';
+import '../../admin/views/widgets/welcome_message.dart';
+import '../../../../utils/date_helper.dart';
 
 class RequestorDashboardView extends GetView<RequestorController> {
   const RequestorDashboardView({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class RequestorDashboardView extends GetView<RequestorController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
+       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -26,20 +28,31 @@ class RequestorDashboardView extends GetView<RequestorController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Row(
+                  Row(
                     children: [
                       Flexible(child: Text('Hello,', style: AppTextStyles.h3)),
                       const SizedBox(width: 4),
-                      Flexible(child: Obx(() => Text(controller.userName.value, style: AppTextStyles.h3))),
+                      // Dynamic user greeting
+                      Flexible(
+                        child: Obx(
+                          () => Text(
+                            '${controller.shortName}!',
+                            style: AppTextStyles.h3,
+                          ),
+                        ),
+                      ),
                     ],
-                   ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(AppText.mockDate, style: AppTextStyles.bodySmall),
+                  Text(
+                    DateHelper.getFormattedDate(),
+                    style: AppTextStyles.bodySmall,
+                  ),
                 ],
               ),
             ),
             GestureDetector(
-              onTap: () => Get.toNamed(AppRoutes.REQUESTOR_NOTIFICATIONS),
+              onTap: () => Get.toNamed(AppRoutes.ADMIN_NOTIFICATIONS),
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -53,17 +66,29 @@ class RequestorDashboardView extends GetView<RequestorController> {
                     ),
                   ],
                 ),
-                child: Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: Theme.of(context).iconTheme.color,
+                ),
               ),
             ),
           ],
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 40.0), 
+        padding: const EdgeInsets.only(
+          left: 24.0,
+          right: 24.0,
+          top: 0.0,
+          bottom: 40.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            WelcomeMessage(
+              name: controller.shortName,
+              showWelcome: controller.showWelcome,
+            ),
             // _buildTopBar(), // Removed
             // const SizedBox(height: 16), // Removed
             //   Obx(() => Text( // Removed Greeting
@@ -75,6 +100,7 @@ class RequestorDashboardView extends GetView<RequestorController> {
             //     ),
             //   )),
             // const SizedBox(height: 24), // Removed
+            const SizedBox(height: 24),
             _buildActionButtons(),
             const SizedBox(height: 24),
             _buildMonthlyExpenseCard(context),
@@ -97,8 +123,6 @@ class RequestorDashboardView extends GetView<RequestorController> {
     );
   }
 
-
-
   Widget _buildActionButtons() {
     return Row(
       children: [
@@ -111,13 +135,17 @@ class RequestorDashboardView extends GetView<RequestorController> {
         ),
         const SizedBox(width: 16),
         // Example for future: SecondaryButton usage
-         Expanded(
+        Expanded(
           child: SecondaryButton(
             text: AppText.uploadBill,
             onPressed: () {
-               // Future implementation
+              // Future implementation
             },
-            icon: const Icon(Icons.upload_file, size: 20, color: AppColors.textDark),
+            icon: const Icon(
+              Icons.upload_file,
+              size: 20,
+              color: AppColors.textDark,
+            ),
           ),
         ),
       ],
@@ -143,7 +171,10 @@ class RequestorDashboardView extends GetView<RequestorController> {
         children: [
           Text(
             AppText.monthlyExpense,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, fontWeight: FontWeight.w500),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppTextStyles.bodyMedium.color,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -154,16 +185,15 @@ class RequestorDashboardView extends GetView<RequestorController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                '₹350.50',
-                style: AppTextStyles.h1.copyWith(fontSize: 32),
-              ),
+              Text('₹350.50', style: AppTextStyles.h1.copyWith(fontSize: 32)),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
                   '/ ₹1000 ${AppText.limit}',
-                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -174,7 +204,9 @@ class RequestorDashboardView extends GetView<RequestorController> {
             child: LinearProgressIndicator(
               value: 0.35, // 350/1000
               backgroundColor: AppColors.borderLight,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppColors.primary,
+              ),
               minHeight: 8,
             ),
           ),
@@ -183,7 +215,10 @@ class RequestorDashboardView extends GetView<RequestorController> {
             onTap: () => Get.toNamed(AppRoutes.MONTHLY_SPENT),
             child: Text(
               AppText.viewDetails,
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primaryBlue, fontWeight: FontWeight.w600),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.primaryBlue,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -193,7 +228,8 @@ class RequestorDashboardView extends GetView<RequestorController> {
 
   Widget _buildPendingRequestsCard(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.MY_REQUESTS, arguments: {'filter': 'Pending'}),
+      onTap: () =>
+          Get.toNamed(AppRoutes.MY_REQUESTS, arguments: {'filter': 'Pending'}),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -216,7 +252,10 @@ class RequestorDashboardView extends GetView<RequestorController> {
                 color: AppColors.infoBg,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.pending_actions, color: AppColors.primaryBlue),
+              child: const Icon(
+                Icons.pending_actions,
+                color: AppColors.primaryBlue,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -237,7 +276,10 @@ class RequestorDashboardView extends GetView<RequestorController> {
             ),
             SecondaryButton(
               text: 'View All',
-              onPressed: () => Get.toNamed(AppRoutes.MY_REQUESTS, arguments: {'filter': 'Pending'}),
+              onPressed: () => Get.toNamed(
+                AppRoutes.MY_REQUESTS,
+                arguments: {'filter': 'Pending'},
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
           ],
@@ -256,7 +298,8 @@ class RequestorDashboardView extends GetView<RequestorController> {
         itemBuilder: (context, index) {
           final item = controller.recentRequests[index];
           return GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.REQUEST_DETAILS_READ, arguments: item),
+            onTap: () =>
+                Get.toNamed(AppRoutes.REQUEST_DETAILS_READ, arguments: item),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -321,9 +364,14 @@ class RequestorDashboardView extends GetView<RequestorController> {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(item['status'] as String).withOpacity(0.1),
+                          color: _getStatusColor(
+                            item['status'] as String,
+                          ).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

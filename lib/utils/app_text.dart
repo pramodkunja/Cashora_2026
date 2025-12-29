@@ -1,5 +1,3 @@
-
-
 class AppText {
   // Common
   static const String appName = 'Cash App';
@@ -10,7 +8,8 @@ class AppText {
   static const String loading = 'Loading...';
   // Common placeholders
   static const String comingSoon = 'Coming Soon';
-  static const String profileUnderConstruction = 'Profile screen is under construction';
+  static const String profileUnderConstruction =
+      'Profile screen is under construction';
 
   // Auth
   static const String welcomeBack = 'Welcome Back';
@@ -21,14 +20,15 @@ class AppText {
   static const String enterPassword = 'Enter your password';
   static const String forgotPassword = 'Forgot Password?'; // As link
   static const String forgotPasswordTitle = 'Forgot Password?'; // As title
-  static const String forgotPasswordSubtitle = 'No worries! Enter your email or phone number linked with your account.';
+  static const String forgotPasswordSubtitle =
+      'No worries! Enter your email or phone number linked with your account.';
   static const String emailOrPhone = 'Email or Phone';
   static const String enterEmailOrPhone = 'Enter email or phone';
   static const String sendCode = 'Send Code';
   static const String signIn = 'Sign In';
   static const String dontHaveAccount = "Don't have an account? ";
   static const String signUp = 'Sign Up';
-  
+
   // Requestor Dashboard
   static const String helloUser = 'Hello, Alex'; // TODO: Dynamic name
   static const String newRequest = 'New Request';
@@ -39,7 +39,7 @@ class AppText {
   static const String pendingApprovals = 'Pending Approvals';
   static const String requestsWaiting = 'Requests waiting'; // Dynamic number?
   static const String recentRequests = 'Recent Requests';
-  
+
   // My Requests
   static const String myRequests = 'My Requests';
   static const String searchRequests = 'Search requests...';
@@ -47,7 +47,7 @@ class AppText {
   static const String pending = 'Pending';
   static const String approved = 'Approved';
   static const String rejected = 'Rejected';
-  
+
   // Create Request
   static const String selectRequestType = 'Select Request Type';
   static const String requestDetails = 'Request Details';
@@ -65,9 +65,10 @@ class AppText {
   static const String requestSubmitted = 'Request Submitted';
   static const String requestApproved = 'Request Automatically Approved';
   static const String fundsAdded = 'Funds have been added to your wallet';
-  static const String requestSubmittedDesc = 'Your request has been submitted successfully.';
+  static const String requestSubmittedDesc =
+      'Your request has been submitted successfully.';
   static const String goToDashboard = 'Go to Dashboard';
-  
+
   // Monthly Spent
   static const String monthlySpentTransactions = 'Monthly Spent Transactions';
   static const String totalSpent = 'Total Spent';
@@ -76,13 +77,15 @@ class AppText {
   // Reset Password
   static const String resetPassword = "Reset Password";
   static const String createNewPassword = "Create New Password";
-  static const String newPasswordMustBeDifferent = "Your new password must be different from previously used passwords.";
+  static const String newPasswordMustBeDifferent =
+      "Your new password must be different from previously used passwords.";
   static const String newPassword = "New Password";
   static const String confirmPassword = "Confirm Password";
   static const String enterNewPassword = "Enter new password";
   static const String confirmNewPassword = "Confirm new password";
   static const String updatePassword = "Update Password";
-  static const String passwordUpdatedSuccess = "Your password has been updated successfully.";
+  static const String passwordUpdatedSuccess =
+      "Your password has been updated successfully.";
 
   static const String backToLogin = "Back to Login";
 
@@ -93,26 +96,32 @@ class AppText {
   static const String organizationCode = "Organization Code";
   static const String adminDetails = "ADMIN DETAILS";
   static const String fullName = "Full Name";
+  static const String firstName = "First Name";
+  static const String lastName = "Last Name";
   static const String workEmail = "Work Email";
-  static const String adminCredentialsInfo = "Admin credentials will be sent to the registered email address securely.";
+  static const String adminCredentialsInfo =
+      "Admin credentials will be sent to the registered email address securely.";
   static const String secureSSL = "256-bit SSL Secure";
   static const String createOrganizationAction = "Create Organization & Admin";
-  static const String organizationCreatedSuccess = "Organization created successfully";
-  static const String secureWorkspaceReady = "Your secure workspace is ready. Admin credentials have been sent to your email.";
+  static const String organizationCreatedSuccess =
+      "Organization created successfully";
+  static const String secureWorkspaceReady =
+      "Your secure workspace is ready. Admin credentials have been sent to your email.";
   static const String checkInbox = "Check your inbox";
-  static const String checkInboxDesc = "Please check your inbox and spam folder to retrieve your temporary password.";
+  static const String checkInboxDesc =
+      "Please check your inbox and spam folder to retrieve your temporary password.";
   static const String contactSupport = "Contact Support";
   static const String didntReceiveEmail = "Didn't receive an email?";
 
   // Placeholders & Inputs
   static const String emailPlaceholder = 'name@company.com';
   static const String passwordPlaceholder = '••••••••';
-  
+
   // Navigation
   static const String dashboard = 'Dashboard';
   static const String requests = 'Requests';
   static const String profile = 'Profile';
-  
+
   // Enterprise Setup
   static const String enterpriseSetup = 'ENTERPRISE SETUP';
   static const String setUpOrganization = 'Set up organization';
@@ -122,12 +131,12 @@ class AppText {
   static const String description = 'Description';
   static const String noDescription = 'No description provided.';
   static const String noAttachments = 'No attachments';
-  
+
   static const String statusPending = 'Pending';
   static const String statusApproved = 'Approved';
   static const String statusRejected = 'Rejected';
   static const String statusPaid = 'Paid';
-  
+
   static const String filterAll = 'All';
   static const String filterPaid = 'Paid';
   static const String filterPending = 'Pending';
@@ -137,23 +146,27 @@ class AppText {
   static const String requestId = 'Request ID';
   static const String status = 'Status';
   static const String paymentStatus = 'Payment Status';
-  
+
   static const String approvedSC = 'APPROVED'; // Small Caps Style or Uppercase
   static const String pendingSC = 'PENDING';
   // Select Request Type
   static const String approvalTime = 'Approval Time';
   static const String preApproved = 'Pre-approved';
-  static const String preApprovedDesc = 'For expenses approved before purchase.';
+  static const String preApprovedDesc =
+      'For expenses approved before purchase.';
   static const String postApproved = 'Post-approved';
-  static const String postApprovedDesc = 'For expenses needing approval after purchase.';
+  static const String postApprovedDesc =
+      'For expenses needing approval after purchase.';
 
   // Request Details (Form)
   static const String requestType = 'Request Type';
   static const String approvalRequired = 'Approval Required';
-  static const String approvalRequiredDesc = 'Amount exceeds auto-approval limit';
+  static const String approvalRequiredDesc =
+      'Amount exceeds auto-approval limit';
   static const String descriptionOptional = 'Description (Optional)';
-  static const String descriptionPlaceholder = 'e.g., A4 paper and pens from Staples';
-  
+  static const String descriptionPlaceholder =
+      'e.g., A4 paper and pens from Staples';
+
   // Review Request
   static const String totalRequestedAmount = 'Total Requested Amount';
   static const String notSelected = 'Not Selected';
@@ -163,12 +176,13 @@ class AppText {
   static const String logIn = 'Log In';
   static const String otpVerification = 'OTP Verification';
   static const String enterConfirmationCode = 'Enter confirmation code';
-  static const String otpSentMessage = "We've sent a 6-digit verification code to the phone number ending in ••••1234."; // TODO: Make dynamic
+  static String otpSentTo(String target) =>
+      "We've sent a 6-digit verification code to $target.";
   static const String resend = 'Resend';
   static const String resendCodeIn = 'Resend code in';
   static const String verify = 'Verify';
   static const String didntReceiveCode = "Didn't receive the code? ";
-  
+
   // Organization Setup Hints & Labels
   static const String stepperOrganization = 'Organization';
   static const String stepperPreferences = 'Preferences';
@@ -188,10 +202,10 @@ class AppText {
   static const String pastApprovals = 'Past approvals';
   static const String addNewUser = 'Add New User';
   static const String createNewAccount = 'Create new account';
-  
+
   static const String approvalsTitle = 'Approvals';
   static const String from = 'From:';
-  
+
   static const String clientLunchMeeting = 'Client Lunch Meeting';
   static const String businessMeal = 'Business Meal';
   static const String pendingApproval = 'Pending Approval';
@@ -200,9 +214,10 @@ class AppText {
   static const String askClarification = 'Ask Clarification';
   static const String approve = 'Approve';
   static const String reject = 'Reject';
-  
+
   static const String approvedSuccessTitle = 'Approved!';
-  static const String approvedSuccessDesc = 'The petty cash request has been successfully approved. The requester will be notified.';
+  static const String approvedSuccessDesc =
+      'The petty cash request has been successfully approved. The requester will be notified.';
   static const String backToApprovals = 'Back to Approvals List';
 
   // Admin Tabs
@@ -218,18 +233,23 @@ class AppText {
 
   // Admin Rejection & Clarification
   static const String reasonForRejection = 'Reason for Rejection';
-  static const String rejectionReasonHint = 'Please provide a reason for rejecting this request.';
+  static const String rejectionReasonHint =
+      'Please provide a reason for rejecting this request.';
   static const String reasonLabel = 'Reason';
-  static const String reasonPlaceholder = 'e.g., Missing receipt, incorrect amount...';
+  static const String reasonPlaceholder =
+      'e.g., Missing receipt, incorrect amount...';
   static const String confirmReject = 'Confirm Reject';
   static const String requestRejected = 'Request Rejected';
-  static const String requestRejectedDesc = 'You have successfully rejected this petty cash request.';
+  static const String requestRejectedDesc =
+      'You have successfully rejected this petty cash request.';
   static const String sentBackSuccessfully = 'Sent Back Successfully';
-  static const String sentBackDesc = 'The petty cash request has been returned for more information.';
+  static const String sentBackDesc =
+      'The petty cash request has been returned for more information.';
   static const String backToApprovalsList = 'Back to Approvals List';
   static const String askClarificationTitle = 'Ask for Clarification';
   static const String yourQuestions = 'Your Questions or Comments';
-  static const String clarificationHint = 'Please provide more details or attach the missing invoice.';
+  static const String clarificationHint =
+      'Please provide more details or attach the missing invoice.';
   static const String sendBackForClarification = 'Send Back for Clarification';
   static const String pastApprovalsTitle = 'Past Approvals';
   static const String clarified = 'Clarified';
@@ -242,7 +262,8 @@ class AppText {
   static const String submittedOn = 'SUBMITTED ON';
   static const String actionDate = 'ACTION DATE';
   static const String approvedByYou = 'Approved by You';
-  static const String pendingApprovalStatus = 'Pending Approval'; // statusPending duplicates
+  static const String pendingApprovalStatus =
+      'Pending Approval'; // statusPending duplicates
   static const String requestSubmittedStatus = 'Request Submitted';
 
   // Clarification Status
@@ -251,21 +272,27 @@ class AppText {
   static const String responseReceived = 'Response Received';
   static const String waitingForRequestor = 'Waiting for requestor to reply';
   static const String pendingResponse = 'Pending Response';
-  static const String reviewResponseAction = 'Review the response below to take action';
+  static const String reviewResponseAction =
+      'Review the response below to take action';
   static const String yourClarificationRequest = 'Your Clarification Request';
   static const String sentByYou = 'SENT BY YOU';
   static const String requestorsResponse = 'Requestor\'s Response';
-  static const String waitingForResponsePlaceholder = 'Waiting for John Doe to respond...';
-  static const String responseNotification = 'You will be notified when a response is submitted.';
+  static const String waitingForResponsePlaceholder =
+      'Waiting for John Doe to respond...';
+  static const String responseNotification =
+      'You will be notified when a response is submitted.';
   static const String itemizedReceipt = 'itemized_receipt_001.pdf';
   static const String askClarificationAgain = 'Ask Clarification Again';
   static const String clarificationHistory = 'Clarification History';
   static const String youAsked = 'YOU ASKED';
-  static const String responseReceivedTitle = 'Response Received'; // Reusing or new
-  static const String furtherClarificationNeeded = 'Further Clarification Needed';
+  static const String responseReceivedTitle =
+      'Response Received'; // Reusing or new
+  static const String furtherClarificationNeeded =
+      'Further Clarification Needed';
   static const String sendClarificationRequest = 'Send Clarification Request';
   static const String makeItClear = 'Make it clear';
-  static const String explainWhy = 'Explain why the response is still insufficient...';
+  static const String explainWhy =
+      'Explain why the response is still insufficient...';
 
   // Profile & Settings
   static const String myProfile = 'My Profile';
@@ -304,13 +331,23 @@ class AppText {
 
   // Deactivation
   static const String deactivateAccount = 'Deactivate Account?';
-  static const String deactivateDesc = 'You are about to deactivate access for the following user. They will no longer be able to submit or approve petty cash requests.';
-  static const String understandAction = 'I understand this action cannot be undone immediately without admin approval.';
+  static const String deactivateDesc =
+      'You are about to deactivate access for the following user. They will no longer be able to submit or approve petty cash requests.';
+  static const String understandAction =
+      'I understand this action cannot be undone immediately without admin approval.';
   static const String deactivateUser = 'Deactivate User';
   static const String userDeactivatedSuccess = 'User Deactivated';
-  static const String userDeactivatedDesc = 'The user has been successfully deactivated.';
+  static const String userDeactivatedDesc =
+      'The user has been successfully deactivated.';
+  static const String activateUser = 'Activate User';
+  static const String activateAccount = 'Activate Account?';
+  static const String activateDesc =
+      'You are about to activate access for the following user. They will be able to submit and approve requests again.';
+  static const String userActivatedSuccess = 'User Activated';
+  static const String inactive = 'Inactive';
   static const String userCreatedSuccess = 'User Created Successfully';
-  static const String userCreatedDesc = 'The new user account has been created.';
+  static const String userCreatedDesc =
+      'The new user account has been created.';
   static const String userUpdatedSuccess = 'User Updated Successfully';
   static const String userUpdatedDesc = 'The user details have been updated.';
   static const String backToUserList = 'Back to User List';
@@ -328,18 +365,28 @@ class AppText {
   static const String goToManageUsers = 'Go to Manage Users';
   static const String addAnotherUser = 'Add Another User';
   static const String userCreatedSuccessTitle = 'User Created Successfully';
-  static const String userCreatedSuccessDesc = 'The new account has been set up and is ready to use.';
+  static const String userCreatedSuccessDesc =
+      'The new account has been set up and is ready to use.';
+  static const String userUpdatedSuccessTitle = 'User Updated Successfully';
+  static const String userUpdatedSuccessDesc =
+      'The user information has been updated and saved.';
+  static const String editAnotherUser = 'Edit Another User';
+  static const String updatedOn = 'Updated On';
   static const String createdOn = 'Created On';
 
   // Settings - Notifications
   static const String approvalStatusUpdates = 'Approval Status Updates';
-  static const String approvalStatusDesc = 'Get notified when a request is approved or rejected';
+  static const String approvalStatusDesc =
+      'Get notified when a request is approved or rejected';
   static const String newRequestSubmitted = 'New Request Submitted';
-  static const String newRequestDesc = 'Receive alerts when team members submit requests';
+  static const String newRequestDesc =
+      'Receive alerts when team members submit requests';
   static const String paymentReminders = 'Payment Reminders';
-  static const String paymentRemindersDesc = 'Reminders for pending payouts and upcoming dues';
+  static const String paymentRemindersDesc =
+      'Reminders for pending payouts and upcoming dues';
   static const String clarificationRequests = 'Clarification Requests';
-  static const String clarificationRequestsDesc = 'Notify when additional information is required';
+  static const String clarificationRequestsDesc =
+      'Notify when additional information is required';
 
   // Settings - Appearance
   static const String appTheme = 'APP THEME';
@@ -353,7 +400,8 @@ class AppText {
   static const String preview = 'PREVIEW';
   static const String officeSupplies = 'Office Supplies';
   static const String todayTime = 'Today, 10:23 AM';
-  static const String previewDesc = 'This is how your transaction items will look with the current settings applied.';
+  static const String previewDesc =
+      'This is how your transaction items will look with the current settings applied.';
   static const String saveChanges = 'Save Changes';
 
   // Settings - Change Password
@@ -387,8 +435,9 @@ class AppText {
   static const String notPaid = 'Not Paid';
   static const String navPayments = 'Payments';
   static const String navReports = 'Reports';
-  static const String totalDisbursed = 'Total Disbursed (Oct)'; // TODO: Dynamic Month
-  
+  static const String totalDisbursed =
+      'Total Disbursed (Oct)'; // TODO: Dynamic Month
+
   // Refinement Accountant Flow
   static const String goodMorning = 'Good Morning';
   static const String mockAccountantName = 'Sarah';
@@ -401,7 +450,7 @@ class AppText {
 
   // Cash Flow History
   static const String cashFlowHistory = 'Cash Flow History';
-  static const String thisMonthFilter = 'This Month'; 
+  static const String thisMonthFilter = 'This Month';
   static const String last3Months = 'Last 3 Months';
   static const String custom = 'Custom';
   static const String totalIn = 'TOTAL IN';
@@ -424,7 +473,7 @@ class AppText {
   static const String upiId = 'UPI ID';
   static const String useForPayment = 'Use for Payment';
   static const String dismiss = 'Dismiss';
-  
+
   // Verify Payment
   static const String verifyPayment = 'Verify Payment';
   static const String paymentDetails = 'PAYMENT DETAILS';
@@ -432,7 +481,8 @@ class AppText {
   static const String finalPayableAmount = 'Final Payable Amount';
   static const String adjustmentReason = 'Adjustment Reason';
   static const String requiredIfAmountChanged = '(Required if amount changed)';
-  static const String reasonForModification = 'Enter reason for modification...';
+  static const String reasonForModification =
+      'Enter reason for modification...';
   static const String paymentSource = 'PAYMENT SOURCE';
   static const String pettyCash = 'Petty Cash';
   static const String cashInHand = 'Cash in hand';
@@ -441,7 +491,7 @@ class AppText {
   static const String digitalPayment = 'Digital payment';
   static const String totalPayment = 'TOTAL PAYMENT';
   static const String makePayment = 'Make Payment';
-  
+
   // Confirm Payment
   static const String confirmPayment = 'Confirm Payment';
   static const String totalPayable = 'TOTAL PAYABLE';
@@ -454,10 +504,12 @@ class AppText {
   static const String paytm = 'Paytm';
   static const String other = 'Other';
   static const String payViaUpiApp = 'Pay via UPI App';
-  static const String securelyRedirects = 'Securely redirects to your installed UPI application.';
-  
+  static const String securelyRedirects =
+      'Securely redirects to your installed UPI application.';
+
   // Payment Success
-  static const String fundsTransferred = 'Funds have been successfully transferred to the employee\'s account.';
+  static const String fundsTransferred =
+      'Funds have been successfully transferred to the employee\'s account.';
   static const String totalPaid = 'TOTAL PAID';
   static const String transactionId = 'Transaction ID';
   static const String paymentDate = 'Date & Time';
@@ -465,9 +517,10 @@ class AppText {
   static const String viewRequestDetails = 'View Request Details';
   static const String backToDashboard = 'Back to Dashboard';
 
-    // Payment Failed
+  // Payment Failed
   static const String paymentFailed = 'Payment Failed';
-  static const String paymentFailedDesc = 'We couldn\'t process the payment of \$450.00 to John Doe due to a network timeout.'; // TODO: Dynamic
+  static const String paymentFailedDesc =
+      'We couldn\'t process the payment of \$450.00 to John Doe due to a network timeout.'; // TODO: Dynamic
   static const String retryPayment = 'Retry Payment';
   static const String goBackToDetails = 'Go Back to Details';
   static const String needHelpContactSupport = 'Need help? Contact Support';
@@ -480,7 +533,8 @@ class AppText {
   static const String spendByCategory = 'Spend by Category';
   static const String departmentSpend = 'Department Spend';
   static const String customReports = 'Custom Reports';
-  static const String generateExportInsights = 'Generate & export detailed insights';
+  static const String generateExportInsights =
+      'Generate & export detailed insights';
 
   // Financial Reports
   static const String financialReports = 'Financial Reports';
@@ -499,7 +553,8 @@ class AppText {
   static const String completed = 'COMPLETED';
   static const String totalPaidAmount = 'Total Paid Amount';
   static const String requestDate = 'Request Date';
-  static const String paymentDateLabel = 'Payment Date'; // paymentDate exists but mapped to 'Date & Time'
+  static const String paymentDateLabel =
+      'Payment Date'; // paymentDate exists but mapped to 'Date & Time'
   static const String requestInformation = 'Request Information';
   static const String department = 'Department';
   static const String billAttachment = 'Bill Details';
@@ -509,7 +564,8 @@ class AppText {
   static const String paidByAccountsTeam = 'Paid by Accounts Team';
   static const String fundsDisbursedFrom = 'Funds disbursed from';
   static const String approvedByManager = 'Approved by Manager';
-  static const String requestSubmittedInit = 'Initial request created by'; // Request Submitted exists
+  static const String requestSubmittedInit =
+      'Initial request created by'; // Request Submitted exists
   static const String downloadAuditReport = 'Download Audit Report';
 
   // Onboarding
@@ -517,10 +573,14 @@ class AppText {
   static const String next = 'Next';
   static const String getStarted = 'Get Started';
   static const String onboardingTitle1 = 'Effortless Expense\nTracking';
-  static const String onboardingDesc1 = 'Capture receipts, submit reports, and track your budget instantly. Expense management made simple.';
+  static const String onboardingDesc1 =
+      'Capture receipts, submit reports, and track your budget instantly. Expense management made simple.';
   static const String onboardingTitle2 = 'Quick Approvals\n& Payments';
-  static const String onboardingDesc2 = 'Streamline your workflow. Review expenses and authorize payments instantly with just one tap.';
+  static const String onboardingDesc2 =
+      'Streamline your workflow. Review expenses and authorize payments instantly with just one tap.';
   static const String onboardingTitle3 = 'Manage Finances\nYour Way';
-  static const String onboardingDesc3 = 'Tailored dashboards for every role. From submitting expenses to auditing reports, experience seamless financial control.';
-  static const String onboardingTerms = 'By continuing, you agree to our Terms & Privacy Policy.';
+  static const String onboardingDesc3 =
+      'Tailored dashboards for every role. From submitting expenses to auditing reports, experience seamless financial control.';
+  static const String onboardingTerms =
+      'By continuing, you agree to our Terms & Privacy Policy.';
 }

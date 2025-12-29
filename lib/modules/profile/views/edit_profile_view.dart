@@ -30,33 +30,16 @@ class EditProfileView extends GetView<ProfileController> {
           children: [
             // Profile Image Edit
             Center(
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primaryLight, width: 4),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 50,
-                      backgroundColor: AppColors.backgroundLight,
-                      backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=alex'),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                      ),
-                      child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
-                    ),
-                  ),
-                ],
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.primaryLight, width: 4),
+                ),
+                child: const CircleAvatar(
+                  radius: 50,
+                  backgroundColor: AppColors.backgroundLight,
+                  child: Icon(Icons.person, size: 50, color: AppColors.textLight),
+                ),
               ),
             ),
             const SizedBox(height: 32),

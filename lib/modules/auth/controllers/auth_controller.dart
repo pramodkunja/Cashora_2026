@@ -37,6 +37,8 @@ class AuthController extends BaseController {
           Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD);
         } else if (user.role.toLowerCase() == 'accountant') {
           Get.offAllNamed(AppRoutes.ACCOUNTANT_DASHBOARD);
+        } else if (user.role.toLowerCase() == 'requestor') {
+           Get.offAllNamed(AppRoutes.REQUESTOR);
         } else {
            Get.offAllNamed(AppRoutes.REQUESTOR);
         }

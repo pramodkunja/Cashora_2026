@@ -21,24 +21,11 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
         automaticallyImplyLeading: false, // Hidden as per bottom nav usually
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: const ActionChip(
-            avatar: CircleAvatar(
-              backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=12'), // Placeholder
-            ),
-            label: Text(""),
-            padding: EdgeInsets.zero,
-            backgroundColor: Colors.transparent, 
-            side: BorderSide.none,
-          ),
+      
         ),
         title: Text(AppText.navHistory, style: AppTextStyles.h3),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings, color: Theme.of(context).iconTheme.color),
-            onPressed: () {},
-          )
-        ],
+        
       ),
       body: SafeArea(
         child: Padding(

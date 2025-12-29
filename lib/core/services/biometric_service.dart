@@ -17,11 +17,7 @@ class BiometricService extends GetxService {
       // but let's keep it and focus on the specific errors.
       
       bool isDeviceSupported = await _auth.isDeviceSupported();
-      
-      // Attempting to access as property/getter based on error "can't be invoked"
-      // If this fails (e.g. it IS a method), we will need another strategy.
-      // But given the error, this seems to be the path.
-      bool canCheck = await _auth.canCheckBiometrics; 
+      bool canCheck = await _auth.canCheckBiometrics;
       
       isSupported.value = isDeviceSupported;
       canUseBiometrics.value = canCheck;

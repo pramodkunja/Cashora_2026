@@ -389,19 +389,24 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           _buildLabelValue("Request ID", "#REQ-2023-8492"),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text("Requestor", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 12,
-                    backgroundColor: const Color(0xFFE0F2FE),
-                    child: Text("JD", style: TextStyle(fontSize: 10, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
-                  ),
-                  const SizedBox(width: 8),
-                  Text("Jane Doe", style: AppTextStyles.h3.copyWith(fontSize: 14)),
-                ],
+              const SizedBox(width: 8),
+              Flexible( // Added Flexible to prevent overflow
+                child: Row(
+                  mainAxisSize: MainAxisSize.min, // Ensure row shrinks
+                  children: [
+                    CircleAvatar(
+                      radius: 12,
+                      backgroundColor: const Color(0xFFE0F2FE),
+                      child: Text("JD", style: TextStyle(fontSize: 10, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible( // Text also needs to be flexible
+                       child: Text("Jane Doe", style: AppTextStyles.h3.copyWith(fontSize: 14), overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
               )
             ],
           ),
@@ -425,26 +430,31 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withOpacity(0.1),
-                  shape: BoxShape.circle,
+          Expanded( // Expanded left side
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.payments_outlined, color: AppColors.warning, size: 24),
                 ),
-                child: const Icon(Icons.payments_outlined, color: AppColors.warning, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Payment Status", style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                  Text("Pending reimbursement", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13)),
-                ],
-              ),
-            ],
+                const SizedBox(width: 16),
+                Expanded( // Expanded text parsing
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Payment Status", style: AppTextStyles.h3.copyWith(fontSize: 16), overflow: TextOverflow.ellipsis),
+                      Text("Pending reimbursement", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13), overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(

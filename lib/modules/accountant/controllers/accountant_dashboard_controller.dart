@@ -4,13 +4,40 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../utils/app_colors.dart';
 import '../views/widgets/update_balances_dialog.dart';
+import '../../../../core/services/auth_service.dart';
 
 class AccountantDashboardController extends GetxController {
   
+  final AuthService _authService = Get.find<AuthService>();
+
+  String get shortName {
+    final user = _authService.currentUser.value;
+    if (user == null) return 'Approver';
+    
+    // User model stores full name in 'name' property
+    String name = user.name;
+    if (name.isEmpty || name == 'Unknown') {
+      name = user.email.isNotEmpty ? user.email : 'Approver';
+    }
+    
+    // Get first word as short name if it contains spaces
+    if (name.contains(' ')) {
+      return name.split(' ').first;
+    }
+    return name;
+  }
+
+  final showWelcome = true.obs;
+
   @override
   void onReady() {
     super.onReady();
     _checkDailyBalanceUpdate();
+    
+    // Auto-hide welcome message after 5 seconds
+    Future.delayed(const Duration(seconds: 5), () {
+      showWelcome.value = false;
+    });
   }
 
   Future<void> _checkDailyBalanceUpdate() async {

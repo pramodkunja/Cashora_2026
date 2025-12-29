@@ -43,6 +43,17 @@ class RequestorController extends GetxController {
 
   final userName = ''.obs;
 
+  final showWelcome = true.obs;
+
+  String get shortName {
+    final name = userName.value;
+    if (name.isEmpty || name == 'User') return 'User';
+    if (name.contains(' ')) {
+      return name.split(' ').first;
+    }
+    return name;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -52,6 +63,11 @@ class RequestorController extends GetxController {
     } else {
       userName.value = 'User';
     }
+
+    // Auto-hide welcome message after 5 seconds
+    Future.delayed(const Duration(seconds: 5), () {
+      showWelcome.value = false;
+    });
   }
 
   @override

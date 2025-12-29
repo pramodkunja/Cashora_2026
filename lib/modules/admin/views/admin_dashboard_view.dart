@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'widgets/welcome_message.dart';
+import '../../../../utils/date_helper.dart';
 import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../routes/app_routes.dart';
@@ -26,16 +28,26 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Row(
+                  Row(
                     children: [
                       Flexible(child: Text('Hello,', style: AppTextStyles.h3)),
                       const SizedBox(width: 4),
-                       // Assuming Admin Controller has userName or similar, if not hardcode for now or use 'Admin'
-                      Flexible(child: Text('Admin', style: AppTextStyles.h3)),
+                      // Dynamic user greeting
+                      Flexible(
+                        child: Obx(
+                          () => Text(
+                            '${controller.shortName}!',
+                            style: AppTextStyles.h3,
+                          ),
+                        ),
+                      ),
                     ],
-                   ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(AppText.mockDate, style: AppTextStyles.bodySmall),
+                  Text(
+                    DateHelper.getFormattedDate(),
+                    style: AppTextStyles.bodySmall,
+                  ),
                 ],
               ),
             ),
@@ -54,7 +66,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                     ),
                   ],
                 ),
-                child: Icon(Icons.notifications_outlined, color: Theme.of(context).iconTheme.color),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: Theme.of(context).iconTheme.color,
+                ),
               ),
             ),
           ],
@@ -66,8 +81,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-              Text(AppText.welcomeApprover, style: AppTextStyles.h1),
+              WelcomeMessage(
+                name: controller.shortName,
+                showWelcome: controller.showWelcome,
+              ),
               const SizedBox(height: 24),
 
               Text(AppText.overview, style: AppTextStyles.h3),
@@ -99,7 +116,8 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
 
               AdminActionCard(
                 icon: Icons.hourglass_empty_rounded,
-                iconBg: AppColors.primaryBlue, // Pass opaque, Card handles opacity
+                iconBg:
+                    AppColors.primaryBlue, // Pass opaque, Card handles opacity
                 iconColor: AppColors.primaryBlue,
                 title: AppText.reviewPending,
                 subtitle: AppText.viewAllRequests,
@@ -113,7 +131,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 title: AppText.viewHistory,
                 subtitle: AppText.pastApprovals,
                 onTap: () {
-                   controller.changeTab(2); // History Tab
+                  controller.changeTab(2); // History Tab
                 },
               ),
               const SizedBox(height: 16),
@@ -125,7 +143,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 title: AppText.addNewUser,
                 subtitle: AppText.createNewAccount,
                 onTap: () {
-                   Get.toNamed(AppRoutes.ADMIN_ADD_USER);
+                  Get.toNamed(AppRoutes.ADMIN_ADD_USER);
                 },
               ),
               const SizedBox(height: 32),

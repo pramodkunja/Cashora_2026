@@ -12,123 +12,262 @@ class AdminEditUserView extends GetView<AdminUserController> {
 
   @override
   Widget build(BuildContext context) {
-    final user = controller.rxSelectedUser; // Reactive map or object
+    // Get user data outside of Obx since Maps are not reactive
+    final user = controller.rxSelectedUser.value;
+
+    // Safety check - if user data is empty, show loading
+    if (user.isEmpty) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AdminAppBar(title: AppText.editUser),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Handle different field name variations like in the list view
+    String name =
+        user['full_name'] ??
+        user['name'] ??
+        '${user['first_name'] ?? ''} ${user['last_name'] ?? ''}'.trim();
+    if (name.isEmpty) name = 'Unknown User';
+
+    String email = user['email'] ?? 'No email';
+    String phone = user['phone'] ?? user['phone_number'] ?? 'No phone';
+    String role = user['role'] ?? 'Requestor';
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      resizeToAvoidBottomInset: true,
       appBar: AdminAppBar(
         title: AppText.editUser, // 'Edit User'
         actions: [
-          TextButton(
-            onPressed: () => controller.confirmDeactivate(user.value),
-            child: Text(AppText.delete, style: AppTextStyles.buttonText.copyWith(color: Colors.red)),
-          )
+          Obx(() {
+            final user = controller.rxSelectedUser.value;
+            final isActive = user['isActive'] ?? user['is_active'] ?? true;
+            return TextButton(
+              onPressed: () =>
+                  controller.confirmDeactivate(controller.rxSelectedUser.value),
+              child: Text(
+                isActive ? AppText.deactivateUser : AppText.activateUser,
+                style: AppTextStyles.buttonText.copyWith(
+                  color: isActive ? Colors.red : Colors.green,
+                ),
+              ),
+            );
+          }),
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(16),
         color: Theme.of(context).cardColor,
         child: PrimaryButton(
           text: AppText.updateUser,
           onPressed: controller.updateUser,
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            // Photo
-            Center(
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=sarah'), // Mock
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // Photo
+              Center(
+                child: CircleAvatar(
+                  radius: 40, // Reduced from 50 to prevent overflow
+                  backgroundColor:
+                      Colors.orangeAccent, // Using same style as ProfileView
+                  child: Text(
+                    name.isNotEmpty ? name.substring(0, 2).toUpperCase() : 'U',
+                    style: const TextStyle(
+                      fontSize: 20, // Reduced font size
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(color: Colors.lightBlue, shape: BoxShape.circle),
-                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                ),
+              ),
+              const SizedBox(height: 24), // Reduced spacing
+              // Edit Form
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTextField(
+                      context,
+                      label: AppText.firstName,
+                      controller: controller.firstNameController,
+                      hint: 'First Name',
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildTextField(
+                      context,
+                      label: AppText.lastName,
+                      controller: controller.lastNameController,
+                      hint: 'Last Name',
+                    ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(AppText.editPhoto, style: AppTextStyles.buttonText.copyWith(color: Colors.lightBlue)),
-            const SizedBox(height: 32),
+              const SizedBox(height: 12),
 
-            // Form
-            _buildReadOnlyField(context, AppText.fullName, 'Jane Doe'), // Using mock data directly for layout match
-            const SizedBox(height: 16),
-            _buildReadOnlyField(context, AppText.emailAddress, 'jane.doe@company.com', icon: Icons.email),
-            const SizedBox(height: 16),
-            _buildReadOnlyField(context, AppText.phone, '+1 (555) 000-0000', icon: Icons.phone),
-            const SizedBox(height: 16),
-            _buildReadOnlyField(context, AppText.role, 'Approver', icon: Icons.badge),
-            
-            const SizedBox(height: 32),
-            Container(alignment: Alignment.centerLeft, child: Text(AppText.permissions, style: AppTextStyles.h3)),
-            const SizedBox(height: 16),
+              _buildTextField(
+                context,
+                label: AppText.emailAddress,
+                controller: controller.emailController,
+                hint: 'user@example.com',
+                icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 12),
 
-            // Permissions Card
-            Container(
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
+              _buildTextField(
+                context,
+                label: AppText.phone,
+                controller: controller.phoneController,
+                hint: '+91 9876543210',
+                icon: Icons.phone,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 12),
+
+              // Role Dropdown
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(() => SwitchListTile(
-                    title: Text(AppText.activeStatus, style: AppTextStyles.h3.copyWith(fontSize: 14)),
-                    subtitle: Text(AppText.userCanAccessSystem, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 12)),
-                    value: controller.rxIsActive.value, 
-                    onChanged: (v) => controller.rxIsActive.value = v,
-                    activeColor: Colors.lightBlue,
-                  )),
-                  const Divider(),
-                  SwitchListTile(
-                    title: Text(AppText.allowCashAdvances, style: AppTextStyles.h3.copyWith(fontSize: 14)),
-                    subtitle: Text(AppText.enablePettyCashRequests, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 12)),
-                    value: false, 
-                    onChanged: (v) {},
-                    activeColor: Colors.lightBlue,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6.0, left: 4),
+                    child: Text(
+                      AppText.role,
+                      style: AppTextStyles.h3.copyWith(fontSize: 14),
+                    ),
                   ),
-                   const Divider(),
-                  SwitchListTile(
-                    title: Text(AppText.viewGlobalReports, style: AppTextStyles.h3.copyWith(fontSize: 14)),
-                    subtitle: Text(AppText.readOnlyAccess, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 12)),
-                    value: true, 
-                    onChanged: (v) {},
-                    activeColor: Colors.lightBlue,
-                  ),
+                  Obx(() {
+                    const List<String> roles = [
+                      'Admin',
+
+                      'Requestor',
+                      'Accountant',
+                    ];
+
+                    // Safety check: Ensure the selected role exists in the dropdown items
+                    String? selectedValue = controller.selectedRole.value;
+
+                    // Case-insensitive check to handle 'accountant' vs 'Accountant'
+                    if (selectedValue.isNotEmpty) {
+                      final matchingRole = roles.firstWhere(
+                        (role) =>
+                            role.toLowerCase() == selectedValue?.toLowerCase(),
+                        orElse: () => '',
+                      );
+                      if (matchingRole.isNotEmpty) {
+                        selectedValue = matchingRole;
+                        // Update controller if case mismatch was found to keep valid state
+                        if (selectedValue != controller.selectedRole.value) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            controller.selectedRole.value = matchingRole;
+                          });
+                        }
+                      } else {
+                        // If role matches none, set to null to show hint and prevent crash
+                        selectedValue = null;
+                      }
+                    } else {
+                      selectedValue = null;
+                    }
+
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedValue,
+                          isExpanded: true,
+                          hint: Text(
+                            'Select Role',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textSlate,
+                            ),
+                          ),
+                          items: roles.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: AppTextStyles.bodyMedium,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            if (newValue != null) {
+                              controller.selectedRole.value = newValue;
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+
+              const SizedBox(height: 20),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildReadOnlyField(BuildContext context, String label, String value, {IconData? icon}) {
-    // Using Container instead of TextField for 'Edit' view style in image (looks boxed)
+  Widget _buildTextField(
+    BuildContext context, {
+    required String label,
+    required TextEditingController controller,
+    required String hint,
+    IconData? icon,
+    TextInputType? keyboardType,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 8.0, left: 4),
+          padding: const EdgeInsets.only(bottom: 6.0, left: 4),
           child: Text(label, style: AppTextStyles.h3.copyWith(fontSize: 14)),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: Row(
             children: [
-               if(icon != null) ...[Icon(icon, size: 20, color: Colors.blueGrey), const SizedBox(width: 12)],
-               Expanded(child: Text(value, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDark))),
+              if (icon != null) ...[
+                Icon(icon, size: 18, color: Colors.blueGrey),
+                const SizedBox(width: 10),
+              ],
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textDark,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSlate,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

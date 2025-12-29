@@ -102,11 +102,11 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                     const SizedBox(height: 48),
                     
                     // Update Button
-                     SizedBox(
+                     Obx(() => SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: controller.resetPassword,
+                        onPressed: controller.isLoading ? null : controller.resetPassword,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
@@ -114,16 +114,22 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Update Password', 
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: controller.isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              )
+                            : const Text(
+                                'Update Password', 
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
-                    ),
+                    )),
                   ],
                 ),
               ),

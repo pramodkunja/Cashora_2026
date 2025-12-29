@@ -1,6 +1,6 @@
 abstract class AppRoutes {
   static const SPLASH = '/splash';
-  static const ONBOARDING = '/onboarding';
+  // static const SPLASH = '/splash';
   static const INITIAL = '/'; // Kept for reference but likely unused if middleware redirects or overridden
   static const LOGIN = '/login';
   static const ORGANIZATION_SETUP = '/setup-organization';

@@ -15,17 +15,29 @@ class AuthService extends GetxService {
   Future<AuthService> init() async {
     String? token = await _storageService.read('auth_token');
     if (token != null) {
-      // For now, we simulate a restored user session. 
-      // ideally verify token with API.
-      currentUser.value = User(id: '1', name: 'User', email: 'user@example.com', role: 'requestor'); 
+      final user = await _authRepository.getCurrentUser();
+      if (user != null) {
+        currentUser.value = user;
+      } else {
+        await logout();
+      }
     }
     return this;
   }
 
   Future<void> login(String email, String password) async {
-    final user = await _authRepository.login(email, password);
+    final result = await _authRepository.login(email, password);
+    final user = result['user'] as User;
+    final token = result['token'] as String?;
+
     currentUser.value = user;
-    await _storageService.write('auth_token', 'mock_token_for_${user.id}');
+
+    if (token != null) {
+      await _storageService.write('auth_token', token);
+    } else {
+      // Fallback to session token if no token provided
+      await _storageService.write('auth_token', 'session_${user.id}');
+    }
   }
 
   Future<void> logout() async {

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import '../../../core/base/base_controller.dart';
 import '../../../routes/app_routes.dart';
+import '../../../../data/repositories/auth_repository.dart';
 
 class OtpVerificationController extends BaseController {
   // Array of controllers for 6 inputs
@@ -21,9 +23,14 @@ class OtpVerificationController extends BaseController {
   Timer? _timer;
   final RxBool canResend = false.obs;
 
+  final AuthRepository _authRepository = Get.find<AuthRepository>();
+  late String email;
+
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments as Map<String, dynamic>?;
+    email = args?['email'] ?? '';
     startTimer();
   }
 
@@ -63,9 +70,18 @@ class OtpVerificationController extends BaseController {
   Future<void> resendCode() async {
     if (!canResend.value) return;
     
-    // Simulate API call
-    Get.snackbar('Sent', 'A new code has been sent.');
-    startTimer();
+    await performAsyncOperation(() async {
+      try {
+        await _authRepository.forgotPassword(email);
+        Get.snackbar('Sent', 'A new code has been sent.');
+        startTimer();
+      } on DioException catch (e) {
+         final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Failed to resend code';
+         Get.snackbar('Error', message.toString());
+      } catch (e) {
+         Get.snackbar('Error', 'Something went wrong');
+      }
+    });
   }
 
   Future<void> verifyOtp() async {
@@ -82,10 +98,16 @@ class OtpVerificationController extends BaseController {
     }
 
     await performAsyncOperation(() async {
-      // Simulate verification
-      await Future.delayed(const Duration(seconds: 2));
-      Get.snackbar('Success', 'OTP Verified!');
-      Get.offNamed(AppRoutes.RESET_PASSWORD);
+      try {
+        await _authRepository.verifyOtp(email, otp);
+        Get.snackbar('Success', 'OTP Verified!');
+        Get.offNamed(AppRoutes.RESET_PASSWORD, arguments: {'email': email, 'otp': otp});
+      } on DioException catch (e) {
+         final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Verification failed';
+         Get.snackbar('Error', message.toString());
+      } catch (e) {
+         Get.snackbar('Error', 'Something went wrong');
+      }
     });
   }
 

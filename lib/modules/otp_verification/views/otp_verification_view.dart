@@ -56,7 +56,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
               const SizedBox(height: 12),
               
               Text(
-                AppText.otpSentMessage, // "We have sent a verification code to..."
+                AppText.otpSentTo(controller.email), // Dynamic message
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
               ),

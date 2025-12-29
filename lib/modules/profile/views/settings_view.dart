@@ -27,39 +27,7 @@ class SettingsView extends GetView<SettingsController> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           children: [
-            // Mini Profile Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Color(0xFFE8D0B3), // Beige/Gold tone from image
-                    backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=alex'),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Alex Morgan', style: AppTextStyles.h3),
-                        Text('alex.morgan@example.com', 
-                           style: AppTextStyles.bodyMedium.copyWith(fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(AppText.edit, style: AppTextStyles.buttonText.copyWith(color: AppColors.primaryBlue)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
+           
 
             // Settings Group 1
             Container(
