@@ -126,7 +126,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("History", style: AppTextStyles.h3.copyWith(fontSize: 18.sp)),
+              Text(AppText.navHistory, style: AppTextStyles.h3.copyWith(fontSize: 18.sp)),
             ],
           ),
           SizedBox(height: 16.h),
@@ -140,7 +140,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                children: [
                  _buildHistoryItem(
                    context, 
-                   title: "Submitted", 
+                   title: AppText.submitted, 
                    date: "Oct 27, 2023 • 09:15 AM", 
                    icon: Icons.send_rounded, 
                    iconColor: AppColors.primaryBlue,
@@ -409,7 +409,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Information", style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+          Text(AppText.information, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
           SizedBox(height: 24.h),
           _buildLabelValue("Request ID", "#REQ-2023-8492"),
           SizedBox(height: 16.h),
@@ -504,11 +504,11 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("APPROVAL HISTORY", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontWeight: FontWeight.bold, fontSize: 12.sp)),
+          Text(AppText.approvalTimeline.toUpperCase(), style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontWeight: FontWeight.bold, fontSize: 12.sp)),
           SizedBox(height: 24.h),
            _buildHistoryItem(
              context,
-             title: "Request Submitted",
+             title: AppText.requestSubmitted,
              date: "Oct 28, 09:41 AM",
              user: "Eleanor Vance",
              icon: Icons.check_rounded,
@@ -517,7 +517,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
            ),
            _buildHistoryItem(
              context,
-             title: "Manager Approval",
+             title: AppText.managerApproval,
              date: "Oct 28, 02:15 PM",
              user: "Sarah Connor",
              icon: Icons.check_rounded,
@@ -526,12 +526,12 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
            ),
            _buildHistoryItem(
              context,
-             title: "Final Approval",
+             title: AppText.finalApproval,
              date: "Oct 29, 10:05 AM",
              user: "Finance Department",
              icon: Icons.check_rounded,
              iconColor: Colors.white,
-             iconBg: const Color(0xFF10B981),
+             iconBg: AppColors.successGreen,
              isLast: true,
            ),
         ],
@@ -617,7 +617,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                 child: Icon(Icons.comment_rounded, color: AppColors.error, size: 16.sp),
               ),
               SizedBox(width: 12.w),
-              Text("REASON FOR REJECTION", style: AppTextStyles.h3.copyWith(fontSize: 14.sp, color: AppColors.error.withOpacity(0.8))),
+              Text(AppText.reasonForRejection.toUpperCase(), style: AppTextStyles.h3.copyWith(fontSize: 14.sp, color: AppColors.error.withOpacity(0.8))),
             ],
           ),
           SizedBox(height: 12.h),
@@ -627,7 +627,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           ),
            SizedBox(height: 12.h),
            Text(
-             "Note from Approver • Oct 28, 2023",
+             "${AppText.noteFromApprover} • Oct 28, 2023",
              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error, fontSize: 12.sp),
            ),
         ],

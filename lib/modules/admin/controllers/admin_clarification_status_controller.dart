@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../utils/app_text.dart';
+import '../../../../data/repositories/admin_repository.dart';
+import '../../../../core/services/network_service.dart';
 
 enum ClarificationState {
   pending,
@@ -11,18 +15,10 @@ enum ClarificationState {
 class AdminClarificationStatusController extends GetxController {
   final Rx<ClarificationState> state = ClarificationState.pending.obs;
   final RxMap<String, dynamic> request = <String, dynamic>{}.obs;
+  AdminRepository? _adminRepository;
 
-  @override
-  void onInit() {
-    super.onInit();
-    if (Get.arguments != null) {
-      request.value = Get.arguments;
-      // Mock logic: If the ID is 'REQ-2023-889' (History item), set to Responded state
-      if (request['id'] == 'REQ-2023-889') {
-        state.value = ClarificationState.responded;
-      }
-    }
-  }
+  AdminRepository get repo => _adminRepository ??= AdminRepository(Get.find<NetworkService>());
+
 
   void toggleSimulateResponse() {
     if (state.value == ClarificationState.pending) {
@@ -32,26 +28,106 @@ class AdminClarificationStatusController extends GetxController {
     }
   }
 
+  final reasonController = TextEditingController(); // For ask again or reject
+
+  @override
+  void onInit() {
+    super.onInit();
+    request.value = Get.arguments ?? {};
+    state.value = _determineState(request['status']);
+    
+    // DEBUG LOG
+    print("DEBUG: AdminClarificationStatusController initialized");
+    print("DEBUG: Request ID: ${request['id']}");
+    print("DEBUG: Request Data: $request");
+    
+    _adminRepository = AdminRepository(Get.find<NetworkService>());
+  }
+
+  ClarificationState _determineState(String? status) {
+    if (status == 'clarification_responded') {
+      return ClarificationState.responded;
+    }
+    return ClarificationState.pending;
+  }
+
+  
+  @override
+  void onClose() {
+      reasonController.dispose();
+      super.onClose();
+  }
+
   void startAskAgain() {
     state.value = ClarificationState.askingAgain;
   }
 
-  void submitAskAgain() {
-    // Logic to send second clarification
-    // For now, go back to pending
-    Get.snackbar(AppText.success, AppText.sentBackSuccessfully);
-    state.value = ClarificationState.pending;
+  Future<void> submitAskAgain() async {
+    final String question = reasonController.text.trim();
+    if (question.isEmpty) {
+        Get.snackbar("Error", "Please provide a reason/question");
+        return;
+    }
+    try {
+        final id = request['id'];
+        if (id == null) return;
+        
+        await repo.askClarification(id is int ? id : int.parse(id.toString()), question);
+        
+        // Success
+        Get.snackbar(AppText.success, AppText.sentBackSuccessfully);
+        
+        // Update local state without navigation
+        // 1. Add new question to clarifications list
+        final updatedClarifications = List<Map<String, dynamic>>.from(request['clarifications'] ?? []);
+        updatedClarifications.add({
+            'question': question,
+            'response': '', // Empty response initially
+            'asked_at': DateTime.now().toIso8601String(),
+            'responded_at': '',
+        });
+        
+        // 2. Update request object
+        final updatedRequest = Map<String, dynamic>.from(request);
+        updatedRequest['clarifications'] = updatedClarifications;
+        updatedRequest['status'] = 'clarification_required'; // or whatever pending status is
+        request.value = updatedRequest;
+        
+        // 3. Reset UI state
+        state.value = ClarificationState.pending;
+        reasonController.clear();
+        
+    } catch (e) {
+        Get.snackbar("Error", "Failed to ask clarification: $e");
+    }
   }
 
-  void approve() {
-    Get.back();
-    Get.snackbar(AppText.approvedSuccessTitle, AppText.approvedSuccessDesc);
+  Future<void> approve() async {
+    try {
+        final id = request['request_id']; // Using valid string ID for approve
+        if (id == null) return;
+        
+        await repo.approveRequest(id.toString()); 
+        
+        Get.back(result: true);
+        Get.snackbar(AppText.approvedSuccessTitle, AppText.approvedSuccessDesc);
+    } catch (e) {
+        Get.snackbar("Error", "Failed to approve: $e");
+    }
   }
 
-  void reject() {
-    // Show rejection dialog or logic
-    // For now reusing the success/back pattern
-    Get.back();
-    Get.snackbar(AppText.requestRejected, AppText.requestRejectedDesc);
+  Future<void> reject() async {
+    // Ideally open a dialog to get reason. For now assuming minimal or using reasonController if exposed
+    try {
+        final id = request['request_id'];
+        
+        // Hardcoding 'Rejected by Admin' for now if reason not captured
+        await repo.rejectRequest(id.toString(), "Rejected by Admin"); 
+        
+        Get.back(result: true);
+        Get.snackbar(AppText.requestRejected, AppText.requestRejectedDesc);
+    } catch(e) {
+        Get.snackbar("Error", "Failed to reject: $e");
+    }
   }
 }

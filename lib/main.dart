@@ -13,6 +13,7 @@ import 'data/repositories/user_repository.dart';
 import 'routes/app_pages.dart';
 import 'routes/app_routes.dart';
 import 'utils/app_theme.dart';
+import 'modules/auth/controllers/auth_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,8 @@ Future<void> initServices() async {
   Get.put(UserRepository()); // Moved after AuthService
   await Get.putAsync(() => BiometricService().init());
   Get.put(AppLifecycleManager());
+  // Inject AuthController to ensure it's available globally or for token logic
+  Get.lazyPut(() => AuthController(), fenix: true); 
 }
 
 class MyApp extends StatelessWidget {

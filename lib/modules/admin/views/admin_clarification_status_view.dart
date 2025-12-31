@@ -13,9 +13,9 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFFF8FAFC), // Light grey bg
       appBar: AdminAppBar(
-        title: AppText.clarificationStatusTitle,
+        title: "Review Clarification",
         onBackPressed: () {
             if (controller.state.value == ClarificationState.askingAgain) {
                 controller.state.value = ClarificationState.responded;
@@ -26,10 +26,6 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
       ),
       body: SafeArea(
         child: Obx(() {
-            // If Asking Again, show different view or overlay? 
-            // Design shows "Ask Clarification Again" as a separate screen title in the 3rd image.
-            // But user said "not any navigation to pages".
-            // So we'll redraw the body.
             if (controller.state.value == ClarificationState.askingAgain) {
                 return _buildAskAgainBody(context);
             }
@@ -37,129 +33,118 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
         }),
       ),
       bottomNavigationBar: Obx(() {
+        Widget? bottomBar;
         if (controller.state.value == ClarificationState.responded) {
-           return Container(
-             padding: const EdgeInsets.all(24),
+           bottomBar = Container(
+             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+             height: 110, // Explicit fixed height to prevent expansion
              decoration: const BoxDecoration(
                color: Colors.white,
                boxShadow: [
                  BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -5))
                ]
              ),
-             child: Column(
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                 InkWell(
-                   onTap: controller.startAskAgain,
-                   child: Container(
-                     padding: const EdgeInsets.symmetric(vertical: 16),
-                     width: double.infinity,
-                     decoration: BoxDecoration(
-                       border: Border.all(color: AppColors.borderLight),
-                       borderRadius: BorderRadius.circular(30),
-                     ),
-                     child: Center(
-                        child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                                Icon(Icons.chat_bubble_outline_rounded, size: 20, color: Theme.of(context).textTheme.bodyLarge?.color),
-                                SizedBox(width: 8),
-                                Text("Ask Clarification Again", style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
-                            ]
-                        )
+             child: SafeArea(
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   Expanded(
+                     child: InkWell(
+                      onTap: controller.reject,
+                       child: Container(
+                         height: 56, // Fixed button height
+                         decoration: BoxDecoration(
+                           color: Colors.white,
+                           borderRadius: BorderRadius.circular(30),
+                           border: Border.all(color: const Color(0xFFEF4444)),
+                         ),
+                         child: const Center(child: Text("Reject", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFFEF4444)))),
+                       ),
                      ),
                    ),
-                 ),
-                 const SizedBox(height: 16),
-                 Row(
-                   children: [
-                     Expanded(
-                       child: InkWell(
-                        onTap: controller.reject,
-                         child: Container(
-                           padding: const EdgeInsets.symmetric(vertical: 16),
-                           decoration: BoxDecoration(
-                             color: const Color(0xFFFEE2E2), // Red bg
-                             borderRadius: BorderRadius.circular(30),
-                           ),
-                           child: const Center(child: Text("Reject", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFEF4444)))),
+                   const SizedBox(width: 16),
+                   Expanded(
+                     child: InkWell(
+                       onTap: controller.approve,
+                       child: Container(
+                         height: 56, // Fixed button height
+                         decoration: BoxDecoration(
+                           color: const Color(0xFF0EA5E9), // Light Blue
+                           borderRadius: BorderRadius.circular(30),
                          ),
+                         child: const Center(child: Row(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: [
+                             Icon(Icons.check, color: Colors.white, size: 20),
+                             SizedBox(width: 8),
+                             Text("Approve", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                           ],
+                         )),
                        ),
                      ),
-                     const SizedBox(width: 16),
-                     Expanded(
-                       child: InkWell(
-                         onTap: controller.approve,
-                         child: Container(
-                           padding: const EdgeInsets.symmetric(vertical: 16),
-                           decoration: BoxDecoration(
-                             color: AppColors.primaryBlue,
-                             borderRadius: BorderRadius.circular(30),
-                           ),
-                           child: const Center(child: Text("Approve", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
-                         ),
-                       ),
-                     ),
-                   ],
-                 ),
-               ],
+                   ),
+                 ],
+               ),
              ),
            );
         } else if (controller.state.value == ClarificationState.askingAgain) {
-            return Container(
+            bottomBar = Container(
                 padding: const EdgeInsets.all(24),
-                child: PrimaryButton(
-                    text: AppText.sendClarificationRequest,
-                    onPressed: controller.submitAskAgain,
+                color: Colors.white,
+                child: SafeArea(
+                  child: PrimaryButton(
+                      text: "Send Clarification Request",
+                      onPressed: controller.submitAskAgain,
+                      icon: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                  ),
                 ),
             );
         }
-        return const SizedBox.shrink(); 
+        
+        return bottomBar ?? const SizedBox.shrink();
       }),
     );
   }
   
   Widget _buildStatusBody(BuildContext context) {
+    try {
       return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                  // For Demo: Invisible trigger to switch states
-                  GestureDetector(
-                      onTap: controller.toggleSimulateResponse,
-                      child: Text(AppText.currentStatus, style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                  ),
-                  const SizedBox(height: 12),
-                  
                   // Status Banner
                   Container(
-                      padding: const EdgeInsets.all(20),
-                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 24),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                           color: controller.state.value == ClarificationState.responded 
-                              ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF064E3B).withOpacity(0.5) : const Color(0xFFECFDF5)) // Greenish
-                              : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF7C2D12).withOpacity(0.5) : const Color(0xFFFFF7ED)), // Orange
-                          borderRadius: BorderRadius.circular(24),
+                              ? const Color(0xFFECFDF5) // Green bg
+                              : const Color(0xFFFFF7ED), // Orange bg
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                             color: controller.state.value == ClarificationState.responded 
-                              ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF065F46) : const Color(0xFF10B981).withOpacity(0.2))
-                              : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF9A3412) : const Color(0xFFF97316).withOpacity(0.2))
+                              color: controller.state.value == ClarificationState.responded 
+                                  ? const Color(0xFFD1FAE5) 
+                                  : const Color(0xFFFFEDD5)
                           ),
                       ),
                       child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                               Container(
-                                  padding: const EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                       color: controller.state.value == ClarificationState.responded 
-                                      ? const Color(0xFFD1FAE5)
-                                      : const Color(0xFFFFEDD5),
+                                          ? const Color(0xFF10B981) 
+                                          : const Color(0xFFF97316),
                                       shape: BoxShape.circle,
                                   ),
                                   child: Icon(
-                                      controller.state.value == ClarificationState.responded ? Icons.mark_email_read_rounded : Icons.pending_actions_rounded,
-                                      color: controller.state.value == ClarificationState.responded ? const Color(0xFF10B981) : const Color(0xFFF97316),
+                                      controller.state.value == ClarificationState.responded 
+                                          ? Icons.check 
+                                          : Icons.hourglass_top_rounded, 
+                                      size: 16, 
+                                      color: Colors.white
                                   ),
                               ),
                               const SizedBox(width: 16),
@@ -168,18 +153,26 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                           Text(
-                                              controller.state.value == ClarificationState.responded ? AppText.responseReceived : AppText.pendingResponse,
+                                              controller.state.value == ClarificationState.responded 
+                                                  ? "Response Received" 
+                                                  : "Waiting for Response",
                                               style: AppTextStyles.h3.copyWith(
-                                                  fontSize: 16,
-                                                  color: controller.state.value == ClarificationState.responded ? const Color(0xFF065F46) : const Color(0xFF9A3412),
-                                              ),
+                                                  fontSize: 16, 
+                                                  color: controller.state.value == ClarificationState.responded 
+                                                      ? const Color(0xFF065F46) 
+                                                      : const Color(0xFF9A3412)
+                                              )
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                              controller.state.value == ClarificationState.responded ? AppText.reviewResponseAction : AppText.waitingForRequestor,
+                                              controller.state.value == ClarificationState.responded 
+                                                  ? "Requestor has updated the details." 
+                                                  : "This request is pending a response from the user.",
                                               style: AppTextStyles.bodyMedium.copyWith(
-                                                  color: controller.state.value == ClarificationState.responded ? const Color(0xFF064E3B) : const Color(0xFFC2410C),
-                                              ),
+                                                  color: controller.state.value == ClarificationState.responded 
+                                                      ? const Color(0xFF047857) 
+                                                      : const Color(0xFFC2410C)
+                                              )
                                           ),
                                       ],
                                   ),
@@ -187,57 +180,41 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                           ],
                       ),
                   ),
-                  const SizedBox(height: 24),
-                  
+
                   Text("Request Details", style: AppTextStyles.h3.copyWith(fontSize: 16)),
                   const SizedBox(height: 12),
                   _buildRequestDetailCard(context),
                   const SizedBox(height: 24),
                   
-                  Text(AppText.yourClarificationRequest, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                  Text("Clarification History", style: AppTextStyles.h3.copyWith(fontSize: 16)),
                   const SizedBox(height: 12),
-                  _buildMessageCard(
-                      context: context,
-                      icon: Icons.person,
-                      title: "SENT BY YOU • 2 HRS AGO",
-                      message: "Please provide the itemized receipt for the office supplies. The current attachment only shows the credit card transaction slip.",
-                      isRequestor: false,
+                  
+                  Container(
+                      decoration: const BoxDecoration(
+                          border: Border(left: BorderSide(color: Color(0xFFE2E8F0), width: 2)),
+                      ),
+                      margin: const EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 24),
+                      child: _buildConversationHistory(context),
                   ),
-                  
-                  const SizedBox(height: 24),
-                  Text(AppText.requestorsResponse, style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  
-                  if (controller.state.value == ClarificationState.pending)
-                    Container(
-                        padding: const EdgeInsets.all(32),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.borderLight, style: BorderStyle.none), // Dashed border implementation needed or simple box
-                            color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(24),
-                        ),
-                        // Dashed border simulation with CustomPaint or DottedBorder package is better, 
-                        // but for standard flutter without packages:
-                        child: Column(
-                            children: [
-                                const Icon(Icons.mail_outline_rounded, size: 48, color: AppColors.textSlate),
-                                const SizedBox(height: 16),
-                                Text(AppText.waitingForResponsePlaceholder, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
-                            ],
-                        ),
-                    )
-                  else
-                    _buildResponseCard(context),
               ],
           ),
       );
+    } catch (e, stack) {
+        print("ERROR rendering Admin Status Body: $e");
+        print(stack);
+        return Center(
+            child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text("Error displaying request details.\n\n$e", style: const TextStyle(color: Colors.red), textAlign: TextAlign.center),
+            ),
+        );
+    }
   }
   
   Widget _buildAskAgainBody(BuildContext context) {
-      // Replicates the "Ask Clarification Again" screen from image
       return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -246,24 +223,12 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                    _buildRequestDetailCard(context),
                    const SizedBox(height: 24),
                    
-                   Text(AppText.clarificationHistory, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                   Text("Clarification History", style: AppTextStyles.h3.copyWith(fontSize: 16)),
                    const SizedBox(height: 12),
-                  _buildMessageTab(
-                      context: context,
-                      title: "YOU ASKED • 2 DAYS AGO",
-                      message: "Please provide the itemized receipt...",
-                      isBlue: false,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildMessageTab(
-                      context: context,
-                      title: "John Doe • Response Received • 2 hrs ago",
-                      message: "I have uploaded the new receipt image as requested...",
-                      isBlue: true,
-                  ),
+                   _buildConversationHistory(context),
                   
                   const SizedBox(height: 24),
-                  Text(AppText.furtherClarificationNeeded, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                  Text("Further Clarification Needed", style: AppTextStyles.h3.copyWith(fontSize: 16)),
                   const SizedBox(height: 12),
                   
                   Container(
@@ -272,21 +237,26 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(color: AppColors.borderLight),
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
+                          ]
                       ),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                               TextFormField(
+                                  controller: controller.reasonController,
                                   maxLines: 5,
+                                  style: AppTextStyles.bodyMedium,
                                   decoration: InputDecoration(
-                                      hintText: AppText.explainWhy,
-                                      hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
+                                      hintText: "Explain why the response is still insufficient (e.g., 'The image is too blurry to read the date')...",
+                                      hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate.withOpacity(0.7)),
                                       border: InputBorder.none,
                                   ),
                               ),
                               Align(
                                   alignment: Alignment.bottomRight,
-                                  child: Text(AppText.makeItClear, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
+                                  child: Text("Make it clear", style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
                               )
                           ],
                       ),
@@ -296,12 +266,27 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
       );
   }
 
+
   Widget _buildRequestDetailCard(BuildContext context) {
-      // Reusing logic from history card roughly
+      final request = controller.request;
+      // Robust name mapping - Try deeper fallbacks
+      String userName = 'Unknown User';
+      if (request['employee_name'] != null) userName = request['employee_name'];
+      else if (request['created_by_name'] != null) userName = request['created_by_name'];
+      else if (request['user'] != null) {
+          if (request['user'] is String) userName = request['user'];
+          else if (request['user'] is Map && request['user']['name'] != null) userName = request['user']['name'];
+      }
+      else if (request['requestor_name'] != null) userName = request['requestor_name'];
+      
+      final String category = request['category'] ?? request['title'] ?? 'General Expense';
+      final String amount = request['amount']?.toString() ?? '0.00';
+      final String? receiptUrl = request['receipt_url'];
+
       return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(24),
                boxShadow: [
                   BoxShadow(
@@ -317,9 +302,9 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                              Text(controller.request['user'] ?? "John Doe", style: AppTextStyles.h3.copyWith(fontSize: 18)),
+                              Text(userName, style: AppTextStyles.h3.copyWith(fontSize: 18)),
                               const SizedBox(height: 4),
-                              Text(controller.request['title'] ?? "Office Supplies", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+                              Text(category, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
                                const SizedBox(height: 16),
                                Container(
                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -327,7 +312,7 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                                        color: const Color(0xFFE0F2FE),
                                        borderRadius: BorderRadius.circular(20),
                                    ),
-                                   child: Text("₹${controller.request['amount'] ?? '50.00'}", style: AppTextStyles.h3.copyWith(fontSize: 14, color: AppColors.primaryBlue)),
+                                   child: Text("₹$amount", style: AppTextStyles.h3.copyWith(fontSize: 14, color: const Color(0xFF0EA5E9), fontWeight: FontWeight.bold)),
                                ),
                           ],
                       ),
@@ -337,141 +322,172 @@ class AdminClarificationStatusView extends GetView<AdminClarificationStatusContr
                       height: 80,
                       width: 80,
                       decoration: BoxDecoration(
-                          color: const Color(0xFFEAB308), // Placeholder color from image
+                          color: const Color(0xFFF1F5F9), 
                           borderRadius: BorderRadius.circular(16),
-                          image: const DecorationImage(
-                              image: NetworkImage('https://via.placeholder.com/150'), // Placeholder
-                              fit: BoxFit.cover,
-                          )
+                          image: receiptUrl != null && receiptUrl.isNotEmpty
+                              ? DecorationImage(
+                                  image: NetworkImage(receiptUrl),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                       ),
+                      child: receiptUrl == null || receiptUrl.isEmpty 
+                          ? const Icon(Icons.receipt_long_rounded, color: AppColors.textSlate) 
+                          : null,
                   ),
               ],
           ),
       );
   }
 
-  Widget _buildMessageCard({required BuildContext context, required IconData icon, required String title, required String message, required bool isRequestor}) {
-      return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-          ),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                  Row(
+  Widget _buildConversationHistory(BuildContext context) {
+    // Parse clarifications list
+    final clarifications = controller.request['clarifications'] as List? ?? [];
+    
+    if (clarifications.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+        children: List.generate(clarifications.length, (index) {
+          final item = clarifications[index];
+          final String question = item['question'] ?? '';
+          final String response = item['response'] ?? '';
+          final String askedAt = _formatDate(item['asked_at']?.toString() ?? '');
+          final String respondedAt = _formatDate(item['responded_at']?.toString() ?? '');
+          
+          final String requestorName = controller.request['employee_name'] ?? controller.request['user'] ?? 'Requestor';
+          // Get initials
+          String initials = "U";
+          if (requestorName.isNotEmpty) {
+               final parts = requestorName.trim().split(" ");
+               if (parts.length > 1 && parts[1].isNotEmpty) {
+                   initials = "${parts[0][0]}${parts[1][0]}".toUpperCase();
+               } else {
+                   initials = requestorName[0].toUpperCase();
+               }
+          }
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Admin Question Node
+              if (question.isNotEmpty)
+                  Stack(
+                      clipBehavior: Clip.none,
                       children: [
+                          Positioned(
+                              left: -31, // Align with left border
+                              top: 0,
+                              child: Container(
+                                  width: 14, 
+                                  height: 14,
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xFFE2E8F0),
+                                      shape: BoxShape.circle,
+                                  ),
+                              ),
+                          ),
                           Container(
-                              padding: const EdgeInsets.all(6),
-                               decoration: BoxDecoration(
-                                   color: isRequestor ? const Color(0xFFDCFCE7) : const Color(0xFFDBEAFE),
-                                   shape: BoxShape.circle,
-                               ),
-                               child: Icon(icon, size: 16, color: isRequestor ? const Color(0xFF16A34A) : const Color(0xFF2563EB)),
+                              margin: const EdgeInsets.only(bottom: 24),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppColors.borderLight),
+                              ),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                      Row(
+                                          children: [
+                                              Container(
+                                                  padding: const EdgeInsets.all(6),
+                                                  decoration: const BoxDecoration(
+                                                      color: Color(0xFFDBEAFE),
+                                                      shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(Icons.person, size: 14, color: Color(0xFF2563EB)),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text("You (Approver)", style: AppTextStyles.h3.copyWith(fontSize: 14)),
+                                              const Spacer(),
+                                              Text(askedAt, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
+                                          ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(question, style: AppTextStyles.bodyMedium),
+                                  ],
+                              ),
                           ),
-                          const SizedBox(width: 12),
-                          Text(title, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSlate)),
                       ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(message, style: AppTextStyles.bodyMedium.copyWith(height: 1.5)),
-                  
-              ],
-          ),
-      );
-  }
-  
-  Widget _buildResponseCard(BuildContext context) {
-      return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              color: const Color(0xFFF0FDF4),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0xFFDCFCE7)),
-          ),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                  Row(
+              
+              // 2. Requestor Response Node
+              if (response.isNotEmpty)
+                   Stack(
+                      clipBehavior: Clip.none,
                       children: [
-                           Container(
-                              padding: const EdgeInsets.all(6),
-                               decoration: const BoxDecoration(
-                                   color: Color(0xFFDCFCE7),
-                                   shape: BoxShape.circle,
-                               ),
-                               child: const Icon(Icons.reply, size: 16, color: Color(0xFF16A34A)),
+                          Positioned(
+                              left: -31, // Align with left border
+                              top: 0,
+                              child: Container(
+                                  width: 14, 
+                                  height: 14,
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xFF10B981), // Green dot
+                                      shape: BoxShape.circle,
+                                  ),
+                              ),
                           ),
-                           const SizedBox(width: 12),
-                          Text("JOHN DOE • 2 HRS AGO", style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSlate)),
+                          Container(
+                              margin: const EdgeInsets.only(bottom: 24),
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  color: const Color(0xFFF0FDF4), // Light green bg
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: const Color(0xFFBBF7D0)),
+                              ),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                      Row(
+                                          children: [
+                                              Container(
+                                                  height: 28, width: 28,
+                                                  decoration: const BoxDecoration(
+                                                      color: Color(0xFFDCFCE7),
+                                                      shape: BoxShape.circle,
+                                                  ),
+                                                  child: Center(child: Text(initials, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF15803D)))),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Text(requestorName, style: AppTextStyles.h3.copyWith(fontSize: 14)),
+                                              const Spacer(),
+                                              Text(respondedAt, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
+                                          ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(response, style: AppTextStyles.bodyMedium),
+                                      
+                                      // Attachment not available in backend response yet, hiding static block
+                                  ],
+                              ),
+                          ),
                       ],
                   ),
-                   const SizedBox(height: 12),
-                   Text("Hi, sorry about that! I've attached the full itemized receipt here.", style: AppTextStyles.bodyMedium.copyWith(height: 1.5)),
-                   const SizedBox(height: 16),
-                   Container(
-                       padding: const EdgeInsets.all(12),
-                       decoration: BoxDecoration(
-                           color: Theme.of(context).cardColor,
-                           borderRadius: BorderRadius.circular(16),
-                           border: Border.all(color: AppColors.borderLight),
-                       ),
-                       child: Row(
-                           children: [
-                               Container(
-                                   padding: const EdgeInsets.all(8),
-                                   decoration: BoxDecoration(
-                                       color: const Color(0xFFF1F5F9),
-                                       borderRadius: BorderRadius.circular(8),
-                                   ),
-                                   child: const Icon(Icons.picture_as_pdf, color: AppColors.textSlate),
-                               ),
-                               const SizedBox(width: 12),
-                               Expanded(
-                                   child: Column(
-                                       crossAxisAlignment: CrossAxisAlignment.start,
-                                       children: [
-                                           Text(AppText.itemizedReceipt, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                                           const SizedBox(height: 2),
-                                            Text("1.2 MB", style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
-                                       ],
-                                   ),
-                               ),
-                               Text("View", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
-                           ],
-                       ),
-                   )
-              ],
-          ),
-      );
+            ],
+          );
+        }),
+    );
   }
   
-  Widget _buildMessageTab({required BuildContext context, required String title, required String message, required bool isBlue}) {
-      return Container(
-          padding: const EdgeInsets.all(20),
-          width: double.infinity,
-           decoration: BoxDecoration(
-              color: isBlue ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E3A8A).withOpacity(0.5) : const Color(0xFFEFF6FF)) : Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(24),
-              border: isBlue ? Border.all(color: const Color(0xFFDBEAFE)) : null,
-              boxShadow: isBlue ? [] : [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0,2))]
-          ),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                   Text(title.toUpperCase(), style: AppTextStyles.bodyMedium.copyWith(fontSize: 10, fontWeight: FontWeight.bold, color: isBlue ? AppColors.primaryBlue : AppColors.textSlate)),
-                   const SizedBox(height: 8),
-                   Text(message, style: AppTextStyles.bodyMedium.copyWith(height: 1.4)),
-              ],
-          ),
-      );
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty) return 'Recently';
+    try {
+      final dt = DateTime.parse(dateStr);
+      // minimalistic format
+      return "${dt.day}/${dt.month} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
+    } catch (_) {
+      return 'Recently';
+    }
   }
 }

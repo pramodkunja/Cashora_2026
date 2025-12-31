@@ -36,6 +36,13 @@ class AppColors {
   
   static const Color infoBlue = primary; 
   static const Color infoBg = surfacePurple; // Was Blue 100, now matching theme
+  
+  // Custom Colors
+  static const Color teal = Color(0xFF0F9D88);
+  static const Color amberBg = Color(0xFFFFFBEB);
+  static const Color amberBorder = Color(0xFFFCD34D);
+  static const Color amberIcon = Color(0xFFD97706);
+  static const Color mintBg = Color(0xFFECFDF5);
 
   
   // Aliases for compatibility

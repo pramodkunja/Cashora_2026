@@ -18,6 +18,12 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
   void onInit() {
     super.onInit();
     _adminRepository = AdminRepository(Get.find<NetworkService>());
+    // fetchAllRequests(); // Moved to onReady
+  }
+  
+  @override
+  void onReady() {
+    super.onReady();
     fetchAllRequests();
   }
 
@@ -43,6 +49,13 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
       combinedClarification.addAll(results[4]);
       // Sort by date descending if possible, for now just list
       clarificationRequests.assignAll(combinedClarification);
+      
+      print("Debugging Data Fetch:");
+      print("Pending: ${results[0].length}");
+      print("Clarification Response Count: ${results[4].length}");
+      if (results[4].isNotEmpty) {
+         print("Sample Clarification Response: ${results[4].first}");
+      }
 
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch requests: $e');

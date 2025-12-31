@@ -305,6 +305,33 @@ class AppText {
   static const String makeItClear = 'Make it clear';
   static const String explainWhy =
       'Explain why the response is still insufficient...';
+  
+  static const String provideClarification = 'PROVIDE CLARIFICATION';
+  static const String approverQuestion = 'Approver Question';
+  static const String yourResponse = 'YOUR RESPONSE';
+  static const String submitClarification = 'Submit Clarification';
+  static const String clarificationRequested = 'CLARIFICATION REQUESTED';
+  static const String typeYourExplanation = 'Type your explanation here...';
+
+  // Common/Fallback
+  static const String unpaid = 'Unpaid';
+  static const String noRequests = 'No requests';
+  static const String unnamedRequest = 'Unnamed Request';
+  static const String unknownUser = 'Unknown User';
+  static const String noDate = 'No Date';
+
+  static const String information = 'Information';
+  static const String submitted = 'Submitted';
+  static const String managerApproval = 'Manager Approval';
+  static const String finalApproval = 'Final Approval';
+  static const String noteFromApprover = 'Note from Approver';
+
+  static const String enterExplanation = 'Please enter your explanation';
+  static const String invalidRequestId = 'Invalid Request ID';
+  static const String clarificationSubmitted = 'Clarification submitted successfully';
+  static String failedToSubmit(String error) => "Failed to submit: $error";
+
+
 
   // Profile & Settings
   static const String myProfile = 'My Profile';

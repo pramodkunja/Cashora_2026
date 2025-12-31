@@ -32,7 +32,7 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
               margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
               padding: EdgeInsets.all(4.r),
               decoration: BoxDecoration(
-                color: Get.isDarkMode ? Colors.black26 : const Color(0xFFF1F5F9),
+                color: Get.isDarkMode ? Colors.black26 : AppColors.backgroundAlt,
                 borderRadius: BorderRadius.circular(20.r), // Pill shape for tab bar container
               ),
               child: TabBar(
@@ -56,7 +56,7 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
                 tabs: [
                   Tab(text: AppText.tabPending),
                   Tab(text: AppText.tabApproved),
-                  const Tab(text: 'Unpaid'), // Replaces Rejected
+                  Tab(text: AppText.unpaid), // Replaces Rejected
                   Tab(text: AppText.clarification),
                 ],
               ),
@@ -79,7 +79,7 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
   Widget _buildRequestList(List<Map<String, dynamic>> items) {
     if (items.isEmpty) {
       return Center(
-        child: Text("No requests", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+        child: Text(AppText.noRequests, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
       );
     }
     return ListView.separated(
@@ -90,8 +90,8 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
         final item = items[index];
         
         // Robust Extraction
-        final String title = item['title']?.toString() ?? item['purpose']?.toString() ?? 'Unnamed Request';
-        final String user = item['user']?.toString() ?? item['employee_name']?.toString() ?? 'Unknown User';
+        final String title = item['title']?.toString() ?? item['purpose']?.toString() ?? AppText.unnamedRequest;
+        final String user = item['user']?.toString() ?? item['employee_name']?.toString() ?? AppText.unknownUser;
         final String amount = (item['amount'] is num) ? (item['amount'] as num).toStringAsFixed(2) : (item['amount']?.toString() ?? '0.00');
         
         String dateStr = item['date']?.toString() ?? item['created_at']?.toString() ?? '';
@@ -104,7 +104,7 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
              if (dateStr.contains('T')) dateStr = dateStr.split('T')[0];
            }
         } else {
-           dateStr = "No Date";
+           dateStr = AppText.noDate;
         }
 
         return GestureDetector(
