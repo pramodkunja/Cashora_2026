@@ -6,6 +6,7 @@ import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/widgets/buttons/primary_button.dart';
 import '../../../../utils/widgets/buttons/secondary_button.dart';
+import '../../../../utils/widgets/attachment_card.dart';
 import '../controllers/admin_request_details_controller.dart';
 
 class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
@@ -14,7 +15,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFFF8FAFC), // Slate 50 for contrast
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -27,10 +28,11 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
       ),
       body: SafeArea(
         child: Obx(() {
-          final status = controller.request['status'] ?? 'Pending';
-          if (status == 'Approved') {
+          final status = (controller.request['status'] ?? 'Pending').toString().toLowerCase();
+          
+          if (status == 'approved' || status == 'auto_approved') {
             return _buildApprovedUI(context);
-          } else if (status == 'Rejected') {
+          } else if (status == 'rejected') {
             return _buildRejectedUI(context);
           } else {
             return _buildPendingUI(context);
@@ -42,48 +44,269 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
 
   // --- APPROVED UI ---
   Widget _buildApprovedUI(BuildContext context) {
+    final req = controller.request;
+    final userName = _getUserName(req);
+    final department = _getDepartment(req);
+    final purpose = req['description'] ?? req['purpose'] ?? 'No description provided.';
+    final submittedOn = _formatDateShort(req['created_at']?.toString() ?? '');
+    final actionDate = _formatDateShort(req['updated_at']?.toString() ?? '');
+
     return SingleChildScrollView(
       padding: EdgeInsets.all(24.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // 1. Status Pill
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: AppColors.successBg, // Light Green
-              borderRadius: BorderRadius.circular(20.r),
+              color: const Color(0xFFD1FAE5), // Emerald 100 - Exact match
+              borderRadius: BorderRadius.circular(30.r),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.check_circle, color: AppColors.successGreen, size: 20.sp),
+                Icon(Icons.check_circle, color: const Color(0xFF10B981), size: 20.sp), // Emerald 500
                 SizedBox(width: 8.w),
                 Text(
-                  AppText.approvedSC,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.successGreen, fontWeight: FontWeight.bold),
+                  "APPROVED",
+                  style: AppTextStyles.bodyMedium.copyWith(color: const Color(0xFF047857), fontWeight: FontWeight.bold, letterSpacing: 1.0), // Emerald 700
                 ),
               ],
             ),
           ),
           SizedBox(height: 16.h),
+          
+          // 2. Amount
           Obx(() => Text(
-                '₹${controller.request['amount'] ?? '0.00'}',
-                style: AppTextStyles.h1.copyWith(fontSize: 40.sp),
+                '₹${req['amount'] ?? '0.00'}',
+                style: AppTextStyles.h1.copyWith(fontSize: 48.sp, fontWeight: FontWeight.w800, color: const Color(0xFF0F172A)), // Slate 900
               )),
           SizedBox(height: 8.h),
-          Obx(() => Text(
-                controller.request['title'] ?? 'Office Supplies',
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 16.sp),
-              )),
+          
+          // 3. Request ID
+          Text(
+            "REQUEST ID #${req['id'] ?? req['request_id'] ?? '---'}",
+             style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontWeight: FontWeight.w600, fontSize: 13.sp, letterSpacing: 0.5),
+          ),
           SizedBox(height: 32.h),
-          _buildInformationCard(context),
+
+          // 4. Details Card
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(24.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 24.r,
+                  offset: Offset(0, 8.h),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User Header
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24.r,
+                      backgroundColor: const Color(0xFFE0F2FE), // Sky 100
+                      child: Text(_getInitials(userName), style: TextStyle(color: const Color(0xFF0369A1), fontWeight: FontWeight.bold, fontSize: 16.sp)), // Sky 700
+                    ),
+                    SizedBox(width: 16.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(userName, style: AppTextStyles.h3.copyWith(fontSize: 18.sp)),
+                        SizedBox(height: 2.h),
+                        Text(department, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.h),
+                
+                // Purpose
+                Text("PURPOSE", style: TextStyle(color: AppColors.textSlate, fontSize: 11.sp, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+                SizedBox(height: 8.h),
+                Text(purpose, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDark, height: 1.5)),
+                SizedBox(height: 24.h),
+                Divider(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+                SizedBox(height: 24.h),
+
+                // Dates
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                           Text("SUBMITTED ON", style: TextStyle(color: AppColors.textSlate, fontSize: 11.sp, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+                           SizedBox(height: 6.h),
+                           Text(submittedOn, style: AppTextStyles.h3.copyWith(fontSize: 15.sp)),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                           Text("ACTION DATE", style: TextStyle(color: AppColors.textSlate, fontSize: 11.sp, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+                           SizedBox(height: 6.h),
+                           Text(actionDate, style: AppTextStyles.h3.copyWith(fontSize: 15.sp)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 24.h),
-          _buildPaymentStatusCard(context),
+
+          // 5. Attachments Card
+          Container(
+             width: double.infinity,
+             padding: EdgeInsets.all(24.w),
+             decoration: BoxDecoration(
+               color: Colors.white,
+               borderRadius: BorderRadius.circular(24.r),
+             ),
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Row(
+                   children: [
+                     Icon(Icons.attach_file, color: AppColors.textDark, size: 20.sp),
+                     SizedBox(width: 8.w),
+                     Text("Bill & Attachments", style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+                   ],
+                 ),
+                 SizedBox(height: 20.h),
+                 // Attachment List Logic
+                 Builder(builder: (context) {
+                    final List<dynamic> files = (req['attachments'] is List) ? req['attachments'] : 
+                                               (req['receipt_url'] != null && req['receipt_url'].toString().isNotEmpty) ? [req['receipt_url']] : [];
+                    
+                    if (files.isEmpty) return Text("No attachments.", style: TextStyle(color: AppColors.textSlate));
+
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: files.length,
+                      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                      itemBuilder: (context, index) {
+                         return AttachmentCard(attachment: files[index], index: index);
+                      }
+                    );
+                 }),
+               ],
+             ),
+          ),
           SizedBox(height: 24.h),
-          _buildApprovalHistory(context),
+          
+          // 6. Timeline Card
+          Container(
+             width: double.infinity,
+             padding: EdgeInsets.all(24.w),
+             decoration: BoxDecoration(
+               color: Colors.white,
+               borderRadius: BorderRadius.circular(24.r),
+             ),
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Row(
+                   children: [
+                     Icon(Icons.history, color: AppColors.textDark, size: 20.sp),
+                     SizedBox(width: 8.w),
+                     Text("Approval Timeline", style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+                   ],
+                 ),
+                 SizedBox(height: 24.h),
+                 // Timeline Items
+                 ..._buildNewTimelineItems(),
+               ],
+             ),
+           ),
+           SizedBox(height: 40.h),
         ],
       ),
     );
+  }
+  
+  List<Widget> _buildNewTimelineItems() {
+    final history = <Widget>[];
+    final req = controller.request;
+
+    // 1. Approved (Top)
+    history.add(_buildTimelineRow(
+      title: "Approved by ${req['approver_name'] ?? 'Approver'}",
+      date: _formatDate(req['updated_at']?.toString() ?? ''),
+      comment: "Approved as per budget allocation.",
+      isCompleted: true,
+      showLine: true,
+    ));
+    
+    // 2. Pending (Middle - Simulated for visual matching)
+    history.add(_buildTimelineRow(
+      title: "Pending Approval",
+      date: _formatDate(req['created_at']?.toString() ?? ''),
+      isCompleted: false, // Gray dot
+      showLine: true,
+    ));
+
+    // 3. Submitted (Bottom)
+    history.add(_buildTimelineRow(
+      title: "Request Submitted",
+      date: _formatDate(req['created_at']?.toString() ?? ''),
+      isCompleted: false, 
+      showLine: false, // Last item
+    ));
+
+    return history;
+  }
+  
+  Widget _buildTimelineRow({required String title, required String date, String? comment, required bool isCompleted, required bool showLine}) {
+     return Row(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+         Column(
+           children: [
+             Container(
+               width: 24.w,
+               height: 24.w,
+               decoration: BoxDecoration(
+                 color: isCompleted ? const Color(0xFFD1FAE5) : const Color(0xFFF1F5F9), // Emerald 100 vs Slate 100
+                 shape: BoxShape.circle,
+               ),
+               child: Icon(isCompleted ? Icons.check : Icons.circle, color: isCompleted ? const Color(0xFF10B981) : const Color(0xFF94A3B8), size: 12.sp), // Emerald 500 vs Slate 400
+             ),
+             if (showLine) Container(width: 2.w, height: 40.h, color: const Color(0xFFE2E8F0)), // Slate 200
+           ],
+         ),
+         SizedBox(width: 16.w),
+         Expanded(
+           child: Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: [
+               Text(title, style: AppTextStyles.h3.copyWith(fontSize: 15.sp)),
+               SizedBox(height: 4.h),
+               Text(date, style: TextStyle(color: AppColors.textSlate, fontSize: 13.sp)),
+               if (comment != null) ...[
+                 SizedBox(height: 4.h),
+                 Text(comment, style: TextStyle(color: AppColors.textSlate, fontStyle: FontStyle.italic, fontSize: 13.sp)),
+               ],
+               SizedBox(height: 24.h),
+             ],
+           ),
+         ),
+       ],
+     );
   }
 
   // --- REJECTED UI ---
@@ -138,24 +361,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
              ),
              child: Column(
                children: [
-                 _buildHistoryItem(
-                   context, 
-                   title: AppText.submitted, 
-                   date: "Oct 27, 2023 • 09:15 AM", 
-                   icon: Icons.send_rounded, 
-                   iconColor: AppColors.primaryBlue,
-                   isLast: false,
-                 ),
-                 _buildHistoryItem(
-                   context, 
-                   title: "Rejected", 
-                   date: "Oct 28, 2023 • 10:42 AM", 
-                   description: "By Sarah Connor (Manager)", 
-                   descriptionColor: const Color(0xFFEF4444),
-                   icon: Icons.cancel, 
-                   iconColor: const Color(0xFFEF4444),
-                   isLast: true,
-                 ),
+                  ..._buildDynamicHistory(),
                ],
              ),
           ),
@@ -176,10 +382,10 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
             children: [
                CircleAvatar(
                 radius: 20.r,
-                backgroundColor: _getAvatarColor(controller.request['initials'] ?? 'U'), 
+                backgroundColor: _getAvatarColor(_getInitials(_getUserName(controller.request))), 
                  child: Text(
-                   controller.request['initials'] ?? 'U',
-                   style: TextStyle(color: _getAvatarTextColor(controller.request['initials'] ?? 'U'), fontWeight: FontWeight.bold, fontSize: 16.sp),
+                   _getInitials(_getUserName(controller.request)),
+                   style: TextStyle(color: _getAvatarTextColor(_getInitials(_getUserName(controller.request))), fontWeight: FontWeight.bold, fontSize: 16.sp),
                  ),
               ),
               SizedBox(width: 12.w),
@@ -188,11 +394,11 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Obx(() => Text(
-                          controller.request['user'] ?? 'User',
+                          _getUserName(controller.request),
                           style: AppTextStyles.h3.copyWith(fontSize: 16.sp),
                         )),
                     Text(
-                      'Marketing Team • 3 days ago', // Placeholder
+                      '${controller.request['department'] ?? 'General'} • ${controller.request['created_at'] != null ? _formatDate(controller.request['created_at']) : 'Recently'}',
                       style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13.sp),
                     ),
                   ],
@@ -252,7 +458,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                 Text(AppText.description, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
                 SizedBox(height: 12.h),
                 Text(
-                  'Lunch meeting with the design team from Acme Inc. to discuss the upcoming Q3 campaign.',
+                  controller.request['description'] ?? controller.request['purpose'] ?? 'No description provided.',
                   style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
                 ),
               ],
@@ -305,54 +511,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                     itemCount: files.length,
                     separatorBuilder: (_, __) => SizedBox(height: 12.h),
                     itemBuilder: (context, index) {
-                      final file = files[index];
-                      String name = "Attachment ${index + 1}";
-                      String url = "";
-
-                      if (file is String) {
-                        url = file;
-                        name = file.split('/').last.split('?').first; 
-                      } else if (file is Map) {
-                        url = file['url'] ?? file['file'] ?? file['path'] ?? '';
-                        name = file['name'] ?? url.split('/').last;
-                      }
-
-                      if (url.isEmpty) return const SizedBox.shrink();
-
-                      return GestureDetector(
-                        onTap: () => controller.viewAttachment(url),
-                        child: Container(
-                          padding: EdgeInsets.all(12.w),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Theme.of(context).dividerColor),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryBlue.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8.r),
-                                ),
-                                child: Icon(Icons.description, color: AppColors.primaryBlue, size: 20.sp),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(name, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                    Text("Tap to view", style: TextStyle(color: AppColors.primaryBlue, fontSize: 10.sp)),
-                                  ],
-                                ),
-                              ),
-                              Icon(Icons.open_in_new, color: AppColors.textSlate, size: 18.sp),
-                            ],
-                          ),
-                        ),
-                      );
+                      return AttachmentCard(attachment: files[index], index: index);
                     },
                   );
                 }),
@@ -411,24 +570,29 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
         children: [
           Text(AppText.information, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
           SizedBox(height: 24.h),
-          _buildLabelValue("Request ID", "#REQ-2023-8492"),
+          _buildLabelValue("Request ID", "#${controller.request['id'] ?? controller.request['request_id'] ?? '---'}"),
           SizedBox(height: 16.h),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Requestor", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
-              SizedBox(width: 8.w),
-              Flexible( // Added Flexible to prevent overflow
+              Expanded(
+                flex: 2,
+                child: Text("Requestor", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                flex: 3,
                 child: Row(
-                  mainAxisSize: MainAxisSize.min, // Ensure row shrinks
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CircleAvatar(
+                     CircleAvatar(
                       radius: 12.r,
                       backgroundColor: const Color(0xFFE0F2FE),
-                      child: Text("JD", style: TextStyle(fontSize: 10.sp, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                      child: Text(_getInitials(_getUserName(controller.request)), style: TextStyle(fontSize: 10.sp, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(width: 8.w),
-                    Flexible( // Text also needs to be flexible
-                       child: Text("Jane Doe", style: AppTextStyles.h3.copyWith(fontSize: 14.sp), overflow: TextOverflow.ellipsis),
+                    Flexible(
+                       child: Text(_getUserName(controller.request), style: AppTextStyles.h3.copyWith(fontSize: 14.sp), overflow: TextOverflow.ellipsis, textAlign: TextAlign.right),
                     ),
                   ],
                 ),
@@ -436,9 +600,9 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
             ],
           ),
           SizedBox(height: 16.h),
-          _buildLabelValue("Department", "Marketing"),
+          _buildLabelValue("Department", controller.request['department'] ?? 'General'),
           SizedBox(height: 16.h),
-          _buildLabelValue("Submission Date", "Oct 28, 2023"),
+          _buildLabelValue("Submission Date", _formatDate(controller.request['created_at']?.toString() ?? '')),
         ],
       ),
     );
@@ -472,7 +636,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Payment Status", style: AppTextStyles.h3.copyWith(fontSize: 16.sp), overflow: TextOverflow.ellipsis),
-                      Text("Pending reimbursement", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13.sp), overflow: TextOverflow.ellipsis),
+                      Text(controller.request['reimbursement_status'] ?? "Pending reimbursement", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13.sp), overflow: TextOverflow.ellipsis),
                     ],
                   ),
                 ),
@@ -486,7 +650,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
               color: AppColors.warning.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Text("Pending", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.warning, fontWeight: FontWeight.bold, fontSize: 12.sp)),
+            child: Text(controller.request['payment_status'] ?? "Pending", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.warning, fontWeight: FontWeight.bold, fontSize: 12.sp)),
           ),
         ],
       ),
@@ -506,34 +670,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
         children: [
           Text(AppText.approvalTimeline.toUpperCase(), style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontWeight: FontWeight.bold, fontSize: 12.sp)),
           SizedBox(height: 24.h),
-           _buildHistoryItem(
-             context,
-             title: AppText.requestSubmitted,
-             date: "Oct 28, 09:41 AM",
-             user: "Eleanor Vance",
-             icon: Icons.check_rounded,
-             iconColor: Colors.white,
-             iconBg: AppColors.primaryBlue,
-           ),
-           _buildHistoryItem(
-             context,
-             title: AppText.managerApproval,
-             date: "Oct 28, 02:15 PM",
-             user: "Sarah Connor",
-             icon: Icons.check_rounded,
-             iconColor: Colors.white,
-             iconBg: AppColors.primaryBlue,
-           ),
-           _buildHistoryItem(
-             context,
-             title: AppText.finalApproval,
-             date: "Oct 29, 10:05 AM",
-             user: "Finance Department",
-             icon: Icons.check_rounded,
-             iconColor: Colors.white,
-             iconBg: AppColors.successGreen,
-             isLast: true,
-           ),
+             ..._buildDynamicHistory(),
         ],
       ),
     );
@@ -622,12 +759,12 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           ),
           SizedBox(height: 12.h),
           Text(
-            '"The receipt image provided is blurry, and the date of transaction is not visible. Please attach a clear photo of the receipt and resubmit."',
+            controller.request['rejection_reason'] ?? controller.request['remarks'] ?? 'No reason provided.',
             style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error, height: 1.5, fontWeight: FontWeight.w500),
           ),
            SizedBox(height: 12.h),
            Text(
-             "${AppText.noteFromApprover} • Oct 28, 2023",
+             "${AppText.noteFromApprover} • ${_formatDate(controller.request['updated_at']?.toString() ?? '')}",
              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error, fontSize: 12.sp),
            ),
         ],
@@ -638,9 +775,21 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
   Widget _buildLabelValue(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start, 
       children: [
-        Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
-        Text(value, style: AppTextStyles.h3.copyWith(fontSize: 14.sp)),
+        Expanded(
+          flex: 2,
+          child: Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+        ),
+        SizedBox(width: 16.w), 
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: AppTextStyles.h3.copyWith(fontSize: 14.sp),
+            textAlign: TextAlign.right,
+          ),
+        ),
       ],
     );
   }
@@ -671,11 +820,161 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
     return const Color(0xFFFEF3C7); // Amber
   }
   
+  String _getDepartment(Map<dynamic, dynamic> item) {
+    // 1. Check top-level
+    if (item['department'] != null && item['department'].toString().isNotEmpty) return item['department'].toString();
+    if (item['department_name'] != null && item['department_name'].toString().isNotEmpty) return item['department_name'].toString();
+
+    // 2. Check nested 'requestor'
+    if (item['requestor'] != null && item['requestor'] is Map) {
+      final r = item['requestor'];
+      if (r['department'] != null) return r['department'].toString();
+      if (r['department_name'] != null) return r['department_name'].toString();
+    }
+
+    // 3. Check nested 'user'
+    if (item['user'] != null && item['user'] is Map) {
+      final u = item['user'];
+       if (u['department'] != null) return u['department'].toString();
+    }
+    
+    // 4. Return reasonable default
+    return 'General'; 
+  }
+  
   Color _getAvatarTextColor(String initials) {
      if (initials.isEmpty) return const Color(0xFF1D4ED8);
     final int hash = initials.codeUnits.fold(0, (p, c) => p + c);
     if (hash % 3 == 0) return const Color(0xFF1D4ED8); // Blue
     if (hash % 3 == 1) return const Color(0xFF7E22CE); // Purple
      return const Color(0xFFB45309); // Amber
+  }
+
+  String _getUserName(Map<dynamic, dynamic> item) {
+    // Check specific keys first
+    if (item['user_name'] != null && item['user_name'].toString().isNotEmpty) return item['user_name'].toString();
+    if (item['employee_name'] != null && item['employee_name'].toString().isNotEmpty) return item['employee_name'].toString();
+    
+    // Check nested 'requestor' object (Primary)
+    if (item['requestor'] != null) {
+      if (item['requestor'] is Map) {
+         final r = item['requestor'];
+         final String firstName = r['first_name']?.toString() ?? '';
+         final String lastName = r['last_name']?.toString() ?? '';
+         if (firstName.isNotEmpty) {
+           return "$firstName $lastName".trim();
+         }
+         if (r['email'] != null) return r['email'].toString().split('@').first;
+      }
+    }
+
+    if (item['requestor_name'] != null && item['requestor_name'].toString().isNotEmpty) return item['requestor_name'].toString();
+
+    // Check nested 'user' object
+    if (item['user'] != null) {
+      if (item['user'] is Map) {
+         final u = item['user'];
+         if (u['name'] != null) return u['name'].toString();
+         if (u['full_name'] != null) return u['full_name'].toString();
+         if (u['first_name'] != null) return "${u['first_name']} ${u['last_name'] ?? ''}".trim();
+         if (u['email'] != null) return u['email'].toString().split('@').first;
+      } else if (item['user'] is String) {
+         return item['user'];
+      }
+    }
+    
+    // Check nested 'employee' object
+    if (item['employee'] != null) {
+      if (item['employee'] is Map) {
+         return item['employee']['name']?.toString() ?? item['employee']['first_name']?.toString() ?? 'Unknown';
+      } else if (item['employee'] is String) {
+         return item['employee'];
+      }
+    }
+
+    return AppText.unknownUser;
+  }
+  
+  List<Widget> _buildDynamicHistory() {
+    // If we have a 'history' list from backend, use it. Otherwise, construct one from status/dates.
+    final history = <Widget>[];
+    
+    // 1. Submitted (Always present if created_at exists)
+    if (controller.request['created_at'] != null) {
+      history.add(_buildHistoryItem(
+        Get.context!,
+        title: AppText.requestSubmitted,
+        date: _formatDate(controller.request['created_at']),
+        user: _getUserName(controller.request),
+        icon: Icons.check_rounded,
+        iconColor: Colors.white,
+        iconBg: AppColors.primaryBlue,
+      ));
+    }
+    
+    // 2. Status specific
+    final status = (controller.request['status'] ?? '').toString().toLowerCase();
+    
+    if (status == 'approved') {
+       history.add(_buildHistoryItem(
+        Get.context!,
+        title: AppText.finalApproval,
+        date: _formatDate(controller.request['updated_at'] ?? ''),
+        user: controller.request['approver_name'] ?? 'Approver',
+        icon: Icons.check_rounded, 
+        iconColor: Colors.white,
+        iconBg: AppColors.successGreen,
+        isLast: true,
+      ));
+    } else if (status == 'rejected') {
+       history.add(_buildHistoryItem(
+        Get.context!,
+        title: AppText.statusRejected,
+        date: _formatDate(controller.request['updated_at'] ?? ''),
+        description: controller.request['rejection_reason'] ?? 'Reason not specified',
+        descriptionColor: AppColors.error,
+        icon: Icons.cancel, 
+        iconColor: AppColors.error,
+        iconBg: AppColors.error.withOpacity(0.1),
+        isLast: true,
+      ));
+    }
+    
+    if (history.isEmpty) {
+       return [Text("No history available", style: TextStyle(color: AppColors.textSlate))];
+    }
+    
+    return history;
+  }
+
+  String _formatDateShort(String dateStr) {
+     if (dateStr.isEmpty) return '---';
+    try {
+      final dt = DateTime.parse(dateStr);
+      final List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return "${months[dt.month - 1]} ${dt.day}, ${dt.year}";
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty) return '---';
+    try {
+      final dt = DateTime.parse(dateStr);
+      final List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return "${months[dt.month - 1]} ${dt.day}, ${dt.year} • ${dt.hour > 12 ? dt.hour - 12 : dt.hour}:${dt.minute.toString().padLeft(2,'0')} ${dt.hour >= 12 ? 'PM' : 'AM'}";
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return 'U';
+    List<String> parts = name.trim().split(' ');
+    if (parts.length > 1) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

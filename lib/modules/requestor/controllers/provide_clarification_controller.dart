@@ -18,6 +18,7 @@ class ProvideClarificationController extends GetxController {
     _requestRepository = RequestRepository(Get.find<NetworkService>());
     if (Get.arguments != null) {
       request.value = Get.arguments;
+
     }
   }
 
@@ -26,6 +27,7 @@ class ProvideClarificationController extends GetxController {
     responseController.dispose();
     super.onClose();
   }
+  
 
   Future<void> submitClarification() async {
     if (responseController.text.trim().isEmpty) {
@@ -35,35 +37,31 @@ class ProvideClarificationController extends GetxController {
 
     try {
       isLoading.value = true;
-      final id = request['id']; // Ensure we use numeric ID
+      final id = request['id'] ?? request['request_id']; // Ensure we use numeric ID
       if (id == null) {
         Get.snackbar(AppText.error, AppText.invalidRequestId);
         return;
       }
       
+      final int requestId = id is int ? id : int.parse(id.toString());
+      
       // Call repository method
-      // Call repository method
-       await _requestRepository.submitClarification(id is int ? id : int.parse(id.toString()), responseController.text.trim());
+       await _requestRepository.submitClarification(requestId, responseController.text.trim());
       
       // Update local state in-place
-      final updatedClarifications = List<Map<String, dynamic>>.from(request['clarifications'] ?? []);
-      // We need to add the new response to the last clarification item or create a new one?
-      // Usually clarification flow is: Admin Ask -> User Respond. So we update the last item which has the question.
-      if (updatedClarifications.isNotEmpty) {
-        final lastIndex = updatedClarifications.length - 1;
-        final lastItem = Map<String, dynamic>.from(updatedClarifications[lastIndex]);
-        lastItem['response'] = responseController.text.trim();
-        lastItem['responded_at'] = DateTime.now().toIso8601String();
-        updatedClarifications[lastIndex] = lastItem;
-      }
+      // We cannot fetch full details as endpoint is missing
+      // await _fetchFullDetails();
       
+      // Optimistic update status if fetch failed or just to be sure
       final updatedRequest = Map<String, dynamic>.from(request);
-      updatedRequest['clarifications'] = updatedClarifications;
       updatedRequest['status'] = 'clarification_responded'; // Update status to reflect change
       request.value = updatedRequest;
 
       responseController.clear();
       Get.snackbar(AppText.success, AppText.clarificationSubmitted);
+      
+      // Ideally navigate back or refresh previous list
+      // Get.back(result: true); // Optionally return result to refresh list
     } catch (e) {
       Get.snackbar(AppText.error, AppText.failedToSubmit(e.toString()));
     } finally {

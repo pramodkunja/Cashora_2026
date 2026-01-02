@@ -5,6 +5,7 @@ import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/widgets/buttons/primary_button.dart';
+import '../../../../utils/widgets/timeline_item_widget.dart';
 import '../controllers/provide_clarification_controller.dart';
 
 class ProvideClarificationView extends GetView<ProvideClarificationController> {
@@ -12,15 +13,17 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC), // Light grey bg
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text("Provide Clarification", style: AppTextStyles.h3.copyWith(fontSize: 18, color: Colors.blueAccent)),
+        title: Text(AppText.provideClarificationTitle, style: AppTextStyles.h3.copyWith(fontSize: 18.sp, color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? (isDark ? Colors.white : Colors.black))),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textDark, size: 20),
+          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).iconTheme.color, size: 20.sp),
           onPressed: () => Get.back(),
         ),
       ),
@@ -32,76 +35,103 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
 
   Widget _buildBody(BuildContext context) {
       final request = controller.request;
-      // Determine if we need to show the input field
-      // Logic: If status is 'clarification_required' OR 'clarification_requested', show input.
-      // If 'clarification_responded' or 'pending_approval', hide input.
       final status = request['status'] as String? ?? '';
       final isPendingMyResponse = status == 'clarification_required' || status == 'clarification_requested';
+      final isApproved = status == 'approved' || status == 'auto_approved';
+      final isRejected = status == 'rejected';
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+      // Determine Banner Colors & Icon
+      Color bgColor;
+      Color borderColor;
+      Color iconColor;
+      Color titleColor;
+      Color subTitleColor;
+      IconData icon;
+      String title;
+      String subTitle;
+
+      if (isPendingMyResponse) {
+          bgColor = isDark ? const Color(0xFF7C2D12).withOpacity(0.3) : const Color(0xFFFFF7ED); // Orange
+          borderColor = isDark ? const Color(0xFF9A3412) : const Color(0xFFFFEDD5);
+          iconColor = const Color(0xFFF97316);
+          titleColor = isDark ? const Color(0xFFFB923C) : const Color(0xFF9A3412);
+          subTitleColor = isDark ? const Color(0xFFFDBA74) : const Color(0xFFC2410C);
+          icon = Icons.priority_high_rounded;
+          title = AppText.actionRequired;
+          subTitle = AppText.approverRequestedClarification;
+      } else if (isApproved) {
+          bgColor = isDark ? const Color(0xFF064E3B).withOpacity(0.3) : const Color(0xFFECFDF5); // Green
+          borderColor = isDark ? const Color(0xFF065F46) : const Color(0xFFD1FAE5);
+          iconColor = const Color(0xFF10B981);
+          titleColor = isDark ? const Color(0xFF34D399) : const Color(0xFF065F46);
+          subTitleColor = isDark ? const Color(0xFF6EE7B7) : const Color(0xFF047857);
+          icon = Icons.check_circle;
+          title = AppText.approved;
+          subTitle = AppText.requestApproved;
+      } else if (isRejected) {
+          bgColor = isDark ? const Color(0xFF7F1D1D).withOpacity(0.3) : const Color(0xFFFEF2F2); // Red
+          borderColor = isDark ? const Color(0xFF991B1B) : const Color(0xFFFEE2E2);
+          iconColor = const Color(0xFFEF4444);
+          titleColor = isDark ? const Color(0xFFF87171) : const Color(0xFF991B1B);
+          subTitleColor = isDark ? const Color(0xFFFCA5A5) : const Color(0xFFB91C1C);
+          icon = Icons.cancel;
+          title = AppText.rejected;
+          subTitle = AppText.rejected;
+      } else {
+          // Default: Response Sent / Pending Admin
+          bgColor = isDark ? const Color(0xFF1E3A8A).withOpacity(0.3) : const Color(0xFFEFF6FF); // Blue
+          borderColor = isDark ? const Color(0xFF1E40AF) : const Color(0xFFDBEAFE);
+          iconColor = const Color(0xFF3B82F6);
+          titleColor = isDark ? const Color(0xFF60A5FA) : const Color(0xFF1E40AF);
+          subTitleColor = isDark ? const Color(0xFF93C5FD) : const Color(0xFF1D4ED8);
+          icon = Icons.check;
+          title = AppText.responseSent;
+          subTitle = AppText.clarificationSubmittedWait;
+      }
       
       return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.r),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                   // Status Banner
                   Container(
-                      margin: const EdgeInsets.only(bottom: 24),
-                      padding: const EdgeInsets.all(16),
+                      margin: EdgeInsets.only(bottom: 24.h),
+                      padding: EdgeInsets.all(16.r),
                       decoration: BoxDecoration(
-                          color: !isPendingMyResponse 
-                              ? const Color(0xFFECFDF5) // Green bg (Responded)
-                              : const Color(0xFFFFF7ED), // Orange bg (Action Needed)
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                              color: !isPendingMyResponse 
-                                  ? const Color(0xFFD1FAE5) 
-                                  : const Color(0xFFFFEDD5)
-                          ),
+                          color: bgColor,
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(color: borderColor),
                       ),
                       child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                               Container(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: EdgeInsets.all(8.r),
                                   decoration: BoxDecoration(
-                                      color: !isPendingMyResponse 
-                                          ? const Color(0xFF10B981) 
-                                          : const Color(0xFFF97316),
+                                      color: iconColor,
                                       shape: BoxShape.circle,
                                   ),
-                                  child: Icon(
-                                      !isPendingMyResponse 
-                                          ? Icons.check 
-                                          : Icons.priority_high_rounded, 
-                                      size: 16, 
-                                      color: Colors.white
-                                  ),
+                                  child: Icon(icon, size: 16.sp, color: Colors.white),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16.w),
                               Expanded(
                                   child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                           Text(
-                                              !isPendingMyResponse 
-                                                  ? "Response Sent" 
-                                                  : "Action Required",
+                                              title,
                                               style: AppTextStyles.h3.copyWith(
-                                                  fontSize: 16, 
-                                                  color: !isPendingMyResponse 
-                                                      ? const Color(0xFF065F46) 
-                                                      : const Color(0xFF9A3412)
+                                                  fontSize: 16.sp, 
+                                                  color: titleColor
                                               )
                                           ),
-                                          const SizedBox(height: 4),
+                                          SizedBox(height: 4.h),
                                           Text(
-                                              !isPendingMyResponse 
-                                                  ? "You have submitted the clarification. Waiting for approval." 
-                                                  : "The approver has requested clarification on this request.",
+                                              subTitle,
                                               style: AppTextStyles.bodyMedium.copyWith(
-                                                  color: !isPendingMyResponse 
-                                                      ? const Color(0xFF047857) 
-                                                      : const Color(0xFFC2410C)
+                                                  color: subTitleColor
                                               )
                                           ),
                                       ],
@@ -111,33 +141,33 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
                       ),
                   ),
 
-                  Text("Request Details", style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                  const SizedBox(height: 12),
+                  Text(AppText.requestDetails, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+                  SizedBox(height: 12.h),
                   _buildRequestDetailCard(context),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
                   
-                  Text("Clarification History", style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                  const SizedBox(height: 12),
+                  Text(AppText.clarificationHistory, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+                  SizedBox(height: 12.h),
                   
                    Container(
-                      decoration: const BoxDecoration(
-                          border: Border(left: BorderSide(color: Color(0xFFE2E8F0), width: 2)),
+                      decoration: BoxDecoration(
+                          border: Border(left: BorderSide(color: Theme.of(context).dividerColor, width: 2)),
                       ),
-                      margin: const EdgeInsets.only(left: 12),
-                      padding: const EdgeInsets.only(left: 24),
+                      margin: EdgeInsets.only(left: 12.w),
+                      padding: EdgeInsets.only(left: 24.w),
                       child: _buildConversationHistory(context),
                   ),
 
                   if (isPendingMyResponse) ...[
-                      const SizedBox(height: 32),
-                      Text("Your Response", style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 32.h),
+                      Text(AppText.yourResponseTitle, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+                      SizedBox(height: 12.h),
                       Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20.r),
                           decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: AppColors.borderLight),
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(24.r),
+                              border: Border.all(color: Theme.of(context).dividerColor),
                               boxShadow: [
                                 BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
                               ]
@@ -148,22 +178,24 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
                                   TextFormField(
                                       controller: controller.responseController,
                                       maxLines: 5,
-                                      style: AppTextStyles.bodyMedium,
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                          color: Theme.of(context).textTheme.bodyMedium?.color
+                                      ),
                                       decoration: InputDecoration(
-                                          hintText: "Type your explanation here...",
+                                          hintText: AppText.typeYourExplanation,
                                           hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate.withOpacity(0.7)),
                                           border: InputBorder.none,
                                       ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: 16.h),
                                   SizedBox(
                                       width: double.infinity,
-                                      height: 56, // Hard explicit height constraint
+                                      height: 56.h, // Hard explicit height constraint
                                       child: PrimaryButton(
-                                          text: "Submit Response",
+                                          text: AppText.submitResponse,
                                           onPressed: controller.submitClarification,
                                           isLoading: controller.isLoading.value,
-                                          icon: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                                          icon: Icon(Icons.send_rounded, color: Colors.white, size: 20.sp),
                                       ),
                                   ),
                               ],
@@ -177,8 +209,9 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
 
   Widget _buildRequestDetailCard(BuildContext context) {
       final request = controller.request;
-      // Robust name mapping - Try deeper fallbacks
-      String userName = 'Unknown User';
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      
+      String userName = AppText.unknownUser;
       if (request['employee_name'] != null) userName = request['employee_name'];
       else if (request['created_by_name'] != null) userName = request['created_by_name'];
       else if (request['user'] != null) {
@@ -187,18 +220,18 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
       }
       else if (request['requestor_name'] != null) userName = request['requestor_name'];
 
-      final String category = request['category'] ?? request['title'] ?? 'General Expense';
+      final String category = request['category'] ?? request['title'] ?? AppText.expense;
       final String amount = request['amount']?.toString() ?? '0.00';
       final String? receiptUrl = request['receipt_url'];
 
       return Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.r),
           decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(24.r),
                boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -210,28 +243,28 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                              Text(userName, style: AppTextStyles.h3.copyWith(fontSize: 18)),
-                              const SizedBox(height: 4),
+                              Text(userName, style: AppTextStyles.h3.copyWith(fontSize: 18.sp)),
+                              SizedBox(height: 4.h),
                               Text(category, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
-                               const SizedBox(height: 16),
+                               SizedBox(height: 16.h),
                                Container(
-                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                                    decoration: BoxDecoration(
-                                       color: const Color(0xFFE0F2FE),
-                                       borderRadius: BorderRadius.circular(20),
+                                       color: isDark ? const Color(0xFF075985).withOpacity(0.3) : const Color(0xFFE0F2FE),
+                                       borderRadius: BorderRadius.circular(20.r),
                                    ),
-                                   child: Text("₹$amount", style: AppTextStyles.h3.copyWith(fontSize: 14, color: const Color(0xFF0EA5E9), fontWeight: FontWeight.bold)),
+                                   child: Text("₹$amount", style: AppTextStyles.h3.copyWith(fontSize: 14.sp, color: const Color(0xFF0EA5E9), fontWeight: FontWeight.bold)),
                                ),
                           ],
                       ),
                   ),
                   // Bill Image
                   Container(
-                      height: 80,
-                      width: 80,
+                      height: 80.h,
+                      width: 80.w,
                       decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9), 
-                          borderRadius: BorderRadius.circular(16),
+                          color: isDark ? Colors.black26 : const Color(0xFFF1F5F9), 
+                          borderRadius: BorderRadius.circular(16.r),
                           image: receiptUrl != null && receiptUrl.isNotEmpty
                               ? DecorationImage(
                                   image: NetworkImage(receiptUrl),
@@ -251,20 +284,15 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
   Widget _buildConversationHistory(BuildContext context) {
     final clarifications = controller.request['clarifications'] as List? ?? [];
     
-    // Fallback: If no clarifications list but there is a 'comments' or 'admin_remarks' field, treat it as the first question?
-    // User logic in ref view: if clarifications empty, check top level.
-    // However, backend should send clarifications list. We will stick to list for now to match Admin view structure.
-    
     if (clarifications.isEmpty) {
-        // If empty, checking top level 'comments' just in case legacy data
         final adminComment = controller.request['admin_remarks'] ?? controller.request['comments'];
         if (adminComment != null && adminComment.toString().isNotEmpty) {
-           return _buildTimelineItem(
+           return TimelineItemWidget(
                question: adminComment, 
                response: '', 
-               askedAt: 'Recently', 
+               askedAt: AppText.recently, 
                respondedAt: '',
-               approverName: "Approver" // We don't have approver name in top level usually
+               approverName: AppText.approver
            );
         }
         return const SizedBox.shrink();
@@ -278,141 +306,24 @@ class ProvideClarificationView extends GetView<ProvideClarificationController> {
           final String askedAt = _formatDate(item['asked_at']?.toString() ?? '');
           final String respondedAt = _formatDate(item['responded_at']?.toString() ?? '');
           
-          return _buildTimelineItem(
-              question: question,
-              response: response,
-              askedAt: askedAt,
-              respondedAt: respondedAt,
-              approverName: "Approver" // Ideally fetch from item['approver_name'] if available
+          return TimelineItemWidget(
+               question: question, 
+               response: response, 
+               askedAt: askedAt, 
+               respondedAt: respondedAt, 
+               approverName: AppText.approver
           );
         }),
     );
   }
 
-  Widget _buildTimelineItem({
-      required String question, 
-      required String response, 
-      required String askedAt, 
-      required String respondedAt,
-      required String approverName
-  }) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 1. Admin Question Node (Approver)
-          if (question.isNotEmpty)
-              Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                      Positioned(
-                          left: -31, // Align with left border
-                          top: 0,
-                          child: Container(
-                              width: 14, 
-                              height: 14,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xFFF97316), // Orange for Admin Question
-                                  shape: BoxShape.circle,
-                              ),
-                          ),
-                      ),
-                      Container(
-                          margin: const EdgeInsets.only(bottom: 24),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFFFF7ED), // Orange tinge
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: const Color(0xFFFFEDD5)),
-                          ),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                  Row(
-                                      children: [
-                                          Container(
-                                              padding: const EdgeInsets.all(6),
-                                              decoration: const BoxDecoration(
-                                                  color: Color(0xFFFFE4C4),
-                                                  shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(Icons.person, size: 14, color: Color(0xFFEA580C)),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(approverName, style: AppTextStyles.h3.copyWith(fontSize: 14)),
-                                          const Spacer(),
-                                          Text(askedAt, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
-                                      ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(question, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDark)),
-                              ],
-                          ),
-                      ),
-                  ],
-              ),
-          
-          // 2. My Response Node
-          if (response.isNotEmpty)
-               Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                      Positioned(
-                          left: -31, // Align with left border
-                          top: 0,
-                          child: Container(
-                              width: 14, 
-                              height: 14,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xFF10B981), // Green dot
-                                  shape: BoxShape.circle,
-                              ),
-                          ),
-                      ),
-                      Container(
-                          margin: const EdgeInsets.only(bottom: 24),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.borderLight),
-                          ),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                  Row(
-                                      children: [
-                                          Container(
-                                              padding: const EdgeInsets.all(6),
-                                              decoration: const BoxDecoration(
-                                                  color: Color(0xFFDCFCE7),
-                                                  shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(Icons.face, size: 14, color: Color(0xFF15803D)),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text("You", style: AppTextStyles.h3.copyWith(fontSize: 14)),
-                                          const Spacer(),
-                                          Text(respondedAt, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
-                                      ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(response, style: AppTextStyles.bodyMedium),
-                              ],
-                          ),
-                      ),
-                  ],
-              ),
-        ],
-      );
-  }
-
   String _formatDate(String dateStr) {
-    if (dateStr.isEmpty) return 'Recently';
+    if (dateStr.isEmpty) return AppText.recently;
     try {
       final dt = DateTime.parse(dateStr);
       return "${dt.day}/${dt.month} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
     } catch (_) {
-      return 'Recently';
+      return AppText.recently;
     }
   }
 }

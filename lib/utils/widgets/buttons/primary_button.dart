@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../app_colors.dart';
 import '../../app_text_styles.dart';
 
@@ -7,7 +8,7 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
   final double? width;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final Widget? icon;
 
   const PrimaryButton({
@@ -16,7 +17,7 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     this.isLoading = false,
     this.width,
-    this.padding = const EdgeInsets.symmetric(vertical: 16),
+    this.padding,
     this.icon,
   }) : super(key: key);
 
@@ -29,17 +30,17 @@ class PrimaryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryBlue,
           foregroundColor: Colors.white,
-          padding: padding,
+          padding: padding ?? EdgeInsets.symmetric(vertical: 16.h),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(30.r),
           ),
           elevation: 0,
         ),
         child: isLoading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
+            ? SizedBox(
+                height: 20.h,
+                width: 20.h,
+                child: const CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
@@ -50,11 +51,11 @@ class PrimaryButton extends StatelessWidget {
                 children: [
                   if (icon != null) ...[
                     icon!,
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8.w),
                   ],
                   Text(
                     text,
-                    style: AppTextStyles.buttonText,
+                    style: AppTextStyles.buttonText.copyWith(fontSize: 16.sp),
                   ),
                 ],
               ),

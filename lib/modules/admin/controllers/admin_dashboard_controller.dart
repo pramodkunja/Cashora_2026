@@ -46,7 +46,9 @@ class AdminDashboardController extends GetxController {
     currentIndex.value = index;
     if (index == 1) {
       if (Get.isRegistered<AdminApprovalsController>()) {
-        Get.find<AdminApprovalsController>().fetchAllRequests();
+        final ctrl = Get.find<AdminApprovalsController>();
+        ctrl.fetchAllRequests();
+        ctrl.resetTab(); // Reset to first tab
       }
     } else if (index == 3) {
       if (Get.isRegistered<ProfileController>()) {
@@ -56,6 +58,6 @@ class AdminDashboardController extends GetxController {
   }
 
   void navigateToApprovals() {
-    currentIndex.value = 1;
+    changeTab(1);
   }
 }

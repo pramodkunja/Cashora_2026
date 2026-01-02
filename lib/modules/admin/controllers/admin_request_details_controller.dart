@@ -31,8 +31,8 @@ class AdminRequestDetailsController extends GetxController {
   Future<void> approveRequest() async {
     try {
       isLoading.value = true;
-      final id = request['request_id']?.toString() ?? request['id']?.toString() ?? '';
-      if (id.isEmpty) {
+      final id = request['id']; // Use numeric ID
+      if (id == null) {
         Get.snackbar('Error', 'Invalid Request ID');
         return;
       }
@@ -54,8 +54,8 @@ class AdminRequestDetailsController extends GetxController {
             isLoading.value = true;
             Get.back(); // Close sheet first
             
-            final id = request['request_id']?.toString() ?? request['id']?.toString() ?? '';
-             if (id.isEmpty) {
+            final id = request['id']; // Use numeric ID
+             if (id == null) {
               Get.snackbar('Error', 'Invalid Request ID');
               return;
             }

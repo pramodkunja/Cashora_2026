@@ -20,7 +20,6 @@ import '../modules/admin/views/admin_rejection_success_view.dart';
 import '../modules/admin/views/admin_clarification_view.dart';
 import '../modules/admin/views/admin_clarification_success_view.dart';
 import '../modules/admin/views/admin_history_view.dart';
-
 import '../modules/admin/views/admin_clarification_status_view.dart';
 import '../modules/admin/controllers/admin_clarification_status_controller.dart';
 import '../modules/admin/controllers/admin_history_controller.dart';

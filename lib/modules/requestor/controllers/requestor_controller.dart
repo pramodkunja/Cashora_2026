@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../utils/app_colors.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../data/repositories/request_repository.dart';
+import 'my_requests_controller.dart';
 
 class RequestorController extends GetxController {
   
@@ -14,6 +15,13 @@ class RequestorController extends GetxController {
 
   void changeTab(int index) {
     currentIndex.value = index;
+    if (index == 1) {
+      if (Get.isRegistered<MyRequestsController>()) {
+        Get.find<MyRequestsController>().fetchRequests();
+      }
+    } else if (index == 0) {
+      fetchPendingCount();
+    }
   }
 
   // Pending: Refactor this to use API if needed later. Keeping for now as User didn't ask to fix Recent Requests specifically, but only Pending Count.

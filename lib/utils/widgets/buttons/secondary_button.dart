@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../app_colors.dart';
 import '../../app_text_styles.dart';
 
@@ -7,7 +8,7 @@ class SecondaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget? icon;
   final double? width;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
 
   final Color? backgroundColor;
   final Color? textColor;
@@ -20,7 +21,7 @@ class SecondaryButton extends StatelessWidget {
     required this.onPressed,
     this.icon,
     this.width,
-    this.padding = const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+    this.padding,
     this.backgroundColor,
     this.textColor,
     this.border,
@@ -35,9 +36,9 @@ class SecondaryButton extends StatelessWidget {
         style: TextButton.styleFrom(
           backgroundColor: backgroundColor ?? AppColors.infoBg, // Default light blue
           foregroundColor: textColor ?? AppColors.textDark,
-          padding: padding,
+          padding: padding ?? EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(30.r),
             side: border ?? BorderSide.none,
           ),
           elevation: 0,
@@ -48,11 +49,14 @@ class SecondaryButton extends StatelessWidget {
           children: [
             if (icon != null) ...[
               icon!,
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
             ],
             Text(
               text,
-              style: AppTextStyles.buttonText.copyWith(color: textColor ?? AppColors.textDark),
+              style: AppTextStyles.buttonText.copyWith(
+                color: textColor ?? AppColors.textDark,
+                fontSize: 16.sp, // Ensuring font size is responsive too
+              ),
             ),
           ],
         ),

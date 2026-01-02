@@ -104,10 +104,10 @@ class AdminClarificationStatusController extends GetxController {
 
   Future<void> approve() async {
     try {
-        final id = request['request_id']; // Using valid string ID for approve
+        final id = request['id']; // Use numeric ID for API
         if (id == null) return;
         
-        await repo.approveRequest(id.toString()); 
+        await repo.approveRequest(id); 
         
         Get.back(result: true);
         Get.snackbar(AppText.approvedSuccessTitle, AppText.approvedSuccessDesc);
@@ -119,10 +119,11 @@ class AdminClarificationStatusController extends GetxController {
   Future<void> reject() async {
     // Ideally open a dialog to get reason. For now assuming minimal or using reasonController if exposed
     try {
-        final id = request['request_id'];
+        final id = request['id']; // Use numeric ID for API
+        if (id == null) return;
         
         // Hardcoding 'Rejected by Admin' for now if reason not captured
-        await repo.rejectRequest(id.toString(), "Rejected by Admin"); 
+        await repo.rejectRequest(id, "Rejected by Admin"); 
         
         Get.back(result: true);
         Get.snackbar(AppText.requestRejected, AppText.requestRejectedDesc);

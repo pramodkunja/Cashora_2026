@@ -64,6 +64,8 @@ class MyRequestsView extends GetView<MyRequestsController> {
                         SizedBox(width: 12.w),
                         _buildTab(context, AppText.filterPending, 1),
                         SizedBox(width: 12.w),
+                        _buildTab(context, AppText.filterClarification, 5),
+                        SizedBox(width: 12.w),
                         _buildTab(context, AppText.filterApproved, 2),
                         SizedBox(width: 12.w),
                         _buildTab(context, AppText.filterRejected, 3),
@@ -148,62 +150,132 @@ class MyRequestsView extends GetView<MyRequestsController> {
     final status = req['status']?.toString().toLowerCase() ?? 'pending';
     
     if (status == 'approved' || status == 'auto_approved') {
-        statusColor = AppColors.successGreen;
-        statusBg = AppColors.successBg;
+        statusColor = const Color(0xFF047857); // Emerald 700
+        statusBg = const Color(0xFFD1FAE5); // Emerald 100
     } else if (status == 'pending') {
-        statusColor = AppColors.warning;
-        statusBg = AppColors.warning.withOpacity(0.1);
+        statusColor = const Color(0xFFB45309); // Amber 700
+        statusBg = const Color(0xFFFEF3C7); // Amber 100
     } else if (status == 'rejected') {
-        statusColor = AppColors.error;
-        statusBg = AppColors.error.withOpacity(0.1);
+        statusColor = const Color(0xFFB91C1C); // Red 700
+        statusBg = const Color(0xFFFEE2E2); // Red 100
     } else {
         statusColor = AppColors.textSlate;
         statusBg = AppColors.textSlate.withOpacity(0.1);
     }
 
     // Determine Status Text
-    String statusText = status.capitalizeFirst!;
-     if (status == 'auto_approved') statusText = 'Approved';
+    String statusText = status.toUpperCase();
+     if (status == 'auto_approved') statusText = 'APPROVED';
+     if (status == 'clarification_required') statusText = 'CLARIFICATION';
+
+    // Icon + Color Logic
+    IconData iconData = Icons.receipt_long_rounded;
+    Color iconColor = AppColors.primaryBlue;
+    Color iconBg = const Color(0xFFE0F2FE); // Blue 100
+
+    final titleLower = (req['purpose'] ?? req['title'] ?? '').toString().toLowerCase();
+    
+    if (titleLower.contains('food') || titleLower.contains('lunch') || titleLower.contains('dinner')) {
+       iconData = Icons.restaurant;
+       iconColor = const Color(0xFF059669); // Emerald 600
+       iconBg = const Color(0xFFECFDF5); // Emerald 50
+    } else if (titleLower.contains('taxi') || titleLower.contains('transport') || titleLower.contains('uber')) {
+       iconData = Icons.directions_car;
+       iconColor = const Color(0xFFDC2626); // Red 600
+       iconBg = const Color(0xFFFEF2F2); // Red 50
+    } else if (titleLower.contains('flight') || titleLower.contains('trip') || titleLower.contains('travel')) {
+       iconData = Icons.flight;
+       iconColor = const Color(0xFF4F46E5); // Indigo 600
+       iconBg = const Color(0xFFEEF2FF); // Indigo 50
+    } else if (titleLower.contains('supplies') || titleLower.contains('inventory')) {
+       iconData = Icons.shopping_cart;
+       iconColor = const Color(0xFFD97706); // Amber 600
+       iconBg = const Color(0xFFFFFBEB); // Amber 50
+    }
+
+    // Date & Category
+    final String date = req['date'] ?? 'No Date';
+    final String category = req['category'] ?? (titleLower.contains('food') ? 'Food' : titleLower.contains('travel') ? 'Travel' : titleLower.contains('supplies') ? 'Inventory' : 'General');
+
 
     return GestureDetector(
       onTap: () => controller.viewDetails(req),
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(20.r),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10.r, offset: Offset(0, 4.h))],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 16.r,
+              offset: Offset(0, 4.h),
+            ),
+          ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(color: req['iconBg'], borderRadius: BorderRadius.circular(12.r)),
-              child: Icon(req['icon'], color: req['iconColor'], size: 24.sp),
-            ),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(req['purpose'] ?? req['title'] ?? 'Request', style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
-                  SizedBox(height: 4.h),
-                  Text(req['date'] ?? 'No Date', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13.sp)),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            Row(
               children: [
-                Text('₹${(req['amount'] as num?)?.toStringAsFixed(2) ?? "0.00"}', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: AppTextStyles.h3.color)),
-                SizedBox(height: 8.h),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                  decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(12.r)),
-                  child: Text(statusText, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: statusColor)),
+                  width: 50.w,
+                  height: 50.w,
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(iconData, color: iconColor, size: 24.sp),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(req['purpose'] ?? req['title'] ?? 'Request', style: AppTextStyles.h3.copyWith(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 4.h),
+                      Text("$date • $category", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13.sp, fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('₹${(req['amount'] as num?)?.toStringAsFixed(2) ?? "0.00"}', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w800, color: const Color(0xFF0F172A))),
+                    SizedBox(height: 8.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: statusBg,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Text(
+                        statusText, 
+                        style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold, color: statusColor, letterSpacing: 0.5)
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
+            
+            // Rejection Note
+            if (status == 'rejected') ...[
+              SizedBox(height: 16.h),
+              Container(
+                 width: double.infinity,
+                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                 decoration: BoxDecoration(
+                   color: const Color(0xFFFEF2F2), // Red 50
+                   borderRadius: BorderRadius.circular(12.r),
+                 ),
+                 child: Text(
+                   req['rejection_reason'] ?? "Missing information or receipt attachment",
+                   style: TextStyle(color: const Color(0xFFEF4444), fontSize: 12.sp, fontWeight: FontWeight.w500),
+                   textAlign: TextAlign.center,
+                 ),
+              )
+            ],
           ],
         ),
       ),

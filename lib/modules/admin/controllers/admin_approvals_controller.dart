@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart'; // Added for TabController
 import '../../../../routes/app_routes.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../data/repositories/admin_repository.dart';
@@ -12,19 +13,38 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
   final unpaidRequests = <Map<String, dynamic>>[].obs;
   final clarificationRequests = <Map<String, dynamic>>[].obs;
   
+  TabController? _tabController;
+  TabController get tabController {
+    if (_tabController == null) {
+      _tabController = TabController(length: 4, vsync: this);
+    }
+    return _tabController!;
+  }
+
   final isLoading = true.obs;
 
   @override
   void onInit() {
     super.onInit();
     _adminRepository = AdminRepository(Get.find<NetworkService>());
-    // fetchAllRequests(); // Moved to onReady
+  }
+
+  @override
+  void onClose() {
+    _tabController?.dispose();
+    super.onClose();
+  }
+  
+  void resetTab() {
+    if (_tabController != null && _tabController!.index != 0) {
+      _tabController!.animateTo(0);
+    }
   }
   
   @override
   void onReady() {
     super.onReady();
-    fetchAllRequests();
+    // fetchAllRequests(); // Removed eager fetch
   }
 
   Future<void> fetchAllRequests() async {

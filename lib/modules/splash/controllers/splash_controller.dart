@@ -8,7 +8,7 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
   final AuthService _authService = Get.find<AuthService>();
   
   // Animation duration
-  final int splashDuration = 5000;
+  final int splashDuration = 8000;
   
   // Progress bar
   final RxDouble progress = 0.0.obs;

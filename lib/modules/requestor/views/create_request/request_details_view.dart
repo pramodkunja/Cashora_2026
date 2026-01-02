@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart'; // Added
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,9 +39,14 @@ class RequestDetailsView extends GetView<CreateRequestController> {
               SizedBox(height: 12.h),
               TextField(
                 controller: controller.amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 style: AppTextStyles.amountDisplay.copyWith(color: AppColors.textDark, fontSize: 32.sp),
                 decoration: InputDecoration(
+                  hintText: '0', 
+                  hintStyle: AppTextStyles.amountDisplay.copyWith(color: AppColors.textSlate.withOpacity(0.5), fontSize: 32.sp), 
                   prefixIcon: Padding(
                     padding: EdgeInsets.only(left: 20.w, right: 8.w),
                     child: Text(
@@ -55,31 +61,18 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                   contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                 ),
               ),
-              SizedBox(height: 24.h),
+              //SizedBox(height: 24.h),
 
-              Text(AppText.requestType, style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, color: AppTextStyles.h3.color)),
-              SizedBox(height: 8.h),
-              Obx(() => Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(30.r)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(controller.category.value, style: TextStyle(color: const Color(0xFF64748B), fontSize: 16.sp)),
-                     IconButton(
-                       icon: Icon(Icons.keyboard_arrow_down, color: const Color(0xFF64748B), size: 24.sp), 
-                       onPressed: null
-                     ),
-                  ],
-                ),
-              )),
+              SizedBox(height: 16.h), // Reduced spacing
               
-              SizedBox(height: 16.h),
-              // Warning Banner
+              // Dynamic Status Banner (Replaces Request Type Selector)
               Obx(() {
-                if (controller.category.value == AppText.approvalRequired) {
-                  return Container(
-                    padding: EdgeInsets.all(16.w),
+                if (controller.amount.value <= 0) return const SizedBox.shrink(); // Hide until amount entered
+
+                if (controller.category.value == 'Approval Required') {
+                   // Warning Banner (Yellow)
+                   return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h), 
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFFBEB), // Yellow 50
                       borderRadius: BorderRadius.circular(16.r),
@@ -88,23 +81,51 @@ class RequestDetailsView extends GetView<CreateRequestController> {
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(8.w),
+                          padding: EdgeInsets.all(6.w),
                           decoration: const BoxDecoration(color: Color(0xFFFDE68A), shape: BoxShape.circle),
-                          child: Icon(Icons.warning_amber_rounded, color: const Color(0xFFB45309), size: 20.sp),
+                          child: Icon(Icons.warning_amber_rounded, color: const Color(0xFFB45309), size: 18.sp),
                         ),
                         SizedBox(width: 12.w),
                         Expanded(child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(AppText.approvalRequired, style: TextStyle(color: const Color(0xFF78350F), fontWeight: FontWeight.w700, fontSize: 14.sp)),
-                            Text(AppText.approvalRequiredDesc, style: TextStyle(color: const Color(0xFF92400E), fontSize: 13.sp)),
+                            Text(AppText.approvalRequired, style: TextStyle(color: const Color(0xFF78350F), fontWeight: FontWeight.w700, fontSize: 13.sp)),
+                            SizedBox(height: 2.h),
+                            Text("Amount exceeds ${controller.deemedLimit.value > 0 ? 'auto-approval limit (₹${controller.deemedLimit.value.toStringAsFixed(0)})' : 'auto-approval limit'}", style: TextStyle(color: const Color(0xFF92400E), fontSize: 12.sp)),
+                          ],
+                        )),
+                      ],
+                    ),
+                  );
+                } else {
+                   // Deemed/Auto-Approved Banner (Green)
+                   return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFECFDF5), // Emerald 50
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: const Color(0xFFD1FAE5)),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(6.w), 
+                          decoration: const BoxDecoration(color: Color(0xFFA7F3D0), shape: BoxShape.circle), 
+                          child: Icon(Icons.check, color: const Color(0xFF047857), size: 18.sp), 
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Deemed Approval", style: TextStyle(color: const Color(0xFF065F46), fontWeight: FontWeight.w700, fontSize: 13.sp)), 
+                             SizedBox(height: 2.h),
+                            Text("This request is within limits and will be auto-approved.", style: TextStyle(color: const Color(0xFF064E3B), fontSize: 12.sp)), 
                           ],
                         )),
                       ],
                     ),
                   );
                 }
-                return const SizedBox.shrink();
               }),
               SizedBox(height: 24.h),
 

@@ -7,15 +7,18 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:cash/data/repositories/request_repository.dart';
+import 'package:cash/data/repositories/organization_repository.dart';
 import '../../../../core/services/network_service.dart';
 
 class CreateRequestController extends GetxController {
   late final RequestRepository _requestRepository;
+  late final OrganizationRepository _orgRepository;
   final ImagePicker _picker = ImagePicker();
 
   // Observable state
   final requestType = 'Post-approved'.obs; 
   final amount = 0.0.obs;
+  final deemedLimit = 0.0.obs; // Dynamic limit
   final category = 'Deemed'.obs; // Auto-calculated status (Deemed/Approval Required)
   final purpose = ''.obs;
   final description = ''.obs;
@@ -60,6 +63,19 @@ class CreateRequestController extends GetxController {
     }
   }
 
+  Future<void> fetchLimit() async {
+    try {
+      final response = await _orgRepository.getApprovalLimits();
+      if (response != null) {
+         // Handle backend response keys
+         var val = response['deemed_approval_limit'] ?? response['deemed_limit'] ?? 0;
+         deemedLimit.value = (val is int) ? val.toDouble() : (val as double? ?? 0.0);
+      }
+    } catch (e) {
+      print("Failed to fetch limits: $e");
+    }
+  }
+
   // Text Controllers
   final amountController = TextEditingController();
   final purposeController = TextEditingController();
@@ -69,12 +85,17 @@ class CreateRequestController extends GetxController {
   void onInit() {
     super.onInit();
     _requestRepository = RequestRepository(Get.find<NetworkService>());
+    _orgRepository = OrganizationRepository(Get.find<NetworkService>());
     fetchCategories();
+    fetchLimit();
 
     amountController.addListener(() {
       final val = double.tryParse(amountController.text.replaceAll(',', '')) ?? 0.0;
       amount.value = val;
-      if (val > 1000) {
+      // Use dynamic limit, default to 1000 if 0 (not fetched yet)
+      final limit = deemedLimit.value > 0 ? deemedLimit.value : 1000.0;
+      
+      if (val > limit) {
         category.value = 'Approval Required';
       } else {
         category.value = 'Deemed';

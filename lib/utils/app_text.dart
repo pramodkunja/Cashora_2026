@@ -143,6 +143,8 @@ class AppText {
   static const String filterPending = 'Pending';
   static const String filterApproved = 'Approved';
   static const String filterRejected = 'Rejected';
+  static const String filterClarification = 'Clarification';
+
   static const String totalAmount = 'TOTAL AMOUNT';
   static const String requestId = 'Request ID';
   static const String status = 'Status';
@@ -312,6 +314,27 @@ class AppText {
   static const String submitClarification = 'Submit Clarification';
   static const String clarificationRequested = 'CLARIFICATION REQUESTED';
   static const String typeYourExplanation = 'Type your explanation here...';
+
+  // New additions for Clarification Flow
+  static const String reviewClarification = 'Review Clarification';
+  static const String waitingForResponse = 'Waiting for Response';
+  static const String requestorUpdatedDetails = 'Requestor has updated the details.';
+  static const String pendingUserResponse = 'This request is pending a response from the user.';
+  static const String errorDisplayingDetails = 'Error displaying request details.';
+  static const String youApprover = 'You (Approver)';
+  static const String recently = 'Recently';
+  static const String responseSent = 'Response Sent';
+  static const String actionRequired = 'Action Required';
+  static const String clarificationSubmittedWait = 'You have submitted the clarification. Waiting for approval.';
+  static const String approverRequestedClarification = 'The approver has requested clarification on this request.';
+  static const String submitResponse = 'Submit Response';
+  static const String approver = 'Approver';
+  static const String you = 'You';
+  static const String expense = 'Expense';
+  static const String provideClarificationTitle = 'Provide Clarification';
+  static const String yourResponseTitle = 'Your Response';
+
+
 
   // Common/Fallback
   static const String unpaid = 'Unpaid';

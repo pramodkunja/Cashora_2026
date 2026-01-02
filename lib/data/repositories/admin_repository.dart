@@ -26,28 +26,30 @@ class AdminRepository {
       rethrow; // Or return empty list based on error handling policy
     }
   }
-  Future<void> approveRequest(String requestId) async {
+  Future<void> submitDecision(dynamic id, String action, {String? reason}) async {
     try {
+      final expenseId = id is int ? id : int.parse(id.toString());
+      final data = {'action': action};
+      if (reason != null) {
+        data['rejection_reason'] = reason;
+      }
+      
       await _networkService.post(
-        '/approver/approve', 
-        data: {'request_id': requestId}
+        '/approver/expenses/$expenseId/decision',
+        data: data
       );
     } catch (e) {
-      print("Error approving request: $e");
+      print("Error submitting decision: $e");
       rethrow;
     }
   }
 
-  Future<void> rejectRequest(String requestId, String reason) async {
-    try {
-      await _networkService.post(
-        '/approver/reject', 
-        data: {'request_id': requestId, 'rejection_reason': reason}
-      );
-    } catch (e) {
-      print("Error rejecting request: $e");
-      rethrow;
-    }
+  Future<void> approveRequest(dynamic id) async {
+    await submitDecision(id, 'approve');
+  }
+
+  Future<void> rejectRequest(dynamic id, String reason) async {
+    await submitDecision(id, 'reject', reason: reason);
   }
 
   Future<void> askClarification(int id, String message) async {

@@ -8,7 +8,7 @@ import '../../../../utils/date_helper.dart';
 class MyRequestsController extends GetxController {
   final RequestRepository _repository = Get.find<RequestRepository>(); // Ensure ID is injected
   
-  final currentTab = 0.obs; // 0: All, 1: Pending, 2: Approved, 3: Rejected, 4: Unpaid
+  final currentTab = 0.obs; // 0: All, 1: Pending, 2: Approved, 3: Rejected, 4: Unpaid, 5: Clarification
   final isLoading = false.obs;
   final requestList = <Map<String, dynamic>>[].obs;
   final searchQuery = ''.obs;
@@ -19,8 +19,6 @@ class MyRequestsController extends GetxController {
     if (Get.arguments != null && Get.arguments['filter'] == 'Pending') {
       currentTab.value = 1;
     }
-    fetchRequests();
-    
     // Listen to tab changes to refetch
     ever(currentTab, (_) => fetchRequests());
   }
@@ -43,6 +41,9 @@ class MyRequestsController extends GetxController {
           break;
         case 4: // Unpaid
           paymentStatus = 'pending';
+          break;
+        case 5: // Clarification
+          status = 'clarification_required';
           break;
         default: // All
           break;

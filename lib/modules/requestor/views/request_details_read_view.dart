@@ -11,28 +11,35 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../utils/widgets/timeline_item_widget.dart';
+import '../../../../utils/widgets/attachment_card.dart';
+import 'widgets/rejected_request_view.dart';
 
 class RequestDetailsReadView extends StatelessWidget {
   const RequestDetailsReadView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> request = Get.arguments ?? {};
-    
-    // --- DEBUGGING START ---
-    debugPrint("DEBUG: FULL REQUEST ARGS: $request");
-    debugPrint("DEBUG: Attachments Field: ${request['attachments']}");
-    if (request['attachments'] != null) {
-      debugPrint("DEBUG: Attachments Type: ${request['attachments'].runtimeType}");
-      if (request['attachments'] is List) {
-         debugPrint("DEBUG: List Length: ${(request['attachments'] as List).length}");
-         if ((request['attachments'] as List).isNotEmpty) {
-           debugPrint("DEBUG: First Item: ${(request['attachments'] as List).first}");
-           debugPrint("DEBUG: First Item Type: ${(request['attachments'] as List).first.runtimeType}");
-         }
-      }
-    }
-    // --- DEBUGGING END ---
+    final Map<String, dynamic> initialRequest = Get.arguments ?? {};
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        title: Text(AppText.requestDetails, style: AppTextStyles.h3.copyWith(color: AppColors.textDark)),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textDark),
+          onPressed: () => Get.back(),
+        ),
+      ),
+      body: _buildContent(context, initialRequest),
+    );
+  }
+
+
+  Widget _buildContent(BuildContext context, Map<String, dynamic> request) {
 
     final String status = request['status'] ?? 'Pending';
     final String category = request['category'] ?? 'General';
@@ -50,6 +57,12 @@ class RequestDetailsReadView extends StatelessWidget {
     final String amount = (request['amount'] as double? ?? 0.0).toStringAsFixed(2);
     final String title = request['title'] ?? 'Request';
 
+    // Check for Rejected Status explicitly for Custom UI
+    if (status.toLowerCase() == 'rejected') {
+      return RejectedRequestView(request: request);
+    }
+
+    // Default UI for Approved/Pending
     // Status Styling
     final isApproved = status == 'Approved' || status == 'auto_approved';
     final statusColor = isApproved ? AppColors.successGreen : const Color(0xFFF59E0B);
@@ -64,19 +77,7 @@ class RequestDetailsReadView extends StatelessWidget {
     else if (category.toLowerCase().contains('office')) catIcon = Icons.work;
     else if (category.toLowerCase().contains('transport')) catIcon = Icons.directions_car;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: Text(AppText.requestDetails, style: AppTextStyles.h3.copyWith(color: AppColors.textDark)),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textDark),
-          onPressed: () => Get.back(),
-        ),
-      ),
-      body: SafeArea(
+    return SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -161,89 +162,80 @@ class RequestDetailsReadView extends StatelessWidget {
                    itemCount: (request['attachments'] as List).length,
                    separatorBuilder: (_, __) => const SizedBox(height: 12),
                    itemBuilder: (context, index) {
-                     final attachment = (request['attachments'] as List)[index];
-                     
-                     String name = 'Attachment ${index + 1}';
-                     String size = 'Unknown';
-                     XFile? xFile;
-                     String? url;
-
-                     if (attachment is Map) {
-                       name = attachment['name'] ?? name;
-                       size = attachment['size']?.toString() ?? size;
-                       
-                       // Check for XFile (Local)
-                       if (attachment['file'] is XFile) {
-                         xFile = attachment['file'];
-                         name = xFile?.name ?? name;
-                       } 
-                       // Check for URL Strings (Remote) under various keys
-                       else {
-                         url = attachment['file'] as String? ?? 
-                               attachment['file_url'] as String? ?? 
-                               attachment['url'] as String? ?? 
-                               attachment['attachment'] as String? ??
-                               attachment['path'] as String?;
-                         
-                         if (url != null) {
-                           if (name == 'Attachment ${index + 1}') {
-                             name = url!.split('/').last;
-                           }
-                         }
-                       }
-                     } else if (attachment is String) {
-                       url = attachment;
-                       name = url.split('/').last;
-                     }
-
-                     return Container(
-                       padding: const EdgeInsets.all(16),
-                       decoration: BoxDecoration(
-                         color: Colors.white,
-                         borderRadius: BorderRadius.circular(20),
-                         boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
-                         ],
-                       ),
-                       child: Row(
-                         children: [
-                           Container(
-                             padding: const EdgeInsets.all(12),
-                             decoration: BoxDecoration(
-                               color: const Color(0xFFF3F4F6),
-                               borderRadius: BorderRadius.circular(12),
-                             ),
-                             child: const Icon(Icons.insert_drive_file, color: Color(0xFFEF4444)),
-                           ),
-                           const SizedBox(width: 16),
-                           Expanded(
-                             child: Column(
-                               crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                 Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                 const SizedBox(height: 4),
-                                 Text(size, style: const TextStyle(color: AppColors.textSlate, fontSize: 12)),
-                               ],
-                             ),
-                           ),
-                           IconButton(
-                             icon: const Icon(Icons.download, size: 20, color: AppColors.textSlate),
-                             onPressed: () => _handleDownload(xFile, url, context),
-                           )
-                         ],
-                       ),
-                     );
+                     return AttachmentCard(attachment: (request['attachments'] as List)[index], index: index);
                    },
                  )
               else 
                 Text('No attachments', style: TextStyle(color: Colors.grey[400])),
               
               const SizedBox(height: 40),
+               const SizedBox(height: 24),
+
+               // 7. Conversation History
+               if ((request['clarifications'] != null && (request['clarifications'] as List).isNotEmpty) || 
+                   (request['admin_remarks'] != null && request['admin_remarks'].toString().isNotEmpty)) ...[
+                     Align(alignment: Alignment.centerLeft, child: Text(AppText.clarificationHistory, style: AppTextStyles.h3.copyWith(fontSize: 18))),
+                     const SizedBox(height: 12),
+                     Container(
+                        decoration: BoxDecoration(
+                           border: Border(left: BorderSide(color: Colors.grey[300]!, width: 2)),
+                        ),
+                        margin: const EdgeInsets.only(left: 12),
+                        padding: const EdgeInsets.only(left: 24),
+                        child: _buildConversationHistory(context, request),
+                     ),
+                     const SizedBox(height: 40),
+               ],
             ],
           ),
         ),
-      ),
+      );
+  }
+
+  Widget _buildConversationHistory(BuildContext context, Map<String, dynamic> request) {
+    final clarifications = request['clarifications'] as List? ?? [];
+    
+    if (clarifications.isEmpty) {
+        final adminComment = request['admin_remarks'] ?? request['comments'];
+        if (adminComment != null && adminComment.toString().isNotEmpty) {
+           return TimelineItemWidget(
+               question: adminComment, 
+               response: '', 
+               askedAt: AppText.recently, 
+               respondedAt: '',
+               approverName: AppText.approver
+           );
+        }
+        return const SizedBox.shrink();
+    }
+
+    return Column(
+        children: List.generate(clarifications.length, (index) {
+          final item = clarifications[index];
+          final String question = item['question'] ?? '';
+          final String response = item['response'] ?? '';
+          final String askedAt = _formatDate(item['asked_at']?.toString() ?? '');
+          final String respondedAt = _formatDate(item['responded_at']?.toString() ?? '');
+          
+          return TimelineItemWidget(
+              question: question,
+              response: response,
+              askedAt: askedAt,
+              respondedAt: respondedAt,
+              approverName: AppText.approver
+          );
+        }),
     );
+  }
+
+  String _formatDate(String dateStr) {
+    if (dateStr.isEmpty) return AppText.recently;
+    try {
+      final dt = DateTime.parse(dateStr);
+      return "${dt.day}/${dt.month} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
+    } catch (_) {
+      return AppText.recently;
+    }
   }
 
   Widget _buildInfoCard(BuildContext context, String label, String value, IconData icon) {
@@ -274,96 +266,5 @@ class RequestDetailsReadView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _handleDownload(XFile? file, String? url, BuildContext context) async {
-    debugPrint("DEBUG: _handleDownload called");
-    debugPrint("DEBUG: File: $file");
-    debugPrint("DEBUG: URL: $url");
-    
-    try {
-      if (file != null) {
-        // Local File Logic
-        if (kIsWeb) {
-          await file.saveTo(file.name);
-          Get.snackbar('Success', 'Download started', snackPosition: SnackPosition.BOTTOM);
-        } else {
-          final result = await OpenFile.open(file.path);
-          if (result.type != ResultType.done) {
-             Get.snackbar('Error', 'Could not open file: ${result.message}', snackPosition: SnackPosition.BOTTOM);
-          }
-        }
-      } else if (url != null && url.isNotEmpty) {
-        if (kIsWeb) {
-          final uri = Uri.parse(url);
-          if (await canLaunchUrl(uri)) {
-             await launchUrl(uri);
-          }
-        } else {
-             // Mobile/Desktop Download
-             await _downloadRemoteFile(url);
-        }
-      } else {
-        Get.snackbar('Error', 'Attachment not available', snackPosition: SnackPosition.BOTTOM);
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to handle attachment: $e', snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  Future<void> _downloadRemoteFile(String url) async {
-     try {
-       // 1. Request Permission
-       if (Platform.isAndroid || Platform.isIOS) {
-          var status = await Permission.storage.status;
-          if (!status.isGranted) {
-             status = await Permission.storage.request();
-          }
-          if (Platform.isAndroid && await Permission.manageExternalStorage.status.isGranted) {
-             // Android 11+ All Files Access
-             status = PermissionStatus.granted; 
-          }
-           // Simple check - proceed even if denied on newer Androids as scoped storage might allow downloads
-       }
-
-       // 2. Get Directory
-       Directory? dir;
-       if (Platform.isAndroid) {
-         dir = Directory('/storage/emulated/0/Download');
-         if (!await dir.exists()) dir = await getExternalStorageDirectory();
-       } else if (Platform.isIOS) {
-         dir = await getApplicationDocumentsDirectory();
-       } else {
-         dir = await getDownloadsDirectory();
-       }
-       
-       if (dir == null) {
-         Get.snackbar('Error', 'Could not determine download path', snackPosition: SnackPosition.BOTTOM);
-         return;
-       }
-
-       // 3. Prepare Path
-       final fileName = url.split('/').last.split('?').first;
-       final savePath = '${dir.path}/$fileName';
-       
-       Get.snackbar('Downloading', 'Downloading $fileName...', showProgressIndicator: true, snackPosition: SnackPosition.BOTTOM);
-
-       // 4. Download
-       await Dio().download(url, savePath);
-       
-       Get.snackbar(
-         'Success', 
-         'Saved to $savePath', 
-         snackPosition: SnackPosition.BOTTOM,
-         duration: const Duration(seconds: 5),
-         mainButton: TextButton(
-           onPressed: () => OpenFile.open(savePath),
-           child: const Text('OPEN', style: TextStyle(color: AppColors.primaryBlue)),
-         )
-       );
-       
-     } catch (e) {
-       Get.snackbar('Error', 'Download failed: $e', snackPosition: SnackPosition.BOTTOM);
-     }
   }
 }
