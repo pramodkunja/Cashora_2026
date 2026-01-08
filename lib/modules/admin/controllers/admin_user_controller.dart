@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../data/repositories/auth_repository.dart';
 import '../../../../core/services/auth_service.dart';
+import '../../../../utils/widgets/app_loader.dart';
 
 class AdminUserController extends GetxController {
   final AuthRepository _authRepository = Get.find<AuthRepository>();
@@ -101,7 +102,7 @@ class AdminUserController extends GetxController {
 
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: AppLoader()),
         barrierDismissible: false,
       );
 
@@ -247,7 +248,7 @@ class AdminUserController extends GetxController {
       if (!_validateForm()) return;
 
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: AppLoader()),
         barrierDismissible: false,
       );
 
@@ -322,7 +323,7 @@ class AdminUserController extends GetxController {
   void toggleUserStatus() async {
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator()),
+        const Center(child: AppLoader()),
         barrierDismissible: false,
       );
 

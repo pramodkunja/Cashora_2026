@@ -16,16 +16,6 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC), // Slate 50 for contrast
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Theme.of(context).iconTheme.color, size: 20.sp),
-          onPressed: () => Get.back(),
-        ),
-        centerTitle: true,
-        title: Text(AppText.requestDetails, style: AppTextStyles.h3),
-      ),
       body: SafeArea(
         child: Obx(() {
           final status = (controller.request['status'] ?? 'Pending').toString().toLowerCase();
@@ -168,45 +158,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           ),
           SizedBox(height: 24.h),
 
-          // 5. Attachments Card
-          Container(
-             width: double.infinity,
-             padding: EdgeInsets.all(24.w),
-             decoration: BoxDecoration(
-               color: Colors.white,
-               borderRadius: BorderRadius.circular(24.r),
-             ),
-             child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 Row(
-                   children: [
-                     Icon(Icons.attach_file, color: AppColors.textDark, size: 20.sp),
-                     SizedBox(width: 8.w),
-                     Text("Bill & Attachments", style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
-                   ],
-                 ),
-                 SizedBox(height: 20.h),
-                 // Attachment List Logic
-                 Builder(builder: (context) {
-                    final List<dynamic> files = (req['attachments'] is List) ? req['attachments'] : 
-                                               (req['receipt_url'] != null && req['receipt_url'].toString().isNotEmpty) ? [req['receipt_url']] : [];
-                    
-                    if (files.isEmpty) return Text("No attachments.", style: TextStyle(color: AppColors.textSlate));
-
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: files.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                      itemBuilder: (context, index) {
-                         return AttachmentCard(attachment: files[index], index: index);
-                      }
-                    );
-                 }),
-               ],
-             ),
-          ),
+          _buildAttachmentsSection(context),
           SizedBox(height: 24.h),
           
           // 6. Timeline Card
@@ -466,58 +418,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           ),
           SizedBox(height: 24.h),
 
-          // Attachment Card
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(24.w),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(24.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 16.r,
-                  offset: Offset(0, 4.h),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(AppText.attachedBill, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
-                SizedBox(height: 16.h),
-                
-                // Dynamic Attachment Logic
-                Builder(builder: (context) {
-                  final req = controller.request;
-                  List<dynamic> files = [];
-                  
-                  // Normalize input
-                  if (req['attachments'] is List) {
-                    files = req['attachments'];
-                  } else if (req['receipt_url'] != null && req['receipt_url'].toString().isNotEmpty) {
-                    files = [req['receipt_url']]; // Treat as single item list
-                  } else if (req['file'] != null) {
-                    files = [req['file']];
-                  }
-
-                  if (files.isEmpty) {
-                    return Text("No attachments found.", style: TextStyle(color: AppColors.textSlate, fontSize: 13.sp));
-                  }
-
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: files.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                    itemBuilder: (context, index) {
-                      return AttachmentCard(attachment: files[index], index: index);
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
+          _buildAttachmentsSection(context),
           SizedBox(height: 24.h),
           
           // Action Buttons
@@ -556,6 +457,153 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
   }
 
   // --- COMMON WIDGETS ---
+
+  // --- ATTACHMENTS SECTION ---
+  Widget _buildAttachmentsSection(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+           BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+        ]
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Row(
+             children: [
+               Icon(Icons.attach_file_rounded, color: AppColors.textDark, size: 20.sp),
+               SizedBox(width: 8.w),
+               Text("Bill & Attachments", style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+             ],
+           ),
+           SizedBox(height: 20.h),
+           
+           LayoutBuilder(
+             builder: (context, constraints) {
+               final double itemWidth = (constraints.maxWidth - 16.w) / 2; // 2 items per row with gap
+               return Wrap(
+                 spacing: 16.w,
+                 runSpacing: 16.w,
+                 children: _buildAttachmentButtons(context, itemWidth),
+               );
+             },
+           )
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildAttachmentButtons(BuildContext context, double width) {
+    final req = controller.request;
+    final buttons = <Widget>[];
+
+    // Determine URLs
+    List<String> billUrls = [];
+    if (req['bill_urls'] != null && req['bill_urls'] is List) {
+      billUrls = List<String>.from(req['bill_urls']);
+    } else if (req['bill_url'] != null) {
+      billUrls.add(req['bill_url']);
+    } else if (req['attachments'] is List && (req['attachments'] as List).isNotEmpty) {
+       final first = (req['attachments'] as List).first;
+       if (first is Map) billUrls.add(first['file_url'] ?? first['url']);
+       else if (first is String) billUrls.add(first);
+    }
+
+    // Receipt: 'receipt_url'
+    String? receiptUrl = req['receipt_url'];
+
+    // QR: 'qr_url' (primary) or 'qr_code_url'
+    String? qrUrl = req['qr_url'] ?? req['qr_code_url'];
+
+    // Logic based on Request Type
+    
+    // Buttons for Bills
+    if (billUrls.isNotEmpty) {
+      for (int i = 0; i < billUrls.length; i++) {
+        if (billUrls[i].isNotEmpty) {
+           buttons.add(_buildAttachmentOption(
+            context: context,
+            icon: Icons.receipt_long_rounded,
+            label: billUrls.length > 1 ? "View Bill ${i + 1}" : "View Bill",
+            onTap: () => controller.viewAttachment(billUrls[i]),
+            width: width,
+          ));
+        }
+      }
+    }
+
+    // Button 2: View QR (If available)
+    if (qrUrl != null && qrUrl.isNotEmpty) {
+       buttons.add(_buildAttachmentOption(
+        context: context,
+        icon: Icons.qr_code_2_rounded,
+        label: "View QR",
+        onTap: () => controller.viewAttachment(qrUrl!),
+         width: width,
+      ));
+    }
+
+    // Button 3: View Receipt (If available)
+    if (receiptUrl != null && receiptUrl.isNotEmpty) {
+      buttons.add(_buildAttachmentOption(
+        context: context,
+        icon: Icons.check_circle_outline_rounded,
+        label: "View Receipt",
+        onTap: () => controller.viewAttachment(receiptUrl!),
+         width: width,
+      ));
+    }
+    
+    if (buttons.isEmpty) {
+      return [Text("No attachments available.", style: TextStyle(color: AppColors.textSlate, fontSize: 13.sp))];
+    }
+
+    return buttons;
+  }
+
+  Widget _buildAttachmentOption({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required double width,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        width: width,
+        padding: EdgeInsets.symmetric(vertical: 24.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: Theme.of(context).dividerColor),
+          borderRadius: BorderRadius.circular(16.r),
+          color: Theme.of(context).cardColor,
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE0F2FE), // Sky 100
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: const Color(0xFF0284C7), size: 24.sp), // Sky 600
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              label, 
+              style: AppTextStyles.h3.copyWith(fontSize: 14.sp, color: AppColors.textDark),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildInformationCard(BuildContext context) {
     return Container(

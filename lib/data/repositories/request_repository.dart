@@ -28,7 +28,9 @@ class RequestRepository {
     required String purpose,
     required String description,
     required String category,
-    XFile? file,
+    XFile? qrFile,
+    XFile? receiptFile,
+    List<XFile>? billFiles,
   }) async {
     try {
       final Map<String, dynamic> fields = {
@@ -41,18 +43,27 @@ class RequestRepository {
 
       FormData formData = FormData.fromMap(fields);
 
-      if (file != null) {
-        if (kIsWeb) {
-          final bytes = await file.readAsBytes();
-          formData.files.add(MapEntry(
-            'file',
-            MultipartFile.fromBytes(bytes, filename: file.name),
-          ));
-        } else {
-          formData.files.add(MapEntry(
-            'file',
-            await MultipartFile.fromFile(file.path, filename: file.name),
-          ));
+      Future<void> addFile(String key, XFile file) async {
+          if (kIsWeb) {
+            final bytes = await file.readAsBytes();
+            formData.files.add(MapEntry(
+              key,
+              MultipartFile.fromBytes(bytes, filename: file.name),
+            ));
+          } else {
+            formData.files.add(MapEntry(
+              key,
+              await MultipartFile.fromFile(file.path, filename: file.name),
+            ));
+          }
+      }
+
+      if (qrFile != null) await addFile('qr_file', qrFile);
+      if (receiptFile != null) await addFile('receipt_file', receiptFile);
+      
+      if (billFiles != null && billFiles.isNotEmpty) {
+        for (var file in billFiles) {
+           await addFile('bill_files', file);
         }
       }
 

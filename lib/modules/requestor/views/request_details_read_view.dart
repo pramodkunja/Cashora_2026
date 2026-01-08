@@ -155,18 +155,44 @@ class RequestDetailsReadView extends StatelessWidget {
               // 6. Attachments
               Align(alignment: Alignment.centerLeft, child: Text('Attachments', style: AppTextStyles.h3.copyWith(fontSize: 18))),
               const SizedBox(height: 12),
-              if (request['attachments'] != null && (request['attachments'] as List).isNotEmpty)
-                 ListView.separated(
-                   shrinkWrap: true,
-                   physics: const NeverScrollableScrollPhysics(),
-                   itemCount: (request['attachments'] as List).length,
-                   separatorBuilder: (_, __) => const SizedBox(height: 12),
-                   itemBuilder: (context, index) {
-                     return AttachmentCard(attachment: (request['attachments'] as List)[index], index: index);
-                   },
-                 )
-              else 
-                Text('No attachments', style: TextStyle(color: Colors.grey[400])),
+              
+              Builder(
+                builder: (context) {
+                   final List<dynamic> allAttachments = [];
+                   if (request['attachments'] != null && request['attachments'] is List) {
+                      allAttachments.addAll(request['attachments']);
+                   }
+                   
+                   if (request['qr_url'] != null) {
+                      allAttachments.add({'name': 'QR Code', 'url': request['qr_url']});
+                   }
+                   if (request['receipt_url'] != null) {
+                      allAttachments.add({'name': 'Receipt', 'url': request['receipt_url']});
+                   }
+                   if (request['bill_urls'] != null && request['bill_urls'] is List) {
+                      final bills = request['bill_urls'] as List;
+                      for (int i=0; i<bills.length; i++) {
+                         allAttachments.add({'name': 'Bill ${i+1}', 'url': bills[i]});
+                      }
+                   } else if (request['bill_url'] != null) {
+                      allAttachments.add({'name': 'Bill', 'url': request['bill_url']});
+                   }
+
+                   if (allAttachments.isEmpty) {
+                      return Text('No attachments', style: TextStyle(color: Colors.grey[400]));
+                   }
+
+                   return ListView.separated(
+                     shrinkWrap: true,
+                     physics: const NeverScrollableScrollPhysics(),
+                     itemCount: allAttachments.length,
+                     separatorBuilder: (_, __) => const SizedBox(height: 12),
+                     itemBuilder: (context, index) {
+                       return AttachmentCard(attachment: allAttachments[index], index: index);
+                     },
+                   );
+                }
+              ),
               
               const SizedBox(height: 40),
                const SizedBox(height: 24),

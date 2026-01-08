@@ -33,24 +33,66 @@ class AdminClarificationStatusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    request.value = Get.arguments ?? {};
-    state.value = _determineState(request['status']);
-    
-    // DEBUG LOG
-    print("DEBUG: AdminClarificationStatusController initialized");
-    print("DEBUG: Request ID: ${request['id']}");
-    print("DEBUG: Request Data: $request");
-    
     _adminRepository = AdminRepository(Get.find<NetworkService>());
+    
+    request.value = Get.arguments ?? {};
+    // Initial state determination from arguments
+    _updateStateFromRequest(request);
+    
+    // Fetch fresh data
+    refreshRequest();
   }
 
-  ClarificationState _determineState(String? status) {
+  Future<void> refreshRequest() async {
+    try {
+      final id = request['id'];
+      if (id == null) return;
+      
+      // Fetch all clarification requests to find the updated one
+      // We check both 'clarification_required' and potential 'clarification_responded' if it exists as a status
+      // For now, assuming they live in 'clarification_required' or generic list. 
+      // Safest is fetching 'clarification_required' as that's where they usually sit.
+      final results = await repo.getOrgExpenses(status: 'clarification_required');
+      
+      final freshItem = results.firstWhere(
+        (item) => item['id'].toString() == id.toString(),
+        orElse: () => {},
+      );
+      
+      if (freshItem.isNotEmpty) {
+        request.value = freshItem;
+        _updateStateFromRequest(freshItem);
+      }
+    } catch (e) {
+      print("Error refreshing request: $e");
+    }
+  }
+
+  void _updateStateFromRequest(Map<String, dynamic> item) {
+    state.value = _determineState(item);
+  }
+
+  ClarificationState _determineState(Map<String, dynamic> item) {
+    // 1. Check clarifications array for actual content
+    final clarifications = item['clarifications'] as List? ?? [];
+    if (clarifications.isNotEmpty) {
+      final lastItem = clarifications.last;
+      final response = lastItem['response']?.toString() ?? '';
+      
+      // If there is a response, it's Responded (User replied)
+      if (response.isNotEmpty) {
+        return ClarificationState.responded;
+      }
+    }
+    
+    // 2. Fallback to status string if needed (though array check is stronger)
+    final status = item['status']?.toString();
     if (status == 'clarification_responded') {
       return ClarificationState.responded;
     }
-    return ClarificationState.pending;
+    
+    return ClarificationState.pending; // Default: Waiting for response
   }
-
   
   @override
   void onClose() {

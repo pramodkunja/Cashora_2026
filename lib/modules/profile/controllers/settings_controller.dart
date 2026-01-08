@@ -5,6 +5,7 @@ import '../../../../core/services/storage_service.dart';
 import '../../../../core/services/biometric_service.dart';
 import '../../../../data/repositories/auth_repository.dart';
 import 'package:dio/dio.dart';
+import '../../../../utils/widgets/app_loader.dart';
 
 class SettingsController extends GetxController {
   final StorageService _storage = Get.find<StorageService>();
@@ -220,7 +221,7 @@ class SettingsController extends GetxController {
 
     // Show loading
     Get.dialog(
-      const Center(child: CircularProgressIndicator()),
+      const Center(child: AppLoader()),
       barrierDismissible: false,
     );
 

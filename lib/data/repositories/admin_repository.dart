@@ -26,6 +26,10 @@ class AdminRepository {
       rethrow; // Or return empty list based on error handling policy
     }
   }
+
+  Future<List<Map<String, dynamic>>> getRejectedExpenses() async {
+    return await getOrgExpenses(status: 'rejected');
+  }
   Future<void> submitDecision(dynamic id, String action, {String? reason}) async {
     try {
       final expenseId = id is int ? id : int.parse(id.toString());

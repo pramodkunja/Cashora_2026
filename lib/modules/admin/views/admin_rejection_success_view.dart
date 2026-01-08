@@ -5,6 +5,7 @@ import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/widgets/buttons/primary_button.dart';
 import '../../../../routes/app_routes.dart';
+import '../controllers/admin_dashboard_controller.dart';
 
 class AdminRejectionSuccessView extends StatelessWidget {
   const AdminRejectionSuccessView({Key? key}) : super(key: key);
@@ -18,7 +19,12 @@ class AdminRejectionSuccessView extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: AppColors.textDark),
-          onPressed: () => Get.offAllNamed(AppRoutes.ADMIN_APPROVALS),
+          onPressed: () {
+            Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
+            Future.delayed(const Duration(milliseconds: 100), () {
+               try { Get.find<AdminDashboardController>().changeTab(1); } catch (_) {}
+            });
+          },
         ),
         centerTitle: true,
         title: Text(AppText.confirmation, style: AppTextStyles.h3),
@@ -62,7 +68,12 @@ class AdminRejectionSuccessView extends StatelessWidget {
             const Spacer(),
             PrimaryButton(
               text: AppText.backToApprovalsList,
-              onPressed: () => Get.offAllNamed(AppRoutes.ADMIN_APPROVALS),
+              onPressed: () {
+                Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
+                Future.delayed(const Duration(milliseconds: 100), () {
+                   try { Get.find<AdminDashboardController>().changeTab(1); } catch (_) {}
+                });
+              },
               width: double.infinity,
             ),
             const SizedBox(height: 32),

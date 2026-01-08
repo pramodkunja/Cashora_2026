@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../utils/widgets/app_loader.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
@@ -13,7 +14,9 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
         // backgroundColor: AppColors.backgroundLight,
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -34,7 +37,6 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
                 borderRadius: BorderRadius.circular(20.r), // Pill shape for tab bar container
               ),
               child: TabBar(
-                controller: controller.tabController,
                 padding: EdgeInsets.zero,
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
@@ -63,17 +65,28 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
             ),
           ),
         ),
-        body: Obx(() => TabBarView(
-          controller: controller.tabController,
+        body: TabBarView(
           children: [
-            _buildRequestList(controller.pendingRequests),
-            _buildRequestList(controller.approvedRequests),
-            _buildRequestList(controller.unpaidRequests),
-            _buildRequestList(controller.clarificationRequests),
+            Obx(() => controller.isLoading.value 
+              ? const Center(child: AppLoader()) 
+              : _buildRequestList(controller.pendingRequests)
+            ),
+            Obx(() => controller.isLoading.value 
+              ? const Center(child: AppLoader()) 
+              : _buildRequestList(controller.approvedRequests)
+            ),
+            Obx(() => controller.isLoading.value 
+              ? const Center(child: AppLoader()) 
+              : _buildRequestList(controller.unpaidRequests)
+            ),
+            Obx(() => controller.isLoading.value 
+              ? const Center(child: AppLoader()) 
+              : _buildRequestList(controller.clarificationRequests)
+            ),
           ],
-        )),
+        ),
 
-    );
+    ));
   }
 
   Widget _buildRequestList(List<Map<String, dynamic>> items) {
@@ -84,6 +97,8 @@ class AdminApprovalsView extends GetView<AdminApprovalsController> {
     }
     return ListView.separated(
       padding: EdgeInsets.all(24.r),
+      shrinkWrap: true,
+      physics: const AlwaysScrollableScrollPhysics(), // Ensures pull-to-refresh works if added later
       itemCount: items.length,
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {

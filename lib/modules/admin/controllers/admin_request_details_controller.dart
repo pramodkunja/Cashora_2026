@@ -5,6 +5,7 @@ import '../../../../routes/app_routes.dart';
 import '../../../../data/repositories/admin_repository.dart';
 import '../../../../core/services/network_service.dart';
 import '../views/widgets/admin_rejection_dialog.dart';
+import '../../../../utils/widgets/app_loader.dart';
 
 class AdminRequestDetailsController extends GetxController {
   late final AdminRepository _adminRepository;
@@ -132,14 +133,7 @@ class AdminRequestDetailsController extends GetxController {
                     fit: BoxFit.contain,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded / 
-                                loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
+                      return const Center(child: AppLoader());
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return Center(

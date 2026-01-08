@@ -207,52 +207,81 @@ class RequestDetailsView extends GetView<CreateRequestController> {
               ),
               SizedBox(height: 24.h),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: SecondaryButton(
-                      text: AppText.takePhoto,
-                      onPressed: () => controller.pickImage(ImageSource.camera),
-                      icon: Icon(Icons.camera_alt, color: AppColors.primaryBlue, size: 20.sp),
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
-                  Expanded(
-                    child: SecondaryButton(
-                      text: AppText.uploadBill,
-                      onPressed: () => controller.pickImage(ImageSource.gallery),
-                      icon: Icon(Icons.upload_file, color: AppColors.primaryBlue, size: 20.sp),
-                    ),
-                  ),
-                ],
-              ),
+              // Attachments Buttons
+              Obx(() {
+                 if (controller.requestType.value.isEmpty) {
+                   return Center(child: Text("Please select a request type to upload attachments.", style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate)));
+                 }
+
+                 return LayoutBuilder(
+                   builder: (context, constraints) {
+                     // Calculate responsive width
+                     // If too small (e.g. < 300), use full width. Else 2 columns.
+                     final isSmall = constraints.maxWidth < 300; // Arbitrary breakpoint
+                     final itemWidth = isSmall 
+                         ? constraints.maxWidth 
+                         : (constraints.maxWidth - 12.w) / 2;
+
+                     return Wrap(
+                       spacing: 12.w,
+                       runSpacing: 12.h,
+                       children: [
+                          // 1. Upload QR (Single, disappears)
+                          if (controller.qrFile.value == null)
+                            SizedBox(
+                              width: itemWidth,
+                              child: SecondaryButton(
+                                text: "Upload QR", 
+                                onPressed: () => _showAttachmentOptions(context, isQr: true),
+                                icon: Icon(Icons.qr_code_scanner, color: AppColors.primaryBlue, size: 20.sp),
+                              ),
+                            ),
+                          
+                          // 2. Upload Receipt (Single, Post-approved only, disappears)
+                          if (controller.requestType.value == 'Post-approved' && controller.receiptFile.value == null)
+                            SizedBox(
+                               width: itemWidth,
+                               child: SecondaryButton(
+                                text: "Upload Receipt",
+                                onPressed: () => _showAttachmentOptions(context, isQr: false, isReceipt: true),
+                                icon: Icon(Icons.receipt, color: AppColors.primaryBlue, size: 20.sp),
+                              ),
+                            ),
+
+                          // 3. Upload Bill (Multiple, Always visible)
+                           SizedBox(
+                             width: itemWidth,
+                             child: SecondaryButton(
+                              text: AppText.uploadBill,
+                              onPressed: () => _showAttachmentOptions(context, isQr: false),
+                              icon: Icon(Icons.upload_file, color: AppColors.primaryBlue, size: 20.sp),
+                            ),
+                          ),
+                       ],
+                     );
+                   }
+                 );
+               }),
               SizedBox(height: 16.h),
-              Obx(() => controller.attachedFiles.isNotEmpty 
-                ? Column(
-                    children: controller.attachedFiles.asMap().entries.map((entry) {
-                      int idx = entry.key;
-                      XFile file = entry.value;
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 8.h),
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                        decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12.r), border: Border.all(color: Theme.of(context).dividerColor)),
-                        child: Row(
-                          children: [
-                            Icon(Icons.description, color: const Color(0xFF64748B), size: 20.sp),
-                            SizedBox(width: 8.w),
-                            Expanded(child: Text(file.name, style: TextStyle(fontSize: 13.sp, color: AppTextStyles.bodyMedium.color), overflow: TextOverflow.ellipsis)),
-                            IconButton(
-                              icon: Icon(Icons.close, color: Colors.red, size: 20.sp),
-                              onPressed: () => controller.removeFile(idx),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            )
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  )
-                : const SizedBox.shrink()),
+              
+              // Attached Files List
+              Obx(() => Column(
+                children: [
+                  // QR File
+                  if (controller.qrFile.value != null)
+                   _buildFileItem(context, "QR Code Uploaded", Icons.qr_code, AppColors.successGreen, () => controller.removeQr()),
+
+                  // Receipt File (Post-approved)
+                  if (controller.requestType.value == 'Post-approved' && controller.receiptFile.value != null)
+                   _buildFileItem(context, "Receipt Uploaded", Icons.receipt, AppColors.primaryBlue, () => controller.removeReceipt()),
+
+                  // Bill Files (Pre-approved)
+                  if (controller.requestType.value == 'Pre-approved')
+                    ...controller.attachedFiles.asMap().entries.map((entry) {
+                        return _buildFileItem(context, entry.value.name, Icons.description, const Color(0xFF64748B), () => controller.removeFile(entry.key));
+                      }).toList(),
+                ],
+              )),
 
               SizedBox(
                 width: double.infinity,
@@ -271,5 +300,92 @@ class RequestDetailsView extends GetView<CreateRequestController> {
         ),
       ),
     );
+  }
+  void _showAttachmentOptions(BuildContext context, {required bool isQr, bool isReceipt = false}) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24.r),
+            topRight: Radius.circular(24.r),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Select Option",
+              style: AppTextStyles.h3.copyWith(fontSize: 18.sp),
+            ),
+            SizedBox(height: 20.h),
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBlue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.camera_alt, color: AppColors.primaryBlue, size: 24.sp),
+              ),
+              title: Text("Capture Image", style: AppTextStyles.bodyLarge),
+              onTap: () {
+                Get.back();
+                controller.pickImage(ImageSource.camera, isQr: isQr, isReceipt: isReceipt);
+              },
+            ),
+            SizedBox(height: 8.h),
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBlue.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.photo_library, color: AppColors.primaryBlue, size: 24.sp),
+              ),
+              title: Text("Upload from Gallery", style: AppTextStyles.bodyLarge),
+              onTap: () {
+                Get.back();
+                controller.pickImage(ImageSource.gallery, isQr: isQr, isReceipt: isReceipt);
+              },
+            ),
+            SizedBox(height: 20.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFileItem(BuildContext context, String name, IconData icon, Color iconColor, VoidCallback onRemove) {
+     return Container(
+        margin: EdgeInsets.only(bottom: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: iconColor.withOpacity(0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 20.sp),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Text(
+                name, 
+                style: TextStyle(fontSize: 13.sp, color: AppTextStyles.bodyMedium.color, fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.close, color: Colors.red, size: 20.sp),
+              onPressed: onRemove,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            )
+          ],
+        ),
+      );
   }
 }

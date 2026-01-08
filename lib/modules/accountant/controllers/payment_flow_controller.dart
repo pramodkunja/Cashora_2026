@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../data/repositories/payment_repository.dart';
+import '../../../../core/services/network_service.dart';
+import '../../../../utils/widgets/app_loader.dart';
 
 class PaymentFlowController extends GetxController {
 
@@ -19,20 +21,30 @@ class PaymentFlowController extends GetxController {
   void onInit() {
     super.onInit();
     // Lazy find or put if not already there (assuming main.dart registers it, otherwise we can put it here for safety, but better in main)
-    try {
-      _paymentRepository = Get.find<PaymentRepository>();
-    } catch (e) {
-      // Fallback if not registered in main yet (during dev/test)
-      // In prod, this should be in binding/main.
-      // We will assume it's registered or let it throw to find the bug.
-      // But for robustness in this "Audit Fix" session, let's try to find it.
-      _paymentRepository = Get.find<PaymentRepository>();
+    // Lazy find or put if not already there
+    if (!Get.isRegistered<PaymentRepository>()) {
+      Get.put(PaymentRepository(Get.find<NetworkService>())); // Ensure NetworkService is available (usually is)
     }
+    _paymentRepository = Get.find<PaymentRepository>();
   
     // Check arguments if any
-    if (Get.arguments != null) {
-      if (Get.arguments is Map) {
-        shouldSimulateQrDetection = Get.arguments['simulateQr'] ?? true;
+    if (Get.arguments != null && Get.arguments is Map) {
+      if (Get.arguments['simulateQr'] != null) {
+        shouldSimulateQrDetection = Get.arguments['simulateQr'];
+      }
+      
+      // Parse passed Request Data
+      if (Get.arguments['request'] != null) {
+        final req = Get.arguments['request'];
+        try {
+          final amt = double.tryParse(req['amount']?.toString() ?? '0') ?? 0.0;
+          requestedAmount.value = amt;
+          finalAmount.value = amt;
+          // Store Full Request Data if needed for UI or Backend
+          // currentRequest.value = req;
+        } catch (e) {
+          print("Error parsing request args: $e");
+        }
       }
     }
   }
@@ -173,7 +185,7 @@ class PaymentFlowController extends GetxController {
             child: const Text('Cancel'),
           ),
           Obx(() => isLoading.value 
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: AppLoader())
             : ElevatedButton(
               onPressed: () async {
                 if (txnController.text.isEmpty) {

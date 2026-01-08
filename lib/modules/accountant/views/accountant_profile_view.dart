@@ -29,7 +29,7 @@ class AccountantProfileView extends GetView<AccountantProfileController> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
+        child: Obx(() => Column(
           children: [
             // Profile Image
             Container(
@@ -45,9 +45,9 @@ class AccountantProfileView extends GetView<AccountantProfileController> {
               ),
             ),
             const SizedBox(height: 16),
-            Obx(() => Text(controller.rxName.value, style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.w600, fontSize: 20))),
+            Text(controller.rxName.value, style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.w600, fontSize: 20)),
             const SizedBox(height: 4),
-            Obx(() => Text(controller.rxEmail.value, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate))),
+            Text(controller.rxEmail.value, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
             
             const SizedBox(height: 32),
 
@@ -134,7 +134,7 @@ class AccountantProfileView extends GetView<AccountantProfileController> {
              ),
              const SizedBox(height: 20),
           ],
-        ),
+        )),
       ),
     );
   }

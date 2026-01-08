@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
+import '../../../../utils/widgets/app_loader.dart';
 import '../controllers/reset_password_controller.dart';
 
 class ResetPasswordView extends GetView<ResetPasswordController> {
@@ -116,11 +117,7 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                           elevation: 0,
                         ),
                         child: controller.isLoading
-                            ? SizedBox(
-                                height: 24.h,
-                                width: 24.w,
-                                child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                              )
+                            ? const AppLoader(size: 30)
                             : Text(
                                 'Update Password', 
                                 style: TextStyle(

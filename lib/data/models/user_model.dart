@@ -24,11 +24,19 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     final org = json['organization'] is Map ? json['organization'] : <String, dynamic>{};
     
-    String fullName = json['full_name']?.toString() ?? json['name']?.toString() ?? 'Unknown';
     String fName = json['first_name']?.toString() ?? '';
     String lName = json['last_name']?.toString() ?? '';
+    String fullName = json['full_name']?.toString() ?? json['name']?.toString() ?? '';
 
-    // Fallback if first/last are empty but full name exists
+    // If API doesn't send "name" or "full_name", but sends first/last, construct it.
+    if ((fullName.isEmpty || fullName == 'Unknown') && (fName.isNotEmpty || lName.isNotEmpty)) {
+      fullName = '$fName $lName'.trim();
+    } 
+    
+    // If still empty, default to Unknown
+    if (fullName.isEmpty) fullName = 'Unknown';
+
+    // Fallback: If fName/lName empty but fullName exists (e.g. legacy/other payload), split it
     if (fName.isEmpty && fullName != 'Unknown') {
       final parts = fullName.split(' ');
       fName = parts.first;

@@ -4,7 +4,9 @@ import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/widgets/buttons/primary_button.dart';
+import '../../../../routes/app_routes.dart';
 import '../controllers/admin_approvals_controller.dart'; // Reuse for navigation or separate
+import '../controllers/admin_dashboard_controller.dart';
 
 class AdminSuccessView extends StatelessWidget {
   const AdminSuccessView({Key? key}) : super(key: key);
@@ -47,10 +49,14 @@ class AdminSuccessView extends StatelessWidget {
             PrimaryButton(
               text: AppText.backToApprovals,
               onPressed: () {
-                 // Logic to go back to approvals list, ideally clear details from stack
-                 // find AdminApprovalsController if exists or just back
-                 Get.back(); // Back from success
-                 Get.back(); // Back from details
+                 Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
+                 // Delay to ensure controller is ready or reuse existing if not disposed
+                 Future.delayed(const Duration(milliseconds: 100), () {
+                   try {
+                     final ctrl = Get.find<AdminDashboardController>();
+                     ctrl.changeTab(1);
+                   } catch (_) {}
+                 });
               },
             ),
             const SizedBox(height: 24),

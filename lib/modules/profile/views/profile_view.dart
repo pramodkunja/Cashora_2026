@@ -10,6 +10,7 @@ import '../../../../utils/widgets/buttons/primary_button.dart';
 import '../../../../routes/app_routes.dart';
 import '../../admin/views/widgets/admin_bottom_bar.dart';
 import '../../requestor/views/widgets/requestor_bottom_bar.dart';
+import '../../../../utils/widgets/app_loader.dart';
 import '../../../../core/services/auth_service.dart';
 // Needs custom layout for list items as per image (Icon box left, Text, Arrow)
 
@@ -39,8 +40,12 @@ class ProfileView extends GetView<ProfileController> {
         ],
       ),
       bottomNavigationBar: isTab ? null : _buildBottomBar(), 
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: AppLoader());
+        }
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         child: Column(
           children: [
             // Profile Image
@@ -209,7 +214,8 @@ class ProfileView extends GetView<ProfileController> {
              SizedBox(height: 20.h),
           ],
         ),
-      ),
+      );
+    }),
     );
   }
 

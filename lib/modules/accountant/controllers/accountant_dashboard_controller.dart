@@ -6,6 +6,7 @@ import '../../../../utils/app_colors.dart';
 import '../views/widgets/update_balances_dialog.dart';
 import '../../../../core/services/auth_service.dart';
 import '../controllers/accountant_profile_controller.dart';
+import '../controllers/accountant_payments_controller.dart';
 
 class AccountantDashboardController extends GetxController {
   
@@ -100,11 +101,19 @@ class AccountantDashboardController extends GetxController {
 
   void navigateToPayments() {
     changeTabIndex(1);
+    // Trigger refresh for Payments
+    if (Get.isRegistered<AccountantPaymentsController>()) {
+      Get.find<AccountantPaymentsController>().fetchPendingPayments();
+    }
   }
 
   void onBottomNavTap(int index) {
     rxIndex.value = index;
-    if (index == 3) {
+    if (index == 1) { // Payments Tab
+      if (Get.isRegistered<AccountantPaymentsController>()) {
+        Get.find<AccountantPaymentsController>().fetchPendingPayments();
+      }
+    } else if (index == 3) { // Profile Tab
       if (Get.isRegistered<AccountantProfileController>()) {
         Get.find<AccountantProfileController>().fetchProfile();
       }

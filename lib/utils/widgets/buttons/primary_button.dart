@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../app_colors.dart';
 import '../../app_text_styles.dart';
+import '../app_loader.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -40,10 +41,7 @@ class PrimaryButton extends StatelessWidget {
             ? SizedBox(
                 height: 20.h,
                 width: 20.h,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
+                child: const AppLoader(size: 24),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,

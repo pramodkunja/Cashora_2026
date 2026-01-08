@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../utils/widgets/app_loader.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
@@ -71,7 +72,21 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
               const SizedBox(height: 24),
               
               Expanded(
-                child: Obx(() => ListView.separated(
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: AppLoader());
+                  }
+                  
+                  if (controller.filteredRequests.isEmpty) {
+                    return Center(
+                      child: Text(
+                        AppText.noRequests,
+                         style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
+                      ),
+                    );
+                  }
+
+                  return ListView.separated(
                   itemCount: controller.filteredRequests.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
@@ -81,7 +96,8 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
                       child: _buildHistoryCard(context, item),
                     );
                   },
-                )),
+                );
+              }),
               ),
             ],
           ),
@@ -120,24 +136,52 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
     Color statusColor;
     Color statusBg;
     IconData statusIcon;
-    String statusText = item['status'];
+    String status = item['status']?.toString() ?? 'unknown';
+    String statusText = status;
 
-    if (statusText == AppText.statusApproved) {
+    if (status == 'approved' || status == 'auto_approved' || status == AppText.statusApproved) {
       statusColor = const Color(0xFF10B981); // Green
       statusBg = const Color(0xFFD1FAE5);
       statusIcon = Icons.check_circle_rounded;
       statusText = AppText.approvedSC;
-    } else if (statusText == AppText.statusRejected) {
+    } else if (status == 'rejected' || status == AppText.statusRejected) {
       statusColor = const Color(0xFFEF4444); // Red
       statusBg = const Color(0xFFFEE2E2);
-      statusIcon = Icons.cancel; // Using cancel icon for X
-      statusText = AppText.statusRejected.toUpperCase(); // Design says REJECTED
+      statusIcon = Icons.cancel; 
+      statusText = AppText.statusRejected.toUpperCase();
     } else { // Clarification
       statusColor = const Color(0xFFF59E0B); // Amber
       statusBg = const Color(0xFFFEF3C7); 
       statusIcon = Icons.help_rounded;
       statusText = AppText.clarification.toUpperCase();
     }
+
+    // Data Extraction Helpers
+    String requestId = item['request_id']?.toString() ?? item['id']?.toString() ?? 'N/A';
+    String actionDate = _formatDate(item['updated_at'] ?? item['created_at']);
+    String amount = item['amount']?.toString() ?? '0.00';
+    
+    String userName = 'Unknown';
+    String userInitials = '??';
+    
+    if (item['requestor'] != null && item['requestor'] is Map) {
+      final r = item['requestor'];
+      userName = "${r['first_name'] ?? ''} ${r['last_name'] ?? ''}".trim();
+      if (userName.isEmpty) userName = r['email']?.toString() ?? 'Unknown';
+    } else if (item['user'] != null) {
+       userName = item['user'].toString();
+    }
+    
+    if (userName.isNotEmpty) {
+      final parts = userName.trim().split(' ');
+      if (parts.length > 1) {
+        userInitials = "${parts[0][0]}${parts[1][0]}".toUpperCase();
+      } else {
+        userInitials = parts[0][0].toUpperCase();
+      }
+    }
+    
+    String title = item['purpose']?.toString() ?? item['title']?.toString() ?? 'Expense Request';
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -161,13 +205,13 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                   Text(
                     'REQUEST ID',
                     style: AppTextStyles.bodyMedium.copyWith(fontSize: 10,  fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${item['id']}',
+                    requestId,
                     style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppTextStyles.h3.color),
                   ),
                 ],
@@ -181,7 +225,7 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${item['actionDate']}',
+                    actionDate,
                      style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppTextStyles.h3.color),
                   ),
                 ],
@@ -195,11 +239,11 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: _getAvatarColor(item['initials']),
+                backgroundColor: _getAvatarColor(userInitials),
                 radius: 20,
                 child: Text(
-                  item['initials'], 
-                  style: AppTextStyles.bodyMedium.copyWith(color: _getAvatarTextColor(item['initials']), fontWeight: FontWeight.bold),
+                  userInitials, 
+                  style: AppTextStyles.bodyMedium.copyWith(color: _getAvatarTextColor(userInitials), fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(width: 12),
@@ -207,13 +251,13 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item['user'], style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                    Text(item['title'], style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13)),
+                    Text(userName, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                    Text(title, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
                   ],
                 ),
               ),
               Text(
-                '₹${item['amount']}',
+                '₹$amount',
                 style: AppTextStyles.h3.copyWith(fontSize: 18),
               ),
             ],
@@ -271,6 +315,17 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
         ],
       ),
     );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return 'N/A';
+    try {
+      final date = DateTime.parse(dateStr);
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return '${months[date.month - 1]} ${date.day}, ${date.year}';
+    } catch (_) {
+      return dateStr.split('T').first;
+    }
   }
   
   Color _getAvatarColor(String initials) {

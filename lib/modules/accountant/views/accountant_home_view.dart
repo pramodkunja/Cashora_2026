@@ -308,7 +308,7 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () =>
-                          controller.changeTabIndex(1), // Use tab switch
+                          controller.navigateToPayments(), // Use navigation method to trigger fetch
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,

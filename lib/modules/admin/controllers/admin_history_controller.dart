@@ -1,16 +1,21 @@
 import 'package:get/get.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../../data/repositories/admin_repository.dart';
+import '../../../../core/services/network_service.dart';
 
 class AdminHistoryController extends GetxController {
+  late final AdminRepository _adminRepository;
   final historyRequests = <Map<String, dynamic>>[].obs;
   final RxString selectedFilter = 'All'.obs;
   final RxMap<String, dynamic> _selectedRequest = <String, dynamic>{}.obs;
+  final isLoading = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadHistoryData();
+    _adminRepository = AdminRepository(Get.find<NetworkService>());
+    fetchHistory();
   }
 
   Map<String, dynamic> get selectedRequest => _selectedRequest;
@@ -20,10 +25,9 @@ class AdminHistoryController extends GetxController {
       return historyRequests;
     }
     return historyRequests.where((item) {
-      if (selectedFilter.value == 'Approved') return item['status'] == AppText.statusApproved;
-      if (selectedFilter.value == 'Rejected') return item['status'] == AppText.statusRejected;
-      if (selectedFilter.value == 'Clarified') return item['status'] == AppText.clarification;
-      return true;
+      if (selectedFilter.value == 'Approved') return item['status'] == 'approved' || item['status'] == 'auto_approved';
+      if (selectedFilter.value == 'Rejected') return item['status'] == 'rejected';
+      return true; // Should not happen given UI only has Approved/Rejected usually for history
     }).toList();
   }
 
@@ -33,55 +37,45 @@ class AdminHistoryController extends GetxController {
 
   void viewDetails(Map<String, dynamic> item) {
     _selectedRequest.value = item;
-    if (item['status'] == AppText.clarification) {
-      Get.toNamed(AppRoutes.ADMIN_CLARIFICATION_STATUS, arguments: item);
-    } else {
-      Get.toNamed(AppRoutes.ADMIN_REQUEST_DETAILS, arguments: item);
-    }
+    Get.toNamed(AppRoutes.ADMIN_REQUEST_DETAILS, arguments: item);
   }
 
-  void _loadHistoryData() {
-    historyRequests.value = [
-      {
-        'id': 'REQ-2023-892',
-        'title': 'Marketing Supplies',
-        'user': 'Sarah Jennings',
-        'initials': 'SJ',
-        'date': 'Oct 24, 2023',
-        'amount': '125.00',
-        'status': AppText.statusApproved,
-        'actionDate': 'Oct 24, 2023',
-      },
-      {
-        'id': 'REQ-2023-891',
-        'title': 'Client Dinner',
-        'user': 'Mike Kowalski',
-        'initials': 'MK',
-        'date': 'Oct 23, 2023',
-        'amount': '450.00',
-        'status': AppText.statusRejected,
-        'actionDate': 'Oct 23, 2023',
-      },
-      {
-        'id': 'REQ-2023-889',
-        'title': 'Software License',
-        'user': 'Amy Lee',
-        'initials': 'AL',
-        'date': 'Oct 20, 2023',
-        'amount': '89.99',
-        'status': AppText.clarification,
-        'actionDate': 'Oct 20, 2023',
-      },
-      {
-        'id': 'REQ-2023-885',
-        'title': 'Travel Expense',
-        'user': 'David Jones',
-        'initials': 'DJ',
-        'date': 'Oct 18, 2023',
-        'amount': '320.50',
-        'status': AppText.statusApproved,
-        'actionDate': 'Oct 18, 2023',
-      },
-    ];
+  Future<void> fetchHistory() async {
+    try {
+      isLoading.value = true;
+      final results = await Future.wait([
+        _adminRepository.getOrgExpenses(status: 'approved'),
+        _adminRepository.getRejectedExpenses(), // Use the new method
+        _adminRepository.getOrgExpenses(status: 'auto_approved'),
+      ]);
+
+      final allHistory = <Map<String, dynamic>>[];
+      allHistory.addAll(results[0]); // Approved
+      allHistory.addAll(results[1]); // Rejected
+      allHistory.addAll(results[2]); // Auto Approved
+
+      // Sort by updated_at or created_at desc
+      allHistory.sort((a, b) {
+        final dateStrA = a['updated_at'] ?? a['created_at'] ?? '';
+        final dateStrB = b['updated_at'] ?? b['created_at'] ?? '';
+        
+        if (dateStrA.toString().isEmpty) return 1; // Push nulls to bottom
+        if (dateStrB.toString().isEmpty) return -1;
+        
+        try {
+          final dateA = DateTime.parse(dateStrA);
+          final dateB = DateTime.parse(dateStrB);
+          return dateB.compareTo(dateA);
+        } catch (_) {
+          return 0;
+        }
+      });
+
+      historyRequests.assignAll(allHistory);
+    } catch (e) {
+      print("Error fetching history: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

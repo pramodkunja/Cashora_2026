@@ -4,10 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added
 import '../../../../routes/app_routes.dart';
 import '../controllers/my_requests_controller.dart';
 import '../../../../core/widgets/common_search_bar.dart';
-import 'widgets/requestor_bottom_bar.dart'; 
-import '../../../../utils/app_text.dart'; 
+import 'widgets/requestor_bottom_bar.dart';
+import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
-import '../../../../utils/app_colors.dart'; 
+import '../../../../utils/app_colors.dart';
+import '../../../utils/widgets/app_loader.dart';
 
 class MyRequestsView extends GetView<MyRequestsController> {
   const MyRequestsView({Key? key}) : super(key: key);
@@ -82,7 +83,7 @@ class MyRequestsView extends GetView<MyRequestsController> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: AppLoader());
                 }
                 
                 if (controller.filteredRequests.isEmpty) {

@@ -36,7 +36,7 @@ class AttachmentCard extends StatelessWidget {
         }
       } else if (attachment is String) {
         url = attachment;
-        name = url.split('/').last;
+        name = url?.split('/').last ?? name;
       }
 
       return GestureDetector(

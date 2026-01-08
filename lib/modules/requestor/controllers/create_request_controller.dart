@@ -22,12 +22,18 @@ class CreateRequestController extends GetxController {
   final category = 'Deemed'.obs; // Auto-calculated status (Deemed/Approval Required)
   final purpose = ''.obs;
   final description = ''.obs;
-  final attachedFiles = <XFile>[].obs;
+  final attachedFiles = <XFile>[].obs; // Bills
+  final qrFile = Rxn<XFile>(); // Single QR
+  final receiptFile = Rxn<XFile>(); // Single Receipt (for Post-approved)
   final isLoading = false.obs;
 
   // New Expense Category Logic
   final selectedExpenseCategory = Rxn<Map<String, dynamic>>();
   final expenseCategories = <Map<String, dynamic>>[].obs;
+
+// ... (existing helper methods fetchCategories, fetchLimit, onInit) ...
+
+
 
   Future<void> fetchCategories() async {
     try {
@@ -117,37 +123,33 @@ class CreateRequestController extends GetxController {
 
 // ... class definition ...
 
-  Future<void> pickImage(ImageSource source) async {
-    Get.snackbar('Debug', 'Opening picker...', duration: const Duration(seconds: 1), snackPosition: SnackPosition.BOTTOM);
-    print("Attempting to pick image from $source");
+  Future<void> pickImage(ImageSource source, {bool isQr = false, bool isReceipt = false}) async {
+    // Get.snackbar('Debug', 'Opening picker...', duration: const Duration(seconds: 1), snackPosition: SnackPosition.BOTTOM);
     
-    // 1. Web: Must use FilePicker and handle bytes (path is null)
+    XFile? pickedFile;
+
+    // 1. Web
     if (kIsWeb) {
       try {
         FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.image,
           allowMultiple: false,
-          withData: true, // Important for Web
+          withData: true,
         );
 
         if (result != null && result.files.single.bytes != null) {
-          final file = XFile.fromData(
+          pickedFile = XFile.fromData(
             result.files.single.bytes!,
             name: result.files.single.name,
           );
-          attachedFiles.add(file);
-        } else {
-             print("User canceled or no data on web");
         }
       } catch (e) {
         Get.snackbar('Error', 'Failed to pick image on Web: $e', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red[100]);
+        return;
       }
-      return;
-    }
-
-    // 2. Desktop: Use FilePicker (path is valid)
-    // Safe to use Platform check here because we already checked kIsWeb
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    } 
+    // 2. Desktop
+    else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       try {
         FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.image,
@@ -155,55 +157,49 @@ class CreateRequestController extends GetxController {
         );
 
         if (result != null && result.files.single.path != null) {
-          final file = XFile(result.files.single.path!);
-          attachedFiles.add(file);
+          pickedFile = XFile(result.files.single.path!);
         }
       } catch (e) {
         Get.snackbar('Error', 'Failed to pick image on Desktop: $e', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red[100]);
+        return;
       }
-      return;
-    }
-
-    // 3. Mobile: Use ImagePicker with permissions
-    PermissionStatus status;
-    
-    if (source == ImageSource.camera) {
-      status = await Permission.camera.request();
-    } else {
-      // Android 13+ logic
-      if (await Permission.photos.status.isGranted || await Permission.mediaLibrary.status.isGranted) {
-           status = PermissionStatus.granted;
-      } else if (await Permission.storage.isGranted) {
-           status = PermissionStatus.granted;
+    } 
+    // 3. Mobile
+    else {
+      // Logic for permissions...
+      PermissionStatus status;
+      if (source == ImageSource.camera) {
+        status = await Permission.camera.request();
       } else {
-           Map<Permission, PermissionStatus> statuses = await [
-              Permission.storage,
-              Permission.photos,
-              Permission.mediaLibrary
-           ].request();
-           
-           if (statuses.values.any((s) => s.isGranted)) {
-             status = PermissionStatus.granted;
-           } else {
-             status = PermissionStatus.denied;
-           }
-      }
-    }
-
-    if (status.isGranted || status.isLimited) {
-      try {
-        final XFile? image = await _picker.pickImage(source: source);
-        if (image != null) {
-          attachedFiles.add(image);
+        if (await Permission.photos.status.isGranted || await Permission.mediaLibrary.status.isGranted) {
+           status = PermissionStatus.granted;
+        } else if (await Permission.storage.isGranted) {
+           status = PermissionStatus.granted;
+        } else {
+             Map<Permission, PermissionStatus> statuses = await [
+                Permission.storage,
+                Permission.photos,
+                Permission.mediaLibrary
+             ].request();
+             if (statuses.values.any((s) => s.isGranted)) {
+               status = PermissionStatus.granted;
+             } else {
+               status = PermissionStatus.denied;
+             }
         }
-      } catch (e) {
-        Get.snackbar('Error', 'Failed to pick image: $e', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red[100]);
       }
-    } else if (status.isPermanentlyDenied) {
-      Get.dialog(
-        AlertDialog(
+
+      if (status.isGranted || status.isLimited) {
+        try {
+          pickedFile = await _picker.pickImage(source: source);
+        } catch (e) {
+          Get.snackbar('Error', 'Failed to pick image: $e', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red[100]);
+          return;
+        }
+      } else if (status.isPermanentlyDenied) {
+        Get.dialog(AlertDialog(
           title: const Text('Permission Required'),
-          content: const Text('Please enable camera/gallery permissions in settings to use this feature.'),
+          content: const Text('Please enable permissions in settings.'),
           actions: [
             TextButton(child: const Text('Cancel'), onPressed: () => Get.back()),
             TextButton(child: const Text('Settings'), onPressed: () {
@@ -211,10 +207,23 @@ class CreateRequestController extends GetxController {
                openAppSettings();
             }),
           ],
-        )
-      );
-    } else {
-      Get.snackbar('Permission Denied', 'We need permission to access your camera/gallery.', snackPosition: SnackPosition.BOTTOM);
+        ));
+        return;
+      } else {
+        Get.snackbar('Permission Denied', 'Permission required.', snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+    }
+
+    // Process picked file
+    if (pickedFile != null) {
+      if (isQr) {
+        qrFile.value = pickedFile;
+      } else if (isReceipt) {
+        receiptFile.value = pickedFile;
+      } else {
+        attachedFiles.add(pickedFile);
+      }
     }
   }
 
@@ -224,7 +233,27 @@ class CreateRequestController extends GetxController {
     }
   }
 
+  void removeQr() {
+    qrFile.value = null;
+  }
+
+  void removeReceipt() {
+    receiptFile.value = null;
+  }
+
   bool validateRequest() {
+    if (requestType.value.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please select a request type',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+        margin: const EdgeInsets.all(16),
+      );
+      return false;
+    }
+
     if (amount.value <= 0) {
        Get.snackbar(
         'Error',
@@ -282,7 +311,9 @@ class CreateRequestController extends GetxController {
         purpose: purpose.value,
         description: description.value,
         category: apiCategory,
-        file: attachedFiles.isNotEmpty ? attachedFiles.first : null,
+        qrFile: qrFile.value,
+        receiptFile: receiptFile.value,
+        billFiles: attachedFiles,
       );
       
       // Navigate to success, passing the status/response

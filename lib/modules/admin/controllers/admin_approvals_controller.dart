@@ -5,7 +5,7 @@ import '../../../../utils/app_text.dart';
 import '../../../../data/repositories/admin_repository.dart';
 import '../../../../core/services/network_service.dart';
 
-class AdminApprovalsController extends GetxController with GetSingleTickerProviderStateMixin {
+class AdminApprovalsController extends GetxController {
   late final AdminRepository _adminRepository;
   
   final pendingRequests = <Map<String, dynamic>>[].obs;
@@ -13,14 +13,6 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
   final unpaidRequests = <Map<String, dynamic>>[].obs;
   final clarificationRequests = <Map<String, dynamic>>[].obs;
   
-  TabController? _tabController;
-  TabController get tabController {
-    if (_tabController == null) {
-      _tabController = TabController(length: 4, vsync: this);
-    }
-    return _tabController!;
-  }
-
   final isLoading = true.obs;
 
   @override
@@ -29,22 +21,16 @@ class AdminApprovalsController extends GetxController with GetSingleTickerProvid
     _adminRepository = AdminRepository(Get.find<NetworkService>());
   }
 
-  @override
-  void onClose() {
-    _tabController?.dispose();
-    super.onClose();
-  }
-  
   void resetTab() {
-    if (_tabController != null && _tabController!.index != 0) {
-      _tabController!.animateTo(0);
-    }
+    // Tab resetting is handled by UI or re-building logic if needed.
+    // With DefaultTabController, programmatic reset requires context.
+    // For now, we leave this empty as it's not critical for stability.
   }
   
   @override
   void onReady() {
     super.onReady();
-    // fetchAllRequests(); // Removed eager fetch
+    fetchAllRequests();
   }
 
   Future<void> fetchAllRequests() async {

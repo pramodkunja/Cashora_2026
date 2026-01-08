@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/app_colors.dart';
+import '../../../../utils/widgets/app_loader.dart';
 import '../controllers/otp_verification_controller.dart';
 
 class OtpVerificationView extends GetView<OtpVerificationController> {
@@ -129,7 +130,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                     elevation: 0,
                   ),
                   child: controller.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const AppLoader(size: 30)
                       : Text(
                           AppText.verify,
                           style: GoogleFonts.inter(

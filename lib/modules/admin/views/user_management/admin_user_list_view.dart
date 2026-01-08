@@ -7,6 +7,7 @@ import '../../../../utils/app_text_styles.dart';
 import '../../../../routes/app_routes.dart';
 import '../../controllers/admin_user_controller.dart';
 import '../widgets/admin_app_bar.dart';
+import '../../../../utils/widgets/app_loader.dart';
 
 class AdminUserListView extends GetView<AdminUserController> {
   const AdminUserListView({Key? key}) : super(key: key);
@@ -109,7 +110,7 @@ class AdminUserListView extends GetView<AdminUserController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoadingUsers.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: AppLoader());
               }
 
               if (controller.rxUsers.isEmpty) {

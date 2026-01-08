@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
+import '../../../../utils/widgets/app_loader.dart';
 import '../../../../utils/widgets/buttons/primary_button.dart';
 import '../../controllers/admin_user_controller.dart';
 import '../widgets/admin_app_bar.dart';
@@ -20,7 +21,7 @@ class AdminEditUserView extends GetView<AdminUserController> {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AdminAppBar(title: AppText.editUser),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: AppLoader()),
       );
     }
 
