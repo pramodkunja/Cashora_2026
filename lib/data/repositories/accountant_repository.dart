@@ -10,6 +10,9 @@ class AccountantRepository {
     try {
       final response = await _networkService.get(
         '/accountant/expenses/pending-payments',
+        queryParameters: {
+          'status': ['approved', 'auto_approved']
+        },
       );
 
       // Handle the specific response structure: { "items": [...] }

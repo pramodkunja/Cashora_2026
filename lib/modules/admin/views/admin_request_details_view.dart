@@ -15,7 +15,17 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC), // Slate 50 for contrast
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).iconTheme.color, size: 20.sp),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(AppText.requestDetails, style: AppTextStyles.h3),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Obx(() {
           final status = (controller.request['status'] ?? 'Pending').toString().toLowerCase();
@@ -70,7 +80,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
           // 2. Amount
           Obx(() => Text(
                 '₹${req['amount'] ?? '0.00'}',
-                style: AppTextStyles.h1.copyWith(fontSize: 48.sp, fontWeight: FontWeight.w800, color: const Color(0xFF0F172A)), // Slate 900
+                style: AppTextStyles.h1.copyWith(fontSize: 48.sp, fontWeight: FontWeight.w800, color: Theme.of(context).textTheme.displayLarge?.color), // Slate 900
               )),
           SizedBox(height: 8.h),
           
@@ -86,7 +96,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
             width: double.infinity,
             padding: EdgeInsets.all(24.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(24.r),
               boxShadow: [
                 BoxShadow(
@@ -123,7 +133,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                 // Purpose
                 Text("PURPOSE", style: TextStyle(color: AppColors.textSlate, fontSize: 11.sp, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
                 SizedBox(height: 8.h),
-                Text(purpose, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textDark, height: 1.5)),
+                Text(purpose, style: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge?.color, height: 1.5)),
                 SizedBox(height: 24.h),
                 Divider(color: Theme.of(context).dividerColor.withOpacity(0.5)),
                 SizedBox(height: 24.h),
@@ -166,7 +176,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
              width: double.infinity,
              padding: EdgeInsets.all(24.w),
              decoration: BoxDecoration(
-               color: Colors.white,
+               color: Theme.of(context).cardColor,
                borderRadius: BorderRadius.circular(24.r),
              ),
              child: Column(
@@ -174,7 +184,7 @@ class AdminRequestDetailsView extends GetView<AdminRequestDetailsController> {
                children: [
                  Row(
                    children: [
-                     Icon(Icons.history, color: AppColors.textDark, size: 20.sp),
+                     Icon(Icons.history, color: Theme.of(context).iconTheme.color, size: 20.sp),
                      SizedBox(width: 8.w),
                      Text("Approval Timeline", style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
                    ],

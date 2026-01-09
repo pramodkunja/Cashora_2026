@@ -23,14 +23,14 @@ class RequestDetailsReadView extends StatelessWidget {
     final Map<String, dynamic> initialRequest = Get.arguments ?? {};
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(AppText.requestDetails, style: AppTextStyles.h3.copyWith(color: AppColors.textDark)),
+        title: Text(AppText.requestDetails, style: AppTextStyles.h3.copyWith(color: Theme.of(context).appBarTheme.titleTextStyle?.color)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textDark),
+          icon: Icon(Icons.arrow_back_ios_new, size: 20, color: Theme.of(context).iconTheme.color),
           onPressed: () => Get.back(),
         ),
       ),
@@ -64,7 +64,8 @@ class RequestDetailsReadView extends StatelessWidget {
 
     // Default UI for Approved/Pending
     // Status Styling
-    final isApproved = status == 'Approved' || status == 'auto_approved';
+    // Status Styling (Case Insensitive)
+    final isApproved = status.toLowerCase() == 'approved' || status.toLowerCase() == 'auto_approved' || status.toLowerCase() == 'paid';
     final statusColor = isApproved ? AppColors.successGreen : const Color(0xFFF59E0B);
     final statusBg = isApproved ? const Color(0xFFD1FAE5) : const Color(0xFFFEF3C7);
     final statusIcon = isApproved ? Icons.check_circle : Icons.pending;
@@ -138,7 +139,7 @@ class RequestDetailsReadView extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
@@ -146,7 +147,7 @@ class RequestDetailsReadView extends StatelessWidget {
                 ),
                 child: Text(
                   request['description'] ?? 'No description provided.',
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+                  style: AppTextStyles.bodyMedium.copyWith(color: Theme.of(context).textTheme.bodyMedium?.color, height: 1.5),
                 ),
               ),
 
@@ -197,7 +198,23 @@ class RequestDetailsReadView extends StatelessWidget {
               const SizedBox(height: 40),
                const SizedBox(height: 24),
 
-               // 7. Conversation History
+               const SizedBox(height: 24),
+
+               // 7. Approval Timeline (New)
+               Align(alignment: Alignment.centerLeft, child: Text("Timeline", style: AppTextStyles.h3.copyWith(fontSize: 18))),
+               const SizedBox(height: 12),
+               Container(
+                  decoration: BoxDecoration(
+                     border: Border(left: BorderSide(color: Colors.grey[300]!, width: 2)),
+                  ),
+                  margin: const EdgeInsets.only(left: 12),
+                  padding: const EdgeInsets.only(left: 24),
+                  child: _buildApprovalTimeline(context, request),
+               ),
+               
+               const SizedBox(height: 40),
+
+               // 8. Conversation History
                if ((request['clarifications'] != null && (request['clarifications'] as List).isNotEmpty) || 
                    (request['admin_remarks'] != null && request['admin_remarks'].toString().isNotEmpty)) ...[
                      Align(alignment: Alignment.centerLeft, child: Text(AppText.clarificationHistory, style: AppTextStyles.h3.copyWith(fontSize: 18))),
@@ -216,6 +233,52 @@ class RequestDetailsReadView extends StatelessWidget {
           ),
         ),
       );
+  }
+
+  Widget _buildApprovalTimeline(BuildContext context, Map<String, dynamic> request) {
+    // Basic lifecycle: Submitted -> [Approvals] -> Current Status
+    final created = request['created_at']?.toString() ?? '';
+    final updated = request['updated_at']?.toString() ?? '';
+    final status = (request['status'] ?? 'Pending').toString();
+    final isApproved = status.toLowerCase() == 'approved' || status.toLowerCase() == 'auto_approved';
+    final isRejected = status.toLowerCase() == 'rejected';
+
+    return Column(
+      children: [
+        // 1. Submitted
+        TimelineItemWidget(
+            question: "Request Submitted",
+            response: "Request created successfully", 
+            askedAt: _formatDate(created),
+            respondedAt: "",
+            approverName: "System",
+            isSystemEvent: true, // You might need to update TimelineItemWidget to handle this look, or use a custom row
+        ),
+        
+        // 2. Decision (if any)
+        if (isApproved)
+           TimelineItemWidget(
+            question: "Request Approved",
+            response: request['admin_remarks'] ?? "Approved by admin",
+            askedAt: _formatDate(updated),
+            respondedAt: "",
+            approverName: request['approver_name'] ?? AppText.approver,
+            isSystemEvent: true,
+            isSuccess: true,
+          ),
+
+        if (isRejected)
+           TimelineItemWidget(
+            question: "Request Rejected",
+            response: request['rejection_reason'] ?? "Rejected by admin",
+            askedAt: _formatDate(updated),
+            respondedAt: "",
+            approverName: request['approver_name'] ?? AppText.approver,
+            isSystemEvent: true,
+            isError: true,
+          ),
+      ],
+    );
   }
 
   Widget _buildConversationHistory(BuildContext context, Map<String, dynamic> request) {
@@ -268,7 +331,7 @@ class RequestDetailsReadView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
@@ -288,7 +351,7 @@ class RequestDetailsReadView extends StatelessWidget {
           const SizedBox(height: 16),
           Text(label.toUpperCase(), style: const TextStyle(color: AppColors.textSlate, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(color: AppColors.textDark, fontSize: 16, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(value, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
         ],
       ),
     );

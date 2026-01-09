@@ -8,6 +8,13 @@ import '../controllers/accountant_dashboard_controller.dart';
 import '../controllers/accountant_payments_controller.dart';
 import 'tabs/completed_payments_tab.dart';
 import 'tabs/pending_payments_tab.dart';
+import 'tabs/generic_payment_list_tab.dart'; // Restoring removed import
+import 'widgets/accountant_bottom_bar.dart'; // Added
+import 'widgets/accountant_bottom_bar.dart';
+
+// Revert imports
+import 'tabs/completed_payments_tab.dart';
+import 'tabs/pending_payments_tab.dart';
 import 'widgets/accountant_bottom_bar.dart';
 
 class AccountantPaymentsView extends GetView<AccountantPaymentsController> {
@@ -78,6 +85,7 @@ class AccountantPaymentsView extends GetView<AccountantPaymentsController> {
               indicatorPadding: EdgeInsets.zero, // Ensure no padding
               labelPadding: EdgeInsets
                   .zero, // Ensure full width tap target (optional, but good for fill)
+
               tabs: const [
                 Tab(text: 'Pending'),
                 Tab(text: 'Completed'),

@@ -113,6 +113,7 @@ class AdminHistoryView extends GetView<AdminHistoryController> {
       onTap: () => controller.updateFilter(label == AppText.filterAll ? 'All' 
           : label == AppText.filterApproved ? 'Approved' 
           : label == AppText.filterRejected ? 'Rejected' 
+          : label == AppText.filterPending ? 'Pending'
           : 'Clarified'),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

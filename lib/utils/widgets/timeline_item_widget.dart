@@ -9,6 +9,9 @@ class TimelineItemWidget extends StatelessWidget {
   final String askedAt;
   final String respondedAt;
   final String approverName;
+  final bool isSystemEvent;
+  final bool isSuccess;
+  final bool isError;
 
   const TimelineItemWidget({
     Key? key,
@@ -17,12 +20,90 @@ class TimelineItemWidget extends StatelessWidget {
     required this.askedAt,
     required this.respondedAt,
     required this.approverName,
+    this.isSystemEvent = false,
+    this.isSuccess = false,
+    this.isError = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      
+      if (isSystemEvent) {
+         Color dotColor = Colors.blue;
+         Color cardBg = Colors.blue.shade50;
+         Color cardBorder = Colors.blue.shade100;
+         IconData icon = Icons.info;
+         Color iconColor = Colors.blue;
+
+         if (isSuccess) {
+            dotColor = AppColors.successGreen;
+            cardBg = const Color(0xFFECFDF5);
+            cardBorder = const Color(0xFFA7F3D0);
+            icon = Icons.check_circle;
+            iconColor = AppColors.successGreen;
+         } else if (isError) {
+            dotColor = AppColors.error;
+            cardBg = const Color(0xFFFEF2F2);
+            cardBorder = const Color(0xFFFECACA);
+            icon = Icons.cancel;
+            iconColor = AppColors.error;
+         } else {
+            // Default System Event (Submitted)
+             dotColor = Colors.grey;
+             cardBg = Colors.grey.shade50;
+             cardBorder = Colors.grey.shade200;
+             icon = Icons.upload_file;
+             iconColor = Colors.grey;
+         }
+
+         return Stack(
+            clipBehavior: Clip.none,
+            children: [
+               Positioned(
+                  left: -31,
+                  top: 0,
+                  child: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                          color: dotColor,
+                          shape: BoxShape.circle,
+                      ),
+                  ),
+               ),
+               Container(
+                  margin: const EdgeInsets.only(bottom: 24),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                      color: cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: cardBorder),
+                  ),
+                  child: Row(
+                      children: [
+                          Icon(icon, color: iconColor, size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                      Text(question, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
+                                      if (response.isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 4.0),
+                                          child: Text(response, style: AppTextStyles.bodyMedium.copyWith(fontSize: 12, color: AppColors.textSlate)),
+                                        ),
+                                  ],
+                              ),
+                          ),
+                          Text(askedAt, style: AppTextStyles.bodyMedium.copyWith(fontSize: 10, color: AppColors.textSlate)),
+                      ],
+                  ),
+               ),
+            ],
+         );
+      }
+
+      // Existing Chat UI
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

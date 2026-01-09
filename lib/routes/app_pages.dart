@@ -424,8 +424,9 @@ class AppPages {
       name: AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS,
       page: () => const BillDetailsView(),
       binding: BindingsBuilder(() {
+        // Reuse existing controller from PaymentRequestDetailsView
         if (!Get.isRegistered<PaymentFlowController>()) {
-          Get.put(PaymentFlowController());
+           Get.put(PaymentFlowController());
         }
       }),
     ),

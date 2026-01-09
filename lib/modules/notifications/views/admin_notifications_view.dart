@@ -121,33 +121,43 @@ class AdminNotificationView extends GetView<AdminNotificationsController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Text(item.body ?? '', style: AppTextStyles.h3.copyWith(fontSize: 16)), // body used for Name
-                        if (item.isUrgent)
-                           Container(
-                             margin: const EdgeInsets.only(left: 8),
-                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                             decoration: BoxDecoration(
-                               color: const Color(0xFFFEF3C7),
-                               borderRadius: BorderRadius.circular(4),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              item.body ?? '',
+                              style: AppTextStyles.h3.copyWith(fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (item.isUrgent)
+                             Container(
+                               margin: const EdgeInsets.only(left: 8),
+                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                               decoration: BoxDecoration(
+                                 color: const Color(0xFFFEF3C7),
+                                 borderRadius: BorderRadius.circular(4),
+                               ),
+                               child: Text('URGENT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: const Color(0xFFD97706))),
                              ),
-                             child: Text('URGENT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: const Color(0xFFD97706))),
-                           ),
-                        if (item.badgeText != null)
-                           Container(
-                             margin: const EdgeInsets.only(left: 8),
-                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                             decoration: BoxDecoration(
-                               color: item.badgeBg,
-                               borderRadius: BorderRadius.circular(4),
+                          if (item.badgeText != null)
+                             Container(
+                               margin: const EdgeInsets.only(left: 8),
+                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                               decoration: BoxDecoration(
+                                 color: item.badgeBg,
+                                 borderRadius: BorderRadius.circular(4),
+                               ),
+                               child: Text(item.badgeText!, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: item.badgeColor)),
                              ),
-                             child: Text(item.badgeText!, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: item.badgeColor)),
-                           ),
-                      ],
+                        ],
+                      ),
                     ),
-                    if (item.amount != null)
+                    if (item.amount != null) ...[
+                      SizedBox(width: 8),
                       Text(item.amount!, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 4),

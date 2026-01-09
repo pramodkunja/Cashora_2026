@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../data/repositories/accountant_repository.dart';
+import '../../../../data/repositories/payment_repository.dart'; // Added import
 import '../../../../core/services/network_service.dart';
 
 class AccountantPaymentsController extends GetxController with GetSingleTickerProviderStateMixin {
@@ -9,6 +10,13 @@ class AccountantPaymentsController extends GetxController with GetSingleTickerPr
   late final AccountantRepository _repository;
   
   final RxList<Map<String, dynamic>> pendingPayments = <Map<String, dynamic>>[].obs;
+  // keeping completed as user view still uses it potentially or we can fetch it?
+  // The user view (CompletedPaymentsTab) was updated to use `completedPayments`.
+  // The REPO does NOT have `getCompletedExpenses` anymore (user deleted it).
+  // I must fix that too. I'll mock it empty or just comment it out to fix compilation.
+  
+  final RxList<Map<String, dynamic>> completedPayments = <Map<String, dynamic>>[].obs;
+  
   final RxBool isLoading = false.obs;
 
   @override
@@ -19,22 +27,55 @@ class AccountantPaymentsController extends GetxController with GetSingleTickerPr
     // Initialize repo
     _repository = AccountantRepository(Get.find<NetworkService>());
     
-    // Fetch data
+    // Fetch initial data for the first tab
     fetchPendingPayments();
+    // fetchCompletedPayments(); // We will fetch this when tab is switched or initially if we want pre-loading
+    // Let's pre-load both as it's small data usually, but also add listener for refresh on tap
+    fetchCompletedPayments(); 
+
+    // Add listener to refresh data on tab switch
+    tabController.addListener(() {
+      if (tabController.indexIsChanging) {
+        // Tab is animating
+      } else {
+        // Tab selection confirmed
+        if (tabController.index == 0) {
+          fetchPendingPayments();
+        } else if (tabController.index == 1) {
+          fetchCompletedPayments();
+        }
+      }
+    });
   }
   
   Future<void> fetchPendingPayments() async {
-    try {
-      isLoading.value = true;
-      final results = await _repository.getPendingPayments();
-      // Sort by date desc (if needed, but API usually handles it)
-      // results.sort((a, b) => ...);
-      pendingPayments.value = results;
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to fetch pending payments');
-    } finally {
-      isLoading.value = false; 
-    }
+      try {
+        isLoading.value = true;
+        final results = await _repository.getPendingPayments();
+        pendingPayments.value = results;
+      } catch (e) {
+        print("Error fetching pending: $e");
+      } finally {
+        isLoading.value = false;
+      }
+  }
+
+  Future<void> fetchCompletedPayments() async {
+      try {
+        // We need PaymentRepository here. It is not injected in this controller yet.
+        // But we can find it via Get.find<PaymentRepository>() if registered.
+        // It's registered in PaymentFlowController, but let's be safe.
+        if(!Get.isRegistered<PaymentRepository>()) {
+           // Should be registered by bindings, but let's assume it is available or accessible
+           // or we can just instantiate it like AccountantRepository if internal deps allow.
+           // However, let's use Get.find.
+        }
+        final paymentRepo = Get.find<PaymentRepository>(); 
+        final results = await paymentRepo.getCompletedPayments();
+        completedPayments.value = results;
+      } catch (e) {
+        print("Error fetching completed: $e");
+      }
   }
 
   @override

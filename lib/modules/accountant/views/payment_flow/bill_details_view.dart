@@ -11,40 +11,19 @@ class BillDetailsView extends GetView<PaymentFlowController> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.isQrDetected.isFalse) {
-        // Only start if not already detected
-        controller.startQrSimulation();
-      }
-    });
-
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-            size: 24.sp,
-          ),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color, size: 24.sp),
           onPressed: () => Get.back(),
         ),
-        title: Text(
-          'INV-2023-001.pdf',
-          style: AppTextStyles.h3.copyWith(color: Colors.black),
-        ),
+        title: Obx(() => Text(
+          controller.currentTitle.value,
+          style: Theme.of(context).textTheme.titleLarge,
+        )),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.share,
-              color: Colors.black,
-              size: 24.sp,
-            ),
-            onPressed: () {},
-          ),
-        ],
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -57,61 +36,96 @@ class BillDetailsView extends GetView<PaymentFlowController> {
               child: Center(
                 child: Container(
                   width: 0.9.sw,
-                  // Remove fixed height to allow InteractiveViewer to handle it nicely
-                  // height: MediaQuery.of(context).size.height * 0.7,
-                  constraints: BoxConstraints(
-                    maxHeight: 0.8.sh,
-                  ),
+                  constraints: BoxConstraints(maxHeight: 0.8.sh),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.1),
-                        blurRadius: 20.r,
-                      )
+                      BoxShadow(color: Colors.white.withOpacity(0.1), blurRadius: 20.r)
                     ],
                   ),
                   child: Stack(
                     children: [
-                      // Bill Placeholder / Image
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      // Image Display
+                      Obx(() {
+                        // Priority: Controller State -> Get.arguments -> Empty
+                        String url = controller.currentImageUrl.value;
+                        if (url.isEmpty && Get.arguments != null && Get.arguments['url'] != null) {
+                           url = Get.arguments['url'];
+                           // Auto-fix controller state if it was missed
+                           WidgetsBinding.instance.addPostFrameCallback((_) {
+                             controller.currentImageUrl.value = url;
+                           });
+                        }
+
+                        if (url.isEmpty) {
+                          return Center(child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.image_not_supported_outlined, size: 48.sp, color: Colors.grey),
+                              SizedBox(height: 8.h),
+                              Text("No Image Available", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+                            ],
+                          ));
+                        }
+                        
+                        return Stack(
+                          alignment: Alignment.center,
                           children: [
-                            Icon(
-                              Icons.receipt_long_rounded,
-                              size: 100.sp,
-                              color: Colors.grey.shade300,
+                            Image.network(
+                              url,
+                              fit: BoxFit.contain,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(child: CircularProgressIndicator());
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                print("Image Load Error for $url: $error");
+                                return Center(child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.broken_image_outlined, size: 48.sp, color: Colors.redAccent),
+                                    SizedBox(height: 8.h),
+                                    Text("Failed to load image", style: AppTextStyles.bodyMedium.copyWith(color: Colors.redAccent)),
+                                    SizedBox(height: 4.h),
+                                    Text(error.toString(), style: TextStyle(fontSize: 10.sp, color: Colors.grey), textAlign: TextAlign.center),
+                                  ],
+                                ));
+                              },
                             ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              'Invoice #INV-2023-001',
-                              style: AppTextStyles.h2.copyWith(
-                                color: Colors.black87,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              'Tap to Zoom',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: Colors.grey,
-                              ),
+                            // DEBUG: Temporary overlay to verify URL reception
+                            Positioned(
+                              top: 10, 
+                              child: Container(
+                                color: Colors.black54, 
+                                padding: EdgeInsets.all(4),
+                                child: Text("DEBUG URL: $url", style: TextStyle(color: Colors.white, fontSize: 10))
+                              )
                             ),
                           ],
-                        ),
-                      ),
+                        );
+                        }),
 
-                      // Scanning Animation Overlay - Wrapped in IgnorePointer to allow Zooming
-                      if (controller.isQrDetected.isFalse)
-                        Positioned.fill(
-                          child: IgnorePointer(child: ScannerAnimation()),
-                        ),
+                      // Scanning Animation (Only if QR Mode & Scanning)
+                      Obx(() {
+                        if (controller.isQrMode.value && controller.isScanning.value) {
+                           return Positioned.fill(child: IgnorePointer(child: ScannerAnimation()));
+                        }
+                        return SizedBox.shrink();
+                      }),
                     ],
                   ),
                 ),
               ),
             ),
+          ),
+
+          // Loading Overlay
+          Obx(() => controller.isScanning.value 
+              ? Center(child: Card(
+                  child: Padding(padding: EdgeInsets.all(16), child: Column(mainAxisSize: MainAxisSize.min, children: [CircularProgressIndicator(), SizedBox(height: 10), Text("Analyzing QR...")]))
+                ))
+              : SizedBox.shrink()
           ),
 
           Obx(() {
@@ -127,6 +141,7 @@ class BillDetailsView extends GetView<PaymentFlowController> {
   }
 
   Widget _buildQrDetectedPopup() {
+    final details = controller.scannedDetails;
     return DraggableScrollableSheet(
       initialChildSize: 0.45,
       minChildSize: 0.2,
@@ -147,10 +162,7 @@ class BillDetailsView extends GetView<PaymentFlowController> {
                   child: Container(
                     width: 40.w,
                     height: 4.h,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
+                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2.r)),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -165,109 +177,56 @@ class BillDetailsView extends GetView<PaymentFlowController> {
                     children: [
                       Container(
                         padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryBlue,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Icon(
-                          Icons.qr_code_scanner,
-                          color: Colors.white,
-                          size: 24.sp,
-                        ),
+                        decoration: BoxDecoration(color: AppColors.primaryBlue, borderRadius: BorderRadius.circular(8.r)),
+                        child: Icon(Icons.qr_code_scanner, color: Colors.white, size: 24.sp),
                       ),
                       SizedBox(width: 16.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              AppText.paymentDetailsFound,
-                              style: AppTextStyles.bodyLarge.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                            Text(AppText.paymentDetailsFound, style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
                             SizedBox(height: 4.h),
-                            Text(
-                              AppText.scannedFromQr,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSlate,
-                              ),
-                            ),
+                            Text("Verified UPI QR", style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate)),
                           ],
                         ),
                       ),
-                      Icon(
-                        Icons.check_circle,
-                        color: AppColors.primaryBlue,
-                        size: 24.sp,
-                      ),
+                      Icon(Icons.check_circle, color: AppColors.primaryBlue, size: 24.sp),
                     ],
                   ),
                 ),
                 SizedBox(height: 24.h),
-                _buildDetailRow(
-                  AppText.payeeName,
-                  'Office Supplies Co.',
-                  boldValue: true,
-                ),
+                _buildDetailRow(AppText.payeeName, details['pn'] ?? 'Unknown', boldValue: true),
                 Divider(height: 24.h),
-                _buildDetailRow(AppText.upiId, 'office.supplies@upi'),
+                _buildDetailRow(AppText.upiId, details['pa'] ?? 'Unknown'),
                 Divider(height: 24.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppText.amount,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSlate,
-                      ),
-                    ),
-                    Text(
-                      '₹145.00',
-                      style: AppTextStyles.h1.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                if (details['am'] != null && details['am']!.isNotEmpty)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(AppText.amount, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+                      Text('₹${details['am']}', style: AppTextStyles.h1.copyWith(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
                 SizedBox(height: 32.h),
                 SizedBox(
                   width: double.infinity,
                   height: 56.h,
                   child: ElevatedButton(
                     onPressed: () {
-                      controller.onUseForPayment();
+                      controller.startUpiPaymentFlow();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1aa3df), // Primary Blue
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
+                      backgroundColor: const Color(0xFF1aa3df),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          AppText.useForPayment,
-                          style: AppTextStyles.buttonText.copyWith(
-                            fontSize: 18.sp,
-                          ),
-                        ),
+                        Text(AppText.useForPayment, style: AppTextStyles.buttonText.copyWith(fontSize: 18.sp)),
                         SizedBox(width: 8.w),
                         Icon(Icons.arrow_forward, color: Colors.white, size: 24.sp),
                       ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                Center(
-                  child: TextButton(
-                    onPressed: () => Get.back(),
-                    child: Text(
-                      AppText.dismiss,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSlate,
-                      ),
                     ),
                   ),
                 ),

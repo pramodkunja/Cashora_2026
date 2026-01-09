@@ -37,27 +37,30 @@ class AdminApprovalsController extends GetxController {
     try {
       isLoading.value = true;
       
+      // 1. Fetch Priority Items (Pending) First for immediate UI feedback
+      final pendingData = await _adminRepository.getOrgExpenses(status: 'pending');
+      pendingRequests.assignAll(pendingData);
+
+      // 2. Fetch others in background
       final results = await Future.wait([
-        _adminRepository.getOrgExpenses(status: 'pending'),
         _adminRepository.getOrgExpenses(status: 'approved'),
         _adminRepository.getOrgExpenses(paymentStatus: 'pending'),
         _adminRepository.getOrgExpenses(status: 'clarification_required'), 
         _adminRepository.getOrgExpenses(status: 'clarification_responded')
       ]);
 
-      pendingRequests.assignAll(results[0]);
-      approvedRequests.assignAll(results[1]);
-      unpaidRequests.assignAll(results[2]);
+      approvedRequests.assignAll(results[0]);
+      unpaidRequests.assignAll(results[1]);
       
       // Combine clarification required and responded
       final combinedClarification = <Map<String, dynamic>>[];
+      combinedClarification.addAll(results[2]);
       combinedClarification.addAll(results[3]);
-      combinedClarification.addAll(results[4]);
       // Sort by date descending if possible, for now just list
       clarificationRequests.assignAll(combinedClarification);
       
       print("Debugging Data Fetch:");
-      print("Pending: ${results[0].length}");
+      print("Pending: ${pendingData.length}");
       print("Clarification Response Count: ${results[4].length}");
       if (results[4].isNotEmpty) {
          print("Sample Clarification Response: ${results[4].first}");

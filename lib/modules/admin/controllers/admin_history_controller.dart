@@ -25,9 +25,12 @@ class AdminHistoryController extends GetxController {
       return historyRequests;
     }
     return historyRequests.where((item) {
-      if (selectedFilter.value == 'Approved') return item['status'] == 'approved' || item['status'] == 'auto_approved';
-      if (selectedFilter.value == 'Rejected') return item['status'] == 'rejected';
-      return true; // Should not happen given UI only has Approved/Rejected usually for history
+      final status = item['status']?.toString().toLowerCase() ?? '';
+      if (selectedFilter.value == 'Approved') return status == 'approved' || status == 'auto_approved';
+      if (selectedFilter.value == 'Rejected') return status == 'rejected';
+      if (selectedFilter.value == 'Pending') return status == 'pending';
+      if (selectedFilter.value == 'Clarified') return status == 'clarification_required';
+      return false; 
     }).toList();
   }
 
@@ -45,14 +48,13 @@ class AdminHistoryController extends GetxController {
       isLoading.value = true;
       final results = await Future.wait([
         _adminRepository.getOrgExpenses(status: 'approved'),
-        _adminRepository.getRejectedExpenses(), // Use the new method
+        _adminRepository.getRejectedExpenses(),
         _adminRepository.getOrgExpenses(status: 'auto_approved'),
+        _adminRepository.getOrgExpenses(status: 'pending'),
+        _adminRepository.getOrgExpenses(status: 'clarification_required'),
       ]);
 
-      final allHistory = <Map<String, dynamic>>[];
-      allHistory.addAll(results[0]); // Approved
-      allHistory.addAll(results[1]); // Rejected
-      allHistory.addAll(results[2]); // Auto Approved
+      final allHistory = results.expand((element) => element).toList();
 
       // Sort by updated_at or created_at desc
       allHistory.sort((a, b) {

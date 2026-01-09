@@ -6,155 +6,188 @@ import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/widgets/custom_search_bar.dart';
+import '../../controllers/accountant_payments_controller.dart';
 
 class CompletedPaymentsTab extends StatelessWidget {
   const CompletedPaymentsTab({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(20.w),
-      child: Column(
-        children: [
-          // Search Bar
-          const CustomSearchBar(
-            hintText: AppText.searchByIdOrName,
-          ),
-          SizedBox(height: 24.h),
+    final controller = Get.find<AccountantPaymentsController>();
 
-          // Total Disbursed Card
-          Container(
-            padding: EdgeInsets.all(24.w),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(24.r),
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator()); // Use AppLoader if available import
+      }
+
+      final payments = controller.completedPayments;
+      
+      // Calculate Total Disbursed
+      double totalDisbursed = 0;
+      for (var item in payments) {
+         // API uses 'amount_paid' for completed payments
+         totalDisbursed += double.tryParse(item['amount_paid']?.toString() ?? item['amount']?.toString() ?? '0') ?? 0;
+      }
+
+      return SingleChildScrollView(
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          children: [
+            // Search Bar
+            const CustomSearchBar(
+              hintText: AppText.searchByIdOrName,
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppText.totalDisbursed,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSlate,
+            SizedBox(height: 24.h),
+
+            // Total Disbursed Card
+            Container(
+              padding: EdgeInsets.all(24.w),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(24.r),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppText.totalDisbursed,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSlate,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: FittedBox(
-                              alignment: Alignment.centerLeft,
-                              fit: BoxFit.scaleDown,
-                              child:
-                                  Text('₹14,250.00', style: AppTextStyles.h1),
+                        SizedBox(height: 8.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FittedBox(
+                                alignment: Alignment.centerLeft,
+                                fit: BoxFit.scaleDown,
+                                child:
+                                    Text('₹${totalDisbursed.toStringAsFixed(2)}', style: AppTextStyles.h1),
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            '+2.4%',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.successGreen,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Icon(
-                            Icons.trending_up,
-                            color: AppColors.successGreen,
-                            size: 16.sp,
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  width: 60.w,
-                  height: 60.w,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9), // Slate 100
-                    borderRadius: BorderRadius.circular(30.r),
+                  Container(
+                    width: 60.w,
+                    height: 60.w,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9), // Slate 100
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    child: Icon(
+                      Icons.attach_money_rounded,
+                      size: 32.sp,
+                      color: AppColors.primaryBlue,
+                    ), 
                   ),
-                  child: Icon(
-                    Icons.attach_money_rounded,
-                    size: 32.sp,
-                    color: Colors.white,
-                  ), // The image has a specific styling, using Icon for now
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20.h),
-
-          // Filters Row
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterChip(context, 'Date Range'),
-                SizedBox(width: 8.w),
-                _buildFilterChip(context, 'Department'),
-                SizedBox(width: 8.w),
-                _buildFilterChip(context, 'Category'),
-              ],
-            ),
-          ),
-          SizedBox(height: 24.h),
-
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              AppText.thisMonth,
-              style: AppTextStyles.bodySmall.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.0,
-                color: AppColors.textLight,
+                ],
               ),
             ),
-          ),
-          SizedBox(height: 16.h),
+            SizedBox(height: 20.h),
 
-          // List Items
-          _buildCompletedItem(
-            context,
-            id: '#REQ-8821',
-            date: 'Oct 26, 2023',
-            name: 'Sarah Jenkins',
-            details: 'Marketing • Office Supplies',
-            amount: '₹45.50',
-          ),
-          SizedBox(height: 16.h),
-          _buildCompletedItem(
-            context,
-            id: '#REQ-8820',
-            date: 'Oct 25, 2023',
-            name: 'Michael Ross',
-            details: 'Sales • Client Entertainment',
-            amount: '₹120.00',
-          ),
-          SizedBox(height: 16.h),
-          _buildCompletedItem(
-            context,
-            id: '#REQ-8819',
-            date: 'Oct 24, 2023',
-            name: 'David Chen',
-            details: 'IT Dept • Hardware',
-            amount: '₹850.00',
-          ),
-          SizedBox(height: 16.h),
-          _buildCompletedItem(
-            context,
-            id: '#REQ-8815',
-            date: 'Oct 21, 2023',
-            name: 'Emily Chen',
-            details: 'Marketing • Ad Spend',
-            amount: '₹2,934.50',
-          ),
-        ],
-      ),
-    );
+            // Filters Row (Keep static or make functional later if needed, user asked strictly for Tabs)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                   // Removed filters as per revert instructions/simplicity but kept method if needed.
+                   // Actually user asked to revert filters for "rejected/cancelled". 
+                   // This is "Completed" tab, so filters are harmless, but let's keep them.
+                  _buildFilterChip(context, 'Date Range'),
+                  SizedBox(width: 8.w),
+                  _buildFilterChip(context, 'Category'),
+                ],
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Recent Completed',
+                style: AppTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                  color: AppColors.textLight,
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // List Items
+            if (payments.isEmpty)
+              Padding(
+                padding: EdgeInsets.only(top: 20.h),
+                child: Text("No completed payments", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: payments.length,
+                separatorBuilder: (context, index) => SizedBox(height: 16.h),
+                itemBuilder: (context, index) {
+                   final item = payments[index];
+                   
+                   // Extract Amount
+                   final amountVal = double.tryParse(item['amount_paid']?.toString() ?? item['amount']?.toString() ?? '0') ?? 0.0;
+                   
+                   // Extract Date
+                   final dateStr = item['processed_at'] ?? item['created_at'] ?? item['updated_at'];
+                   String formattedDate = '';
+                   if (dateStr != null) {
+                      try {
+                        final dt = DateTime.parse(dateStr);
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        formattedDate = '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
+                      } catch (_) {
+                        formattedDate = dateStr.toString().split('T')[0];
+                      }
+                   }
+
+                   // Extract Name / Title
+                   // 'payments' list items often lack requestor/payee details directly.
+                   // So we use request_id or payment_id as the main identifier if name is missing.
+                   String title = 'Unknown User';
+                   if (item['requestor'] != null && item['requestor'] is Map) {
+                      final req = item['requestor'];
+                      title = "${req['first_name'] ?? ''} ${req['last_name'] ?? ''}".trim();
+                      if (title.isEmpty) title = req['email'] ?? 'Unknown User';
+                   } else if (item['payee_name'] != null) {
+                      title = item['payee_name'];
+                   } else {
+                      // Fallback: Use Request ID as title
+                      title = item['request_id'] ?? 'Payment #${item['id']}';
+                   }
+
+                   // Extract Subtitle / Details
+                   String subtitle = item['payment_source'] ?? item['category'] ?? '';
+                   if (subtitle.isEmpty) {
+                      // If no category, show the Payment ID
+                       subtitle = item['payment_id'] ?? 'ID: ${item['id']}';
+                   }
+
+                   return _buildCompletedItem(
+                    context,
+                    id: (item['payment_id'] ?? item['id']?.toString() ?? '').toString().toUpperCase(),
+                    date: formattedDate,
+                    name: title,
+                    details: subtitle,
+                    amount: '₹${amountVal.toStringAsFixed(2)}',
+                  );
+                },
+              ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildFilterChip(BuildContext context, String label) {

@@ -13,7 +13,10 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
   @override
   Widget build(BuildContext context) {
     // Get request data from arguments or controller
-    final Map<String, dynamic> request = Get.arguments['request'] ?? {};
+    // Get request data from arguments or controller
+    final Map<String, dynamic> request = controller.currentRequest.isNotEmpty 
+        ? controller.currentRequest 
+        : (Get.arguments is Map ? (Get.arguments['request'] ?? {}) : {});
     final requestor = request['requestor'] ?? {};
     final approver = request['approver'] ?? {};
 
@@ -30,23 +33,23 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
     final String? qrUrl = request['qr_url']; // Assuming backend key
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         // ... (keep existing AppBar) ...
-        backgroundColor: AppColors.backgroundLight,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'Request Details',
-          style: AppTextStyles.h3.copyWith(color: AppColors.textDark),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
+            icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
             onPressed: () {},
           ),
         ],
@@ -58,14 +61,14 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
             SizedBox(height: 10.h),
             Text(
               'Requested Amount',
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             SizedBox(height: 8.h),
             Text(
               amount,
-              style: AppTextStyles.h1.copyWith(
-                color: AppColors.textDark, 
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
                 fontSize: 32.sp,
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 24.h),
@@ -101,24 +104,13 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
              ),
 
             SizedBox(height: 24.h),
-            _buildRequesterCard(requestorName, requestorRole, requestId, date, purpose, description),
+            _buildRequesterCard(context, requestorName, requestorRole, requestId, date, purpose, description),
             SizedBox(height: 16.h),
-            _buildBillAttachmentCard(receiptUrl, qrUrl),
+            _buildBillAttachmentCard(context, receiptUrl, qrUrl),
             SizedBox(height: 20.h),
             
             // Action Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: controller.onUseForPayment,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-                ),
-                child: Text('Process Payment', style: AppTextStyles.buttonText.copyWith(color: Colors.white)),
-              ),
-            ),
+            SizedBox.shrink(),
           ],
         ),
       ),
@@ -136,10 +128,10 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
     }
   }
 
-  Widget _buildRequesterCard(String name, String role, String id, String date, String purpose, String description) {
+  Widget _buildRequesterCard(BuildContext context, String name, String role, String id, String date, String purpose, String description) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
@@ -170,7 +162,7 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
                   children: [
                     Text(
                       name.isNotEmpty ? name : 'Unknown User',
-                      style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
@@ -189,12 +181,12 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildInfoItem('REQUEST ID', id),
-              _buildInfoItem('DATE', date),
+              _buildInfoItem(context, 'REQUEST ID', id),
+              _buildInfoItem(context, 'DATE', date),
             ],
           ),
           SizedBox(height: 20.h),
-          _buildInfoItem('PURPOSE', purpose),
+          _buildInfoItem(context, 'PURPOSE', purpose),
           SizedBox(height: 20.h),
           Text(
             'DESCRIPTION',
@@ -203,14 +195,14 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
           SizedBox(height: 8.h),
           Text(
             description,
-            style: AppTextStyles.bodyMedium.copyWith(height: 1.5, color: AppColors.textDark),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoItem(String label, String value) {
+  Widget _buildInfoItem(BuildContext context, String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -221,16 +213,16 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
         SizedBox(height: 4.h),
         Text(
           value,
-          style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
         ),
       ],
     );
   }
 
-  Widget _buildBillAttachmentCard(String? billUrl, String? qrUrl) {
+  Widget _buildBillAttachmentCard(BuildContext context, String? billUrl, String? qrUrl) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
@@ -259,18 +251,44 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
             children: [
               Expanded(
                 child: _buildAttachmentButton(
-                  'View Bill',
-                  Icons.receipt_long,
-                  billUrl != null ? () => Get.toNamed(AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS, arguments: {'url': billUrl, 'title': 'Bill Details'}) : null,
+                    context,
+                    'View Bill',
+                    Icons.receipt_long,
+                    billUrl != null ? () {
+                      controller.prepareForView(
+                        url: billUrl, 
+                        title: 'Bill Details', 
+                        isQr: false
+                      );
+                      Get.toNamed(AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS, arguments: {
+                        'url': billUrl, 
+                        'title': 'Bill Details',
+                        'isQr': false,
+                        'request': controller.currentRequest.value
+                      });
+                    } : null,
+                  ),
                 ),
-              ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: _buildAttachmentButton(
-                  'View QR',
-                  Icons.qr_code_scanner,
-                  qrUrl != null ? () => Get.toNamed(AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS, arguments: {'url': qrUrl, 'title': 'QR Code'}) : null,
-                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: _buildAttachmentButton(
+                    context,
+                    'View QR',
+                    Icons.qr_code_scanner,
+                    qrUrl != null ? () {
+                      controller.prepareForView(
+                        url: qrUrl, 
+                        title: 'Scan QR Code', 
+                        isQr: true
+                      );
+                      Get.toNamed(AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS, arguments: {
+                        'url': qrUrl, 
+                        'title': 'Scan QR Code',
+                        'isQr': true,
+                         'request': controller.currentRequest.value
+                      });
+                    } : null,
+                  ),
               ),
             ],
           ),
@@ -279,13 +297,13 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
     );
   }
 
-  Widget _buildAttachmentButton(String label, IconData icon, VoidCallback? onTap) {
+  Widget _buildAttachmentButton(BuildContext context, String label, IconData icon, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 100.h,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: AppColors.primaryBlue.withOpacity(0.1)),
           boxShadow: [
@@ -310,9 +328,9 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
             SizedBox(height: 8.h),
             Text(
               label,
-              style: AppTextStyles.bodyMedium.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: onTap != null ? AppColors.textDark : AppColors.textSlate,
+                color: onTap != null ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).disabledColor,
               ),
             ),
           ],
