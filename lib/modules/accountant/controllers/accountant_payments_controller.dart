@@ -4,12 +4,13 @@ import '../../../../routes/app_routes.dart';
 import '../../../../data/repositories/accountant_repository.dart';
 import '../../../../data/repositories/payment_repository.dart'; // Added import
 import '../../../../core/services/network_service.dart';
+import '../../../../data/models/payment_response_model.dart';
 
 class AccountantPaymentsController extends GetxController with GetSingleTickerProviderStateMixin {
   late TabController tabController;
   late final AccountantRepository _repository;
   
-  final RxList<Map<String, dynamic>> pendingPayments = <Map<String, dynamic>>[].obs;
+  final RxList<Payment> pendingPayments = <Payment>[].obs;
   // keeping completed as user view still uses it potentially or we can fetch it?
   // The user view (CompletedPaymentsTab) was updated to use `completedPayments`.
   // The REPO does NOT have `getCompletedExpenses` anymore (user deleted it).
@@ -51,8 +52,8 @@ class AccountantPaymentsController extends GetxController with GetSingleTickerPr
   Future<void> fetchPendingPayments() async {
       try {
         isLoading.value = true;
-        final results = await _repository.getPendingPayments();
-        pendingPayments.value = results;
+        final response = await _repository.getPendingPayments();
+        pendingPayments.value = response.payments;
       } catch (e) {
         print("Error fetching pending: $e");
       } finally {

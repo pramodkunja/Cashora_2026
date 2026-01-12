@@ -25,7 +25,7 @@ class PendingPaymentsTab extends StatelessWidget {
       // Calculate Total Outstanding
       double totalAmount = 0;
       for (var item in payments) {
-         totalAmount += double.tryParse(item['amount']?.toString() ?? '0') ?? 0;
+         totalAmount += item.amountPaid;
       }
 
       return SingleChildScrollView(
@@ -110,19 +110,30 @@ class PendingPaymentsTab extends StatelessWidget {
                 separatorBuilder: (context, index) => SizedBox(height: 16.h),
                 itemBuilder: (context, index) {
                    final item = payments[index];
-                   final request = item['requestor'] ?? {};
-                   final String name = "${request['first_name'] ?? ''} ${request['last_name'] ?? ''}".trim();
+                   final requestor = item.expense?.requestor;
+                   final String name = requestor?.name ?? requestor?.email ?? 'Unknown User';
                    
+                   // Prepare data for route arguments - convert to Map to maintain compatibility
+                   // We combine payment info with expense info as the Details view likely uses merged data or specifically expense data.
+                   // The Details view expects fields like 'amount', 'purpose', 'description' at the top level.
+                   // These are in the 'expense' object.
+                   Map<String, dynamic> data = item.expense?.toJson() ?? {};
+                   // Add payment specific info if needed, or override status if payment status is more relevant
+                   data['payment_id'] = item.paymentId;
+                   data['amount_paid'] = item.amountPaid;
+                   // Ensure basic fields are present if expense was null? (Shouldn't be)
+
+
                    return _buildRequestItem(
                     context,
-                    id: item['request_id'] ?? '#REQ-${item['id']}',
-                    date: _formatDate(item['created_at']),
-                    name: name.isNotEmpty ? name : (request['email'] ?? 'Unknown User'),
-                    department: 'General', // Not in API, defaulting
-                    category: item['category'] ?? 'Expense',
-                    amount: '₹${item['amount']?.toString() ?? '0.00'}',
-                    data: item, // Pass full object for tap
-                  );
+                    id: item.requestId ?? '#REQ-${item.id}',
+                    date: _formatDate(item.createdAt),
+                    name: name,
+                    department: 'General', 
+                    category: item.expense?.category ?? 'Expense',
+                    amount: '₹${item.amountPaid.toStringAsFixed(2)}',
+                    data: data,
+                   );
                 },
               ),
           ],

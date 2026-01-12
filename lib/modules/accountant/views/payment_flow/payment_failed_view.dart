@@ -82,15 +82,25 @@ class PaymentFailedView extends StatelessWidget {
                   Divider(height: 1.h, color: Colors.grey[200]),
                   _buildDetailRow(
                     AppText.transactionId,
-                    '#TRX-9982',
+                    '${Get.arguments?['txnId'] ?? 'N/A'}',
                     showCopy: true,
                   ),
                   Divider(height: 1.h, color: Colors.grey[200]),
-                  _buildDetailRow(AppText.date, 'Oct 24, 2023'),
+                  Builder(builder: (context) {
+                       final dateStr = Get.arguments?['date']?.toString();
+                       String displayDate = 'Unknown Date';
+                       if (dateStr != null) {
+                           try {
+                             final dt = DateTime.parse(dateStr).toLocal();
+                             displayDate = "${dt.day}/${dt.month}/${dt.year}";
+                           } catch (_) {}
+                       }
+                       return _buildDetailRow(AppText.date, displayDate);
+                  }),
                   Divider(height: 1.h, color: Colors.grey[200]),
                   _buildDetailRow(
                     AppText.recipient,
-                    'John Doe',
+                    '${Get.arguments?['payee'] ?? 'Unknown'}',
                     isRecipient: true,
                   ),
                   Divider(height: 1.h, color: Colors.grey[200]),
@@ -106,11 +116,11 @@ class PaymentFailedView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '\$450.00',
+                          '₹${Get.arguments?['amount']?.toStringAsFixed(2) ?? '0.00'}',
                           style: AppTextStyles.h2.copyWith(
                             color: AppColors.primaryBlue,
                           ),
-                        ), // TODO: Dynamic
+                        ), 
                       ],
                     ),
                   ),

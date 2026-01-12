@@ -212,15 +212,21 @@ class BillDetailsView extends GetView<PaymentFlowController> {
                 SizedBox(
                   width: double.infinity,
                   height: 56.h,
-                  child: ElevatedButton(
-                    onPressed: () {
+                  child: Obx(() => ElevatedButton(
+                    onPressed: controller.isLoading.value ? null : () {
                       controller.startUpiPaymentFlow();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1aa3df),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                     ),
-                    child: Row(
+                    child: controller.isLoading.value 
+                      ? SizedBox(
+                          height: 24.sp, 
+                          width: 24.sp, 
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                        )
+                      : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(AppText.useForPayment, style: AppTextStyles.buttonText.copyWith(fontSize: 18.sp)),
@@ -228,7 +234,7 @@ class BillDetailsView extends GetView<PaymentFlowController> {
                         Icon(Icons.arrow_forward, color: Colors.white, size: 24.sp),
                       ],
                     ),
-                  ),
+                  )),
                 ),
               ],
             ),

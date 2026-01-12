@@ -78,19 +78,29 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      '₹150.00',
+                      '₹${Get.arguments?['amount']?.toStringAsFixed(2) ?? '0.00'}',
                       style: AppTextStyles.h1.copyWith(fontSize: 32.sp, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 24.h),
                     const Divider(),
                     SizedBox(height: 24.h),
-                    _buildReceiptRow(AppText.transactionId, '#TXN-883920', icon: Icons.copy),
+                    _buildReceiptRow(AppText.transactionId, '${Get.arguments?['txnId'] ?? 'N/A'}', icon: Icons.copy),
                     SizedBox(height: 16.h),
-                    _buildReceiptRow(AppText.paymentDate, 'Oct 24, 2023\n10:45 AM'),
+                    Builder(builder: (context) {
+                       final dateStr = Get.arguments?['date']?.toString();
+                       String displayDate = 'Unknown Date';
+                       if (dateStr != null) {
+                           try {
+                             final dt = DateTime.parse(dateStr).toLocal();
+                             displayDate = "${dt.day}/${dt.month}/${dt.year}\n${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
+                           } catch (_) {}
+                       }
+                       return _buildReceiptRow(AppText.paymentDate, displayDate);
+                    }),
                     SizedBox(height: 16.h),
-                    _buildReceiptRow(AppText.paymentSource, 'Petty Cash Box A', isStatus: true, statusColor: Colors.green),
+                    _buildReceiptRow(AppText.paymentSource, 'UPI', isStatus: true, statusColor: Colors.green),
                     SizedBox(height: 16.h),
-                    _buildReceiptRow(AppText.recipient, 'Sarah Jenkins', useLocalAvatar: true),
+                    _buildReceiptRow(AppText.recipient, '${Get.arguments?['payee'] ?? 'Unknown'}', useLocalAvatar: true),
                   ],
                 ),
               ),
