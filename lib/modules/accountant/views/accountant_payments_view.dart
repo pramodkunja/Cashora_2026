@@ -45,7 +45,7 @@ class AccountantPaymentsView extends GetView<AccountantPaymentsController> {
               size: 24.sp,
             ),
             onPressed: () {},
-          )
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(70.h), // Increased height for spacing
@@ -96,10 +96,7 @@ class AccountantPaymentsView extends GetView<AccountantPaymentsController> {
       ),
       body: TabBarView(
         controller: controller.tabController,
-        children: const [
-          PendingPaymentsTab(),
-          CompletedPaymentsTab(),
-        ],
+        children: const [PendingPaymentsTab(), CompletedPaymentsTab()],
       ),
     );
   }

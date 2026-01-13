@@ -32,7 +32,7 @@ class _LockViewState extends State<LockView> {
     if (authenticated) {
       _authService.verifySession();
       // Navigate to the correct dashboard via RouteGuard
-      Get.offAllNamed(AppRoutes.INITIAL); 
+      Get.offAllNamed(AppRoutes.INITIAL);
     }
   }
 
@@ -43,7 +43,10 @@ class _LockViewState extends State<LockView> {
       child: Scaffold(
         backgroundColor: Colors.black.withOpacity(0.85), // Dark overlay
         body: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur effect like PhonePe/GPay
+          filter: ImageFilter.blur(
+            sigmaX: 10,
+            sigmaY: 10,
+          ), // Blur effect like PhonePe/GPay
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -54,17 +57,26 @@ class _LockViewState extends State<LockView> {
                     color: Colors.white.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.lock_outline, size: 60.sp, color: Colors.white),
+                  child: Icon(
+                    Icons.lock_outline,
+                    size: 60.sp,
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: 24.h),
                 Text(
                   'App Locked',
-                  style: AppTextStyles.h2.copyWith(color: Colors.white, letterSpacing: 1),
+                  style: AppTextStyles.h2.copyWith(
+                    color: Colors.white,
+                    letterSpacing: 1,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 Text(
                   'Unlock with Biometrics',
-                  style: AppTextStyles.bodyMedium.copyWith(color: Colors.white70),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: Colors.white70,
+                  ),
                 ),
                 SizedBox(height: 48.h),
                 ElevatedButton(
@@ -72,11 +84,22 @@ class _LockViewState extends State<LockView> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 48.w, vertical: 16.h),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 48.w,
+                      vertical: 16.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
                     elevation: 0,
                   ),
-                  child: Text('Unlock', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Unlock',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),

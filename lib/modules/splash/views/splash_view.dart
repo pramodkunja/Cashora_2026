@@ -12,7 +12,8 @@ class SplashView extends StatefulWidget {
   State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView> with SingleTickerProviderStateMixin {
+class _SplashViewState extends State<SplashView>
+    with SingleTickerProviderStateMixin {
   late AnimationController _mainController;
   late Animation<double> _logoScaleAnimation;
   late Animation<double> _contentWidthAnimation;
@@ -43,7 +44,8 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
 
     // 2. Expand Space for Text (Logo Moves Left) (0.8s - 1.5s)
     // Width grows to accommodate text (~240px)
-    _contentWidthAnimation = Tween<double>(begin: 0.0, end: 200.w).animate( // Responsive width
+    _contentWidthAnimation = Tween<double>(begin: 0.0, end: 200.w).animate(
+      // Responsive width
       CurvedAnimation(
         parent: _mainController,
         curve: const Interval(0.25, 0.5, curve: Curves.easeInOut),
@@ -55,22 +57,26 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     double startTime = 0.4;
     double step = 0.05; // Quick staggering
     for (int i = 0; i < _letters.length; i++) {
-        double start = startTime + (i * step);
-        double end = start + 0.1;
-        
-        _letterFadeAnimations.add(Tween<double>(begin: 0.0, end: 1.0).animate(
+      double start = startTime + (i * step);
+      double end = start + 0.1;
+
+      _letterFadeAnimations.add(
+        Tween<double>(begin: 0.0, end: 1.0).animate(
           CurvedAnimation(
             parent: _mainController,
             curve: Interval(start, end, curve: Curves.easeIn),
           ),
-        ));
-        
-        _letterSlideAnimations.add(Tween<double>(begin: 10.0, end: 0.0).animate(
+        ),
+      );
+
+      _letterSlideAnimations.add(
+        Tween<double>(begin: 10.0, end: 0.0).animate(
           CurvedAnimation(
             parent: _mainController,
             curve: Interval(start, end, curve: Curves.easeOut),
           ),
-        ));
+        ),
+      );
     }
 
     // 4. Tagline Reveal (2.2s - 2.8s)
@@ -110,63 +116,72 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                     width: 120.w, // Responsive width
                   ),
                 ),
-                
+
                 // Expanding Text Area
                 Container(
-                   constraints: BoxConstraints(maxWidth: 200.w), // Constrain max width
-                   width: _contentWidthAnimation.value,
-                   height: 100.h,
-                   child: ClipRect(
-                     child: SingleChildScrollView(
-                       scrollDirection: Axis.horizontal,
-                       physics: const NeverScrollableScrollPhysics(),
-                       child: Padding(
-                         padding: EdgeInsets.only(left: 16.0.w),
-                         child: Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: [
-                             // Letter by Letter
-                             Row(
-                               children: List.generate(_letters.length, (index) {
-                                  // As before...
-                                 return Opacity(
-                                   opacity: _letterFadeAnimations.isNotEmpty ? _letterFadeAnimations[index].value : 0.0,
-                                   child: Transform.translate(
-                                     offset: Offset(0, _letterSlideAnimations.isNotEmpty ? _letterSlideAnimations[index].value : 0.0),
-                                     child: Text(
-                                       _letters[index],
-                                       style: GoogleFonts.outfit(
-                                         fontSize: 48.sp, 
-                                         fontWeight: FontWeight.bold,
-                                         color: AppColors.primary,
-                                         letterSpacing: -1.0,
-                                         height: 1.0,
-                                       ),
-                                     ),
-                                   ),
-                                 );
-                               }),
-                             ),
-                             SizedBox(height: 4.h),
-                             // Tagline
-                             Opacity(
-                                opacity: _taglineOpacityAnimation.value,
-                                child: Text(
-                                  'Smart petty cash',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 14.sp, 
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF64748B),
-                                    letterSpacing: 0.2,
+                  constraints: BoxConstraints(
+                    maxWidth: 200.w,
+                  ), // Constrain max width
+                  width: _contentWidthAnimation.value,
+                  height: 100.h,
+                  child: ClipRect(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 16.0.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Letter by Letter
+                            Row(
+                              children: List.generate(_letters.length, (index) {
+                                // As before...
+                                return Opacity(
+                                  opacity: _letterFadeAnimations.isNotEmpty
+                                      ? _letterFadeAnimations[index].value
+                                      : 0.0,
+                                  child: Transform.translate(
+                                    offset: Offset(
+                                      0,
+                                      _letterSlideAnimations.isNotEmpty
+                                          ? _letterSlideAnimations[index].value
+                                          : 0.0,
+                                    ),
+                                    child: Text(
+                                      _letters[index],
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 48.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primary,
+                                        letterSpacing: -1.0,
+                                        height: 1.0,
+                                      ),
+                                    ),
                                   ),
+                                );
+                              }),
+                            ),
+                            SizedBox(height: 4.h),
+                            // Tagline
+                            Opacity(
+                              opacity: _taglineOpacityAnimation.value,
+                              child: Text(
+                                'Smart petty cash',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF64748B),
+                                  letterSpacing: 0.2,
                                 ),
-                             ),
-                           ],
-                         ),
-                       ),
-                     ),
-                   ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );

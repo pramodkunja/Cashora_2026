@@ -85,6 +85,7 @@ import '../modules/accountant/views/payment_flow/payment_failed_view.dart';
 import '../modules/accountant/views/payment_flow/completed_request_details_view.dart';
 import '../modules/accountant/views/analytics/spend_analytics_view.dart';
 import '../modules/accountant/views/analytics/financial_reports_view.dart';
+import '../core/constants/user_roles.dart'; // Added Import
 import '../modules/accountant/controllers/accountant_analytics_controller.dart';
 
 class AuthMiddleware extends GetMiddleware {
@@ -95,19 +96,18 @@ class AuthMiddleware extends GetMiddleware {
     }
     return null;
   }
-  }
-
+}
 
 class RouteGuard extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     final authService = Get.find<AuthService>();
-    
+
     // 1. Check Login
     if (!authService.isLoggedIn) {
       return const RouteSettings(name: AppRoutes.LOGIN);
     }
-    
+
     // 2. Check Session Verification (Strict Startup)
     if (!authService.isSessionVerified.value) {
       return const RouteSettings(name: AppRoutes.LOCK);
@@ -119,18 +119,26 @@ class RouteGuard extends GetMiddleware {
     // 3. Firewall: Block unauthorized access based on URL signatures
     if (route != null) {
       // Block Admin routes for non-admins
-      if (route.startsWith('/admin') && role != 'admin' && role != 'super_admin') {
-         Get.snackbar('Access Denied', 'You are not authorized to access this area.');
-         return _getDashboardRoute(role);
+      if (route.startsWith('/admin') &&
+          role != UserRoles.ADMIN &&
+          role != UserRoles.SUPER_ADMIN) {
+        Get.snackbar(
+          'Access Denied',
+          'You are not authorized to access this area.',
+        );
+        return _getDashboardRoute(role);
       }
-      
+
       // Block Accountant routes for non-accountants
-      if (route.startsWith('/accountant') && role != 'accountant') {
-         Get.snackbar('Access Denied', 'You are not authorized to access this area.');
-         return _getDashboardRoute(role);
+      if (route.startsWith('/accountant') && role != UserRoles.ACCOUNTANT) {
+        Get.snackbar(
+          'Access Denied',
+          'You are not authorized to access this area.',
+        );
+        return _getDashboardRoute(role);
       }
     }
-    
+
     // 4. Force Redirect from Root
     // if (route == AppRoutes.INITIAL || route == '/') {
     //    return _getDashboardRoute(role);
@@ -140,12 +148,13 @@ class RouteGuard extends GetMiddleware {
   }
 
   RouteSettings _getDashboardRoute(String role) {
-      if (role == 'admin' || role == 'super_admin') return const RouteSettings(name: AppRoutes.ADMIN_DASHBOARD);
-      if (role == 'accountant') return const RouteSettings(name: AppRoutes.ACCOUNTANT_DASHBOARD);
-      return const RouteSettings(name: AppRoutes.REQUESTOR);
+    if (role == UserRoles.ADMIN || role == UserRoles.SUPER_ADMIN)
+      return const RouteSettings(name: AppRoutes.ADMIN_DASHBOARD);
+    if (role == UserRoles.ACCOUNTANT)
+      return const RouteSettings(name: AppRoutes.ACCOUNTANT_DASHBOARD);
+    return const RouteSettings(name: AppRoutes.REQUESTOR);
   }
 }
-
 
 class AppPages {
   static const INITIAL = AppRoutes.SPLASH;
@@ -159,24 +168,19 @@ class AppPages {
       }),
     ),
 
-    GetPage(
-      name: AppRoutes.LOCK,
-      page: () => const LockView(),
-    ),
+    GetPage(name: AppRoutes.LOCK, page: () => const LockView()),
 
     GetPage(
       name: AppRoutes.INITIAL, // '/'
-      page: () => const SizedBox(), 
-      middlewares: [
-        RouteGuard(),
-      ],
+      page: () => const SizedBox(),
+      middlewares: [RouteGuard()],
     ),
     GetPage(
       name: AppRoutes.LOGIN,
       page: () => const LoginView(),
       binding: AuthBinding(),
     ),
- 
+
     GetPage(
       name: AppRoutes.ORGANIZATION_SETUP,
       page: () => const OrganizationSetupView(),
@@ -366,21 +370,21 @@ class AppPages {
     GetPage(
       name: AppRoutes.ADMIN_ADD_USER,
       page: () => const AdminAddUserView(),
-       binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.put(AdminUserController()); // Reuse controller
       }),
     ),
     GetPage(
       name: AppRoutes.ADMIN_EDIT_USER,
       page: () => const AdminEditUserView(),
-       binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.put(AdminUserController());
       }),
     ),
     GetPage(
       name: AppRoutes.ADMIN_DEACTIVATE_USER,
       page: () => const AdminDeactivateUserView(),
-       binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
         Get.put(AdminUserController());
       }),
     ),
@@ -426,7 +430,7 @@ class AppPages {
       binding: BindingsBuilder(() {
         // Reuse existing controller from PaymentRequestDetailsView
         if (!Get.isRegistered<PaymentFlowController>()) {
-           Get.put(PaymentFlowController());
+          Get.put(PaymentFlowController());
         }
       }),
     ),
@@ -466,7 +470,7 @@ class AppPages {
       name: AppRoutes.ACCOUNTANT_FINANCIAL_REPORTS,
       page: () => const FinancialReportsView(),
       binding: BindingsBuilder(() {
-        Get.put(AccountantAnalyticsController()); 
+        Get.put(AccountantAnalyticsController());
       }),
     ),
     GetPage(

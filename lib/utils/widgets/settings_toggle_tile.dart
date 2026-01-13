@@ -23,14 +23,16 @@ class SettingsToggleTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-             Icon(icon, color: AppColors.primaryBlue),
-             const SizedBox(width: 16),
+            Icon(icon, color: AppColors.primaryBlue),
+            const SizedBox(width: 16),
           ],
           Expanded(
             child: Column(
@@ -38,7 +40,13 @@ class SettingsToggleTile extends StatelessWidget {
               children: [
                 Text(title, style: AppTextStyles.h3.copyWith(fontSize: 16)),
                 const SizedBox(height: 4),
-                Text(subtitle, style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, fontSize: 13)),
+                Text(
+                  subtitle,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppTextStyles.bodyMedium.color,
+                    fontSize: 13,
+                  ),
+                ),
               ],
             ),
           ),

@@ -276,16 +276,17 @@ class CashFlowHistoryView extends GetView<CashFlowHistoryController> {
           border: Border.all(
             color: isSelected
                 ? AppColors.primaryBlue
-                : Colors.transparent, // Border check? Image shows clean white for unselected
+                : Colors
+                      .transparent, // Border check? Image shows clean white for unselected
           ),
           boxShadow: isSelected
               ? [
-                BoxShadow(
-                  color: AppColors.primaryBlue.withOpacity(0.3),
-                  blurRadius: 8.r,
-                  offset: Offset(0, 4.h),
-                ),
-              ]
+                  BoxShadow(
+                    color: AppColors.primaryBlue.withOpacity(0.3),
+                    blurRadius: 8.r,
+                    offset: Offset(0, 4.h),
+                  ),
+                ]
               : [],
         ),
         child: Text(
@@ -379,11 +380,10 @@ class CashFlowHistoryView extends GetView<CashFlowHistoryController> {
             amount,
             style: AppTextStyles.bodyLarge.copyWith(
               fontWeight: FontWeight.w700,
-              color:
-                  isCashIn
-                      ? AppColors.successGreen
-                      : AppColors
-                          .textDark, // Image shows black for debit? No, looks like black.
+              color: isCashIn
+                  ? AppColors.successGreen
+                  : AppColors
+                        .textDark, // Image shows black for debit? No, looks like black.
             ),
           ),
         ],

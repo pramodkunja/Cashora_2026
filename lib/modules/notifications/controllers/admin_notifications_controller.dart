@@ -6,8 +6,12 @@ class AdminNotificationsController extends GetxController {
   final RxList<NotificationItem> _allNotifications = <NotificationItem>[].obs;
 
   List<NotificationItem> get allNotifications => _allNotifications;
-  List<NotificationItem> get newRequests => _allNotifications.where((n) => n.type == NotificationType.newRequest).toList();
-  List<NotificationItem> get clarifications => _allNotifications.where((n) => n.type == NotificationType.clarification).toList();
+  List<NotificationItem> get newRequests => _allNotifications
+      .where((n) => n.type == NotificationType.newRequest)
+      .toList();
+  List<NotificationItem> get clarifications => _allNotifications
+      .where((n) => n.type == NotificationType.clarification)
+      .toList();
 
   @override
   void onInit() {
@@ -27,7 +31,8 @@ class AdminNotificationsController extends GetxController {
         image: 'https://i.pravatar.cc/150?u=sarah',
         isUrgent: true,
         isUnread: true,
-        body: 'Sarah Jenkins', // Storing Name in body for simple re-use or extend model
+        body:
+            'Sarah Jenkins', // Storing Name in body for simple re-use or extend model
       ),
       NotificationItem(
         id: '2',
@@ -55,7 +60,7 @@ class AdminNotificationsController extends GetxController {
         badgeBg: const Color(0xFFD1FAE5),
         icon: Icons.receipt_long,
       ),
-       NotificationItem(
+      NotificationItem(
         id: '4',
         title: 'Uber Ride to Airport',
         time: '1d ago',
@@ -66,7 +71,7 @@ class AdminNotificationsController extends GetxController {
         body: 'David Kim',
         icon: Icons.directions_car,
       ),
-       NotificationItem(
+      NotificationItem(
         id: '5',
         title: 'Quarterly Software Licenses',
         time: '1d ago',
@@ -82,6 +87,10 @@ class AdminNotificationsController extends GetxController {
 
   void markAllRead() {
     _allNotifications.clear();
-    Get.snackbar('Notifications', 'All notifications cleared', snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar(
+      'Notifications',
+      'All notifications cleared',
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 }

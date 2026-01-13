@@ -14,50 +14,54 @@ class RequestorMainView extends GetView<RequestorController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Obx(() => IndexedStack(
-        index: controller.currentIndex.value,
-        children: [
-          RequestorDashboardView(),
-          MyRequestsView(),
-          ProfileView(isTab: true),
-        ],
-      )),
-      bottomNavigationBar: Obx(() => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
+      body: Obx(
+        () => IndexedStack(
+          index: controller.currentIndex.value,
+          children: [
+            RequestorDashboardView(),
+            MyRequestsView(),
+            ProfileView(isTab: true),
           ],
         ),
-        child: BottomNavigationBar(
-          currentIndex: controller.currentIndex.value,
-          onTap: controller.changeTab,
-          backgroundColor: Colors.white,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textLight,
-          showUnselectedLabels: true,
-          type: BottomNavigationBarType.fixed,
-          elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded),
-              label: AppText.dashboard,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long_rounded),
-              label: AppText.requests,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: AppText.profile,
-            ),
-          ],
+      ),
+      bottomNavigationBar: Obx(
+        () => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: BottomNavigationBar(
+            currentIndex: controller.currentIndex.value,
+            onTap: controller.changeTab,
+            backgroundColor: Colors.white,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: AppColors.textLight,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            elevation: 0,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.grid_view_rounded),
+                label: AppText.dashboard,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.receipt_long_rounded),
+                label: AppText.requests,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_rounded),
+                label: AppText.profile,
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }

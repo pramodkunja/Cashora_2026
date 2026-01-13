@@ -18,7 +18,11 @@ class EditProfileView extends GetView<ProfileController> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textDark, size: 24.sp),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.textDark,
+            size: 24.sp,
+          ),
           onPressed: () => Get.back(),
         ),
         centerTitle: true,
@@ -39,7 +43,11 @@ class EditProfileView extends GetView<ProfileController> {
                 child: CircleAvatar(
                   radius: 50.r,
                   backgroundColor: AppColors.backgroundLight,
-                  child: Icon(Icons.person, size: 50.sp, color: AppColors.textLight),
+                  child: Icon(
+                    Icons.person,
+                    size: 50.sp,
+                    color: AppColors.textLight,
+                  ),
                 ),
               ),
             ),
@@ -68,16 +76,17 @@ class EditProfileView extends GetView<ProfileController> {
               ],
             ),
             SizedBox(height: 20.h),
-            
+
             _buildTextField(
               context,
               label: AppText.emailAddress,
-              controller: controller.emailController, // Should be read-only logically
+              controller:
+                  controller.emailController, // Should be read-only logically
               icon: Icons.email_outlined,
               readOnly: true,
             ),
             SizedBox(height: 20.h),
-            
+
             _buildTextField(
               context,
               label: AppText.phone,
@@ -85,8 +94,8 @@ class EditProfileView extends GetView<ProfileController> {
               icon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
             ),
-             SizedBox(height: 20.h),
-            
+            SizedBox(height: 20.h),
+
             _buildTextField(
               context,
               label: AppText.role,
@@ -97,11 +106,13 @@ class EditProfileView extends GetView<ProfileController> {
 
             SizedBox(height: 40.h),
 
-            Obx(() => PrimaryButton(
-              text: 'Save Changes',
-              onPressed: controller.saveProfile,
-              isLoading: controller.isSaving.value,
-            )),
+            Obx(
+              () => PrimaryButton(
+                text: 'Save Changes',
+                onPressed: controller.saveProfile,
+                isLoading: controller.isSaving.value,
+              ),
+            ),
           ],
         ),
       ),
@@ -122,8 +133,8 @@ class EditProfileView extends GetView<ProfileController> {
         Text(
           label,
           style: AppTextStyles.bodyMedium.copyWith(
-            fontWeight: FontWeight.w600, 
-            color: AppTextStyles.bodyMedium.color
+            fontWeight: FontWeight.w600,
+            color: AppTextStyles.bodyMedium.color,
           ),
         ),
         SizedBox(height: 8.h),
@@ -135,10 +146,15 @@ class EditProfileView extends GetView<ProfileController> {
             color: readOnly ? AppColors.textSlate : AppColors.textDark,
           ),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: readOnly ? AppColors.textSlate : AppColors.textLight, size: 24.sp),
+            prefixIcon: Icon(
+              icon,
+              color: readOnly ? AppColors.textSlate : AppColors.textLight,
+              size: 24.sp,
+            ),
             filled: true,
-            fillColor: readOnly 
-                ? AppColors.backgroundLight // or a specific read-only color
+            fillColor: readOnly
+                ? AppColors
+                      .backgroundLight // or a specific read-only color
                 : Theme.of(context).cardColor,
             contentPadding: EdgeInsets.symmetric(vertical: 16.h),
             border: OutlineInputBorder(
@@ -151,7 +167,11 @@ class EditProfileView extends GetView<ProfileController> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: readOnly ? Theme.of(context).dividerColor : AppColors.primary),
+              borderSide: BorderSide(
+                color: readOnly
+                    ? Theme.of(context).dividerColor
+                    : AppColors.primary,
+              ),
             ),
           ),
         ),

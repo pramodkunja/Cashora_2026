@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart'; // For WidgetsBinding
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import 'package:logger/logger.dart';
@@ -43,8 +44,10 @@ class NetworkService extends GetxService {
             // Prevent circular dependency issues by fetching AuthService lazily if needed
             // But usually Find is safe here if initialized
             if (Get.isRegistered<AuthService>()) {
-              await Get.find<AuthService>().logout();
-              Get.offAllNamed('/login'); // Hardcoded string or AppRoutes.LOGIN
+              // Execute strictly in callback to avoid interfering with current stack
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                 await Get.find<AuthService>().logout();
+              });
             }
           }
 
@@ -57,7 +60,7 @@ class NetworkService extends GetxService {
 
           // 3. Normalize error for UI consumption (Optional but good for "Production Ready")
           // Logic could go here to wrap e in a custom 'Failure' object
-          
+
           return handler.next(e);
         },
       ),
@@ -71,7 +74,11 @@ class NetworkService extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return await _dio.get(path, queryParameters: queryParameters, options: options);
+    return await _dio.get(
+      path,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 
   Future<Response> post(
@@ -80,7 +87,12 @@ class NetworkService extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return await _dio.post(path, data: data, queryParameters: queryParameters, options: options);
+    return await _dio.post(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 
   Future<Response> put(
@@ -89,7 +101,12 @@ class NetworkService extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return await _dio.put(path, data: data, queryParameters: queryParameters, options: options);
+    return await _dio.put(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 
   Future<Response> patch(
@@ -98,7 +115,12 @@ class NetworkService extends GetxService {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return await _dio.patch(path, data: data, queryParameters: queryParameters, options: options);
+    return await _dio.patch(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 
   Future<Response> delete(

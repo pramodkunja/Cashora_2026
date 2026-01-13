@@ -47,7 +47,7 @@ class MonthlySpentController extends GetxController {
       'color': const Color(0xFFFEE2E2), // Red 50
       'iconColor': const Color(0xFFDC2626), // Red 600
     },
-     {
+    {
       'title': 'Client Dinner',
       'date': 'Oct 12, 2023',
       'amount': '₹120.00',
@@ -57,7 +57,7 @@ class MonthlySpentController extends GetxController {
       'iconColor': const Color(0xFF16A34A), // Green 600
     },
   ];
-  
+
   // To simulate filtering
   final displayedTransactions = <Map<String, dynamic>>[].obs;
 
@@ -69,7 +69,7 @@ class MonthlySpentController extends GetxController {
     super.onInit();
     // Initial load
     _applyFilters();
-    
+
     // Listen to search changes
     searchController.addListener(() {
       searchTransactions(searchController.text);
@@ -80,7 +80,7 @@ class MonthlySpentController extends GetxController {
     selectedFilterIndex.value = index;
     _applyFilters();
   }
-  
+
   void searchTransactions(String query) {
     searchQuery.value = query;
     _applyFilters();
@@ -92,12 +92,20 @@ class MonthlySpentController extends GetxController {
     // 1. Filter by Status
     String statusFilter = '';
     switch (selectedFilterIndex.value) {
-      case 1: statusFilter = 'Paid'; break;
-      case 2: statusFilter = 'Pending'; break;
-      case 3: statusFilter = 'Rejected'; break;
-      default: statusFilter = ''; break;
+      case 1:
+        statusFilter = 'Paid';
+        break;
+      case 2:
+        statusFilter = 'Pending';
+        break;
+      case 3:
+        statusFilter = 'Rejected';
+        break;
+      default:
+        statusFilter = '';
+        break;
     }
-    
+
     if (statusFilter.isNotEmpty) {
       result = result.where((t) => t['status'] == statusFilter).toList();
     }
@@ -105,10 +113,13 @@ class MonthlySpentController extends GetxController {
     // 2. Filter by Search Query
     if (searchQuery.value.isNotEmpty) {
       final lowerQuery = searchQuery.value.toLowerCase();
-      result = result.where((t) => 
-        t['title'].toString().toLowerCase().contains(lowerQuery) || 
-        t['amount'].toString().toLowerCase().contains(lowerQuery)
-      ).toList();
+      result = result
+          .where(
+            (t) =>
+                t['title'].toString().toLowerCase().contains(lowerQuery) ||
+                t['amount'].toString().toLowerCase().contains(lowerQuery),
+          )
+          .toList();
     }
 
     displayedTransactions.assignAll(result);
@@ -127,19 +138,29 @@ class MonthlySpentController extends GetxController {
     final parts = currentMonth.value.split(' ');
     final monthName = parts[0];
     final year = int.parse(parts[1]);
-    
+
     final months = [
-      'January', 'February', 'March', 'April', 'May', 'June', 
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     int monthIndex = months.indexOf(monthName) + 1;
-    
+
     // Calculate new date
     var newDate = DateTime(year, monthIndex + offset, 1);
-    
+
     // Update string
     currentMonth.value = '${months[newDate.month - 1]} ${newDate.year}';
-    
+
     // Refresh data would happen here
   }
 
@@ -148,8 +169,18 @@ class MonthlySpentController extends GetxController {
     // Format "October 2023"
     final parts = currentMonth.value.split(' ');
     final months = [
-      'January', 'February', 'March', 'April', 'May', 'June', 
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     int monthIndex = months.indexOf(parts[0]) + 1;
     if (monthIndex == 0) monthIndex = 10; // Fallback
@@ -163,7 +194,7 @@ class MonthlySpentController extends GetxController {
           // We can also store the full selectedDate if we want to filter by specific day later
           String monthName = months[selectedDate.month - 1];
           currentMonth.value = '$monthName ${selectedDate.year}';
-          
+
           // Optionally triggered logic to fetch data for that specific day or month
           // For now, updating text mimics the "Apply" behavior
         },

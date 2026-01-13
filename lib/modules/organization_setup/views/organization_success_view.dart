@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
@@ -31,7 +31,10 @@ class OrganizationSuccessView extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFDCFCE7), width: 8),
+                      border: Border.all(
+                        color: const Color(0xFFDCFCE7),
+                        width: 8,
+                      ),
                     ),
                     child: const Center(
                       child: Icon(
@@ -56,7 +59,10 @@ class OrganizationSuccessView extends StatelessWidget {
                 Text(
                   AppText.secureWorkspaceReady,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, height: 1.5),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppTextStyles.bodyMedium.color,
+                    height: 1.5,
+                  ),
                 ),
                 const SizedBox(height: 40),
 
@@ -77,7 +83,11 @@ class OrganizationSuccessView extends StatelessWidget {
                           color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.mail_outline_rounded, color: AppColors.primaryBlue, size: 20),
+                        child: const Icon(
+                          Icons.mail_outline_rounded,
+                          color: AppColors.primaryBlue,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -86,12 +96,19 @@ class OrganizationSuccessView extends StatelessWidget {
                           children: [
                             Text(
                               AppText.checkInbox,
-                              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: AppTextStyles.h3.color),
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppTextStyles.h3.color,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               AppText.checkInboxDesc,
-                              style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, fontSize: 13, height: 1.4),
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppTextStyles.bodyMedium.color,
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
                             ),
                           ],
                         ),
@@ -103,37 +120,45 @@ class OrganizationSuccessView extends StatelessWidget {
 
                 // Go to Login Button
                 PrimaryButton(
-                  text: AppText.goToLogin, // TODO: Add to AppText if not present (already checked)
+                  text: AppText
+                      .goToLogin, // TODO: Add to AppText if not present (already checked)
                   onPressed: () => Get.offAllNamed(AppRoutes.LOGIN),
-                  icon: const Icon(Icons.arrow_forward_rounded, size: 20, color: Colors.white),
+                  icon: const Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 20,
+                    color: Colors.white,
+                  ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Footer Links
                 Center(
-                   child: Wrap(
-                     spacing: 4,
-                     children: [
-                         Text(
-                           AppText.didntReceiveEmail,
-                         style: GoogleFonts.inter(color: AppTextStyles.bodySmall.color, fontSize: 13),
-                       ),
-                       GestureDetector(
-                         onTap: () {},
-                         child: Text(
-                           AppText.contactSupport,
-                           style: GoogleFonts.inter(
-                             color: const Color(0xFF0EA5E9), 
-                             fontSize: 13,
-                             decoration: TextDecoration.underline,
-                             decorationColor: const Color(0xFF0EA5E9),
-                           ),
-                         ),
-                       )
-                     ],
-                   ),
-                )
+                  child: Wrap(
+                    spacing: 4,
+                    children: [
+                      Text(
+                        AppText.didntReceiveEmail,
+                        style: GoogleFonts.inter(
+                          color: AppTextStyles.bodySmall.color,
+                          fontSize: 13,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          AppText.contactSupport,
+                          style: GoogleFonts.inter(
+                            color: const Color(0xFF0EA5E9),
+                            fontSize: 13,
+                            decoration: TextDecoration.underline,
+                            decorationColor: const Color(0xFF0EA5E9),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

@@ -20,7 +20,9 @@ class AppTheme {
       ),
       cardColor: AppColors.cardBackground,
       dividerColor: AppColors.borderLight,
-      bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.white,
+      ),
       colorScheme: ColorScheme.fromSwatch().copyWith(
         primary: AppColors.primary,
         secondary: AppColors.primaryLight,
@@ -31,7 +33,11 @@ class AppTheme {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: AppColors.textDark),
-        titleTextStyle: TextStyle(color: AppColors.textDark, fontSize: 18, fontWeight: FontWeight.w600),
+        titleTextStyle: TextStyle(
+          color: AppColors.textDark,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -40,10 +46,9 @@ class AppTheme {
     return ThemeData(
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.primaryDark,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).apply(
-        bodyColor: AppColors.white,
-        displayColor: AppColors.white,
-      ),
+      textTheme: GoogleFonts.interTextTheme(
+        ThemeData.dark().textTheme,
+      ).apply(bodyColor: AppColors.white, displayColor: AppColors.white),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -56,7 +61,9 @@ class AppTheme {
       ),
       cardColor: const Color(0xFF1E293B), // Slate 800
       dividerColor: const Color(0xFF334155), // Slate 700
-      bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B)),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Color(0xFF1E293B),
+      ),
       colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(
         primary: AppColors.primary,
         secondary: AppColors.primaryLight,
@@ -67,7 +74,11 @@ class AppTheme {
         backgroundColor: AppColors.primaryDark,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

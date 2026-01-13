@@ -23,7 +23,10 @@ class AdminClarificationView extends GetView<AdminRequestDetailsController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppText.requestDetails, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+            Text(
+              AppText.requestDetails,
+              style: AppTextStyles.h3.copyWith(fontSize: 16.sp),
+            ),
             SizedBox(height: 12.h),
             // Request Summary Card
             Container(
@@ -47,7 +50,11 @@ class AdminClarificationView extends GetView<AdminRequestDetailsController> {
                       children: [
                         Obx(() {
                           final req = controller.request;
-                          final user = req['user']?.toString() ?? req['employee_name']?.toString() ?? req['created_by']?.toString() ?? AppText.unknownUser;
+                          final user =
+                              req['user']?.toString() ??
+                              req['employee_name']?.toString() ??
+                              req['created_by']?.toString() ??
+                              AppText.unknownUser;
                           return Text(
                             user,
                             style: AppTextStyles.h3.copyWith(fontSize: 16.sp),
@@ -55,12 +62,17 @@ class AdminClarificationView extends GetView<AdminRequestDetailsController> {
                         }),
                         SizedBox(height: 4.h),
                         Obx(() {
-                           final req = controller.request;
-                           final title = req['title']?.toString() ?? req['purpose']?.toString() ?? AppText.expense;
-                           return Text(
+                          final req = controller.request;
+                          final title =
+                              req['title']?.toString() ??
+                              req['purpose']?.toString() ??
+                              AppText.expense;
+                          return Text(
                             title,
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
-                            maxLines: 2, 
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textSlate,
+                            ),
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           );
                         }),
@@ -68,64 +80,85 @@ class AdminClarificationView extends GetView<AdminRequestDetailsController> {
                     ),
                   ),
                   SizedBox(width: 12.w),
-                   // Thumbnail or Icon
-                   Obx(() {
-                     final req = controller.request;
-                     String? imageUrl;
-                     if (req['receipt_url'] != null && req['receipt_url'].toString().isNotEmpty) {
-                       imageUrl = req['receipt_url'].toString();
-                     } else if (req['attachments'] is List && (req['attachments'] as List).isNotEmpty) {
-                         final first = (req['attachments'] as List).first;
-                         if (first is String) imageUrl = first;
-                         if (first is Map) imageUrl = first['url'] ?? first['file'] ?? first['path'];
-                     }
-                     
-                     if (imageUrl != null && (imageUrl.endsWith('.jpg') || imageUrl.endsWith('.png') || imageUrl.endsWith('.jpeg'))) {
-                        return Container(
-                          height: 80.h,
-                          width: 80.w,
-                          decoration: BoxDecoration(
-                            color: isDark ? Colors.black26 : Colors.grey[200],
-                            borderRadius: BorderRadius.circular(12.r),
-                            image: DecorationImage(
-                              image: NetworkImage(imageUrl),
-                              fit: BoxFit.cover,
-                            ),
+                  // Thumbnail or Icon
+                  Obx(() {
+                    final req = controller.request;
+                    String? imageUrl;
+                    if (req['receipt_url'] != null &&
+                        req['receipt_url'].toString().isNotEmpty) {
+                      imageUrl = req['receipt_url'].toString();
+                    } else if (req['attachments'] is List &&
+                        (req['attachments'] as List).isNotEmpty) {
+                      final first = (req['attachments'] as List).first;
+                      if (first is String) imageUrl = first;
+                      if (first is Map)
+                        imageUrl =
+                            first['url'] ?? first['file'] ?? first['path'];
+                    }
+
+                    if (imageUrl != null &&
+                        (imageUrl.endsWith('.jpg') ||
+                            imageUrl.endsWith('.png') ||
+                            imageUrl.endsWith('.jpeg'))) {
+                      return Container(
+                        height: 80.h,
+                        width: 80.w,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.black26 : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(12.r),
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
                           ),
-                        );
-                     }
-                     return Container(
-                       height: 80.h,
-                       width: 80.w,
-                       decoration: BoxDecoration(
-                         color: AppColors.primaryBlue.withOpacity(0.1),
-                         borderRadius: BorderRadius.circular(12.r),
-                       ),
-                       child: Icon(Icons.receipt_long, color: AppColors.primaryBlue, size: 32.sp),
-                     );
-                   }),
+                        ),
+                      );
+                    }
+                    return Container(
+                      height: 80.h,
+                      width: 80.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Icon(
+                        Icons.receipt_long,
+                        color: AppColors.primaryBlue,
+                        size: 32.sp,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
-             SizedBox(height: 12.h),
-             Obx(() {
-               final req = controller.request;
-                final String amount = (req['amount'] is num) ? (req['amount'] as num).toStringAsFixed(2) : (req['amount']?.toString() ?? '0.00');
-               return Container(
-                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                 decoration: BoxDecoration(
-                   color: Theme.of(context).primaryColor.withOpacity(0.1), // Light Blue
-                   borderRadius: BorderRadius.circular(20.r),
-                 ),
-                 child: Text(
-                   '₹$amount',
-                   style: AppTextStyles.h3.copyWith(fontSize: 14.sp, color: AppColors.primaryBlue),
-                 ),
-               );
-             }),
+            SizedBox(height: 12.h),
+            Obx(() {
+              final req = controller.request;
+              final String amount = (req['amount'] is num)
+                  ? (req['amount'] as num).toStringAsFixed(2)
+                  : (req['amount']?.toString() ?? '0.00');
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: Theme.of(
+                    context,
+                  ).primaryColor.withOpacity(0.1), // Light Blue
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  '₹$amount',
+                  style: AppTextStyles.h3.copyWith(
+                    fontSize: 14.sp,
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
+              );
+            }),
 
             SizedBox(height: 32.h),
-            Text(AppText.yourQuestions, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)),
+            Text(
+              AppText.yourQuestions,
+              style: AppTextStyles.h3.copyWith(fontSize: 16.sp),
+            ),
             SizedBox(height: 12.h),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -142,7 +175,7 @@ class AdminClarificationView extends GetView<AdminRequestDetailsController> {
                   hintStyle: TextStyle(color: AppColors.textSlate),
                 ),
                 style: AppTextStyles.bodyMedium.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                 ),
               ),
             ),

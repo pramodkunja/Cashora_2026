@@ -35,8 +35,13 @@ class AdminBottomBar extends StatelessWidget {
         backgroundColor: Theme.of(context).cardColor,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppTextStyles.bodySmall.color,
-        selectedLabelStyle: AppTextStyles.bodyMedium.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: AppTextStyles.bodyMedium.copyWith(fontSize: 12.sp),
+        selectedLabelStyle: AppTextStyles.bodyMedium.copyWith(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: AppTextStyles.bodyMedium.copyWith(
+          fontSize: 12.sp,
+        ),
         elevation: 0,
         items: [
           BottomNavigationBarItem(

@@ -18,7 +18,8 @@ class PaymentResponse {
       total: json['total'] as int? ?? 0,
       page: json['page'] as int? ?? 1,
       size: json['size'] as int? ?? 25,
-      payments: (json['payments'] as List?)
+      payments:
+          (json['payments'] as List?)
               ?.map((e) => Payment.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -147,14 +148,15 @@ class Expense {
       id: json['id'] as int?,
       description: json['description'] as String?,
       category: json['category'] as String?,
-      expenseStatus: json['status'] as String?, 
+      expenseStatus: json['status'] as String?,
       paymentStatus: json['payment_status'] as String?,
       requestType: json['request_type'] as String?,
       requestId: json['request_id'] as String?,
       purpose: json['purpose'] as String?,
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       receiptUrl: json['receipt_url'] as String?,
-      billUrls: (json['bill_urls'] as List?)?.map((e) => e as String).toList() ?? [],
+      billUrls:
+          (json['bill_urls'] as List?)?.map((e) => e as String).toList() ?? [],
       qrUrl: json['qr_url'] as String?,
       rejectionReason: json['rejection_reason'] as String?,
       requestor: json['requestor'] != null
@@ -200,11 +202,7 @@ class QrData {
   final String? payload;
   final String? svgBase64;
 
-  QrData({
-    this.type,
-    this.payload,
-    this.svgBase64,
-  });
+  QrData({this.type, this.payload, this.svgBase64});
 
   factory QrData.fromJson(Map<String, dynamic> json) {
     return QrData(
@@ -215,10 +213,6 @@ class QrData {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'payload': payload,
-      'svg_base64': svgBase64,
-    };
+    return {'type': type, 'payload': payload, 'svg_base64': svgBase64};
   }
 }

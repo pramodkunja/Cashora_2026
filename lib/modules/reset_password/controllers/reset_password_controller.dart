@@ -13,8 +13,10 @@ class ResetPasswordController extends BaseController {
   final isNewPasswordHidden = true.obs;
   final isConfirmPasswordHidden = true.obs;
 
-  void toggleNewPasswordVisibility() => isNewPasswordHidden.value = !isNewPasswordHidden.value;
-  void toggleConfirmPasswordVisibility() => isConfirmPasswordHidden.value = !isConfirmPasswordHidden.value;
+  void toggleNewPasswordVisibility() =>
+      isNewPasswordHidden.value = !isNewPasswordHidden.value;
+  void toggleConfirmPasswordVisibility() =>
+      isConfirmPasswordHidden.value = !isConfirmPasswordHidden.value;
 
   final AuthRepository _authRepository = Get.find<AuthRepository>();
   late String email;
@@ -49,7 +51,10 @@ class ResetPasswordController extends BaseController {
         await _authRepository.resetPassword(email, otp, newPass);
         Get.offNamed(AppRoutes.RESET_PASSWORD_SUCCESS);
       } on DioException catch (e) {
-        final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Failed to reset password';
+        final message =
+            e.response?.data['detail'] ??
+            e.response?.data['message'] ??
+            'Failed to reset password';
         Get.snackbar('Error', message.toString());
       } catch (e) {
         Get.snackbar('Error', 'Something went wrong');

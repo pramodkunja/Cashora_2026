@@ -220,10 +220,7 @@ class SettingsController extends GetxController {
     }
 
     // Show loading
-    Get.dialog(
-      const Center(child: AppLoader()),
-      barrierDismissible: false,
-    );
+    Get.dialog(const Center(child: AppSpinner()), barrierDismissible: false);
 
     try {
       await _authRepository.changePassword(current, newPass);

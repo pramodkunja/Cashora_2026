@@ -5,10 +5,18 @@ import '../data/notification_model.dart';
 
 class RequestorNotificationsController extends GetxController {
   final RxList<NotificationItem> _allNotifications = <NotificationItem>[].obs;
-  
+
   List<NotificationItem> get allNotifications => _allNotifications;
-  List<NotificationItem> get actionRequired => _allNotifications.where((n) => n.type == NotificationType.actionRequired).toList();
-  List<NotificationItem> get approved => _allNotifications.where((n) => n.type == NotificationType.approved || n.type == NotificationType.payment).toList();
+  List<NotificationItem> get actionRequired => _allNotifications
+      .where((n) => n.type == NotificationType.actionRequired)
+      .toList();
+  List<NotificationItem> get approved => _allNotifications
+      .where(
+        (n) =>
+            n.type == NotificationType.approved ||
+            n.type == NotificationType.payment,
+      )
+      .toList();
 
   @override
   void onInit() {
@@ -24,7 +32,8 @@ class RequestorNotificationsController extends GetxController {
         time: '10m ago',
         type: NotificationType.actionRequired,
         ref: '#EXP-2023',
-        body: 'Please attach the itemized receipt for the client lunch at bistro.',
+        body:
+            'Please attach the itemized receipt for the client lunch at bistro.',
         isUrgent: true,
       ),
       NotificationItem(
@@ -76,6 +85,10 @@ class RequestorNotificationsController extends GetxController {
 
   void markAllRead() {
     _allNotifications.clear();
-    Get.snackbar('Notifications', 'All notifications cleared', snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar(
+      'Notifications',
+      'All notifications cleared',
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 }

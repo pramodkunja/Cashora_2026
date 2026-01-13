@@ -13,19 +13,23 @@ class AccountantDashboardView extends GetView<AccountantDashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() => IndexedStack(
-        index: controller.rxIndex.value,
-        children: const [
-          AccountantHomeView(),
-          AccountantPaymentsView(),
-          SpendAnalyticsView(),
-          AccountantProfileView(),
-        ],
-      )),
-      bottomNavigationBar: Obx(() => AccountantBottomBar(
-        currentIndex: controller.rxIndex.value,
-        onTap: controller.onBottomNavTap,
-      )),
+      body: Obx(
+        () => IndexedStack(
+          index: controller.rxIndex.value,
+          children: const [
+            AccountantHomeView(),
+            AccountantPaymentsView(),
+            SpendAnalyticsView(),
+            AccountantProfileView(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Obx(
+        () => AccountantBottomBar(
+          currentIndex: controller.rxIndex.value,
+          onTap: controller.onBottomNavTap,
+        ),
+      ),
     );
   }
 }

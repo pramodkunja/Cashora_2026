@@ -4,7 +4,8 @@ import '../../../../data/repositories/user_repository.dart';
 import '../../../../core/services/auth_service.dart';
 
 class AccountantProfileController extends GetxController {
-  final UserRepository _userRepository = Get.find<UserRepository>(); // Ensure put in binding
+  final UserRepository _userRepository =
+      Get.find<UserRepository>(); // Ensure put in binding
   final AuthService _authService = Get.find<AuthService>();
 
   final rxName = ''.obs;
@@ -55,7 +56,7 @@ class AccountantProfileController extends GetxController {
   }
 
   void onBottomNavTap(int index) {
-     switch (index) {
+    switch (index) {
       case 0:
         Get.offNamed(AppRoutes.ACCOUNTANT_DASHBOARD);
         break;

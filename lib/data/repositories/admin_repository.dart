@@ -6,7 +6,10 @@ class AdminRepository {
 
   AdminRepository(this._networkService);
 
-  Future<List<Map<String, dynamic>>> getOrgExpenses({String? status, String? paymentStatus}) async {
+  Future<List<Map<String, dynamic>>> getOrgExpenses({
+    String? status,
+    String? paymentStatus,
+  }) async {
     try {
       final Map<String, dynamic> queryParams = {};
       if (status != null) queryParams['status'] = status;
@@ -30,17 +33,22 @@ class AdminRepository {
   Future<List<Map<String, dynamic>>> getRejectedExpenses() async {
     return await getOrgExpenses(status: 'rejected');
   }
-  Future<void> submitDecision(dynamic id, String action, {String? reason}) async {
+
+  Future<void> submitDecision(
+    dynamic id,
+    String action, {
+    String? reason,
+  }) async {
     try {
       final expenseId = id is int ? id : int.parse(id.toString());
       final data = {'action': action};
       if (reason != null) {
         data['rejection_reason'] = reason;
       }
-      
+
       await _networkService.post(
         '/approver/expenses/$expenseId/decision',
-        data: data
+        data: data,
       );
     } catch (e) {
       print("Error submitting decision: $e");
@@ -58,11 +66,9 @@ class AdminRepository {
 
   Future<void> askClarification(int id, String message) async {
     try {
-     
-      
       await _networkService.post(
-        '/approver/ask-clarification', 
-        data: {'expense_id': id, 'question': message}
+        '/approver/ask-clarification',
+        data: {'expense_id': id, 'question': message},
       );
     } catch (e) {
       print("Error asking clarification: $e");

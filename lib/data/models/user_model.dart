@@ -22,17 +22,21 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final org = json['organization'] is Map ? json['organization'] : <String, dynamic>{};
-    
+    final org = json['organization'] is Map
+        ? json['organization']
+        : <String, dynamic>{};
+
     String fName = json['first_name']?.toString() ?? '';
     String lName = json['last_name']?.toString() ?? '';
-    String fullName = json['full_name']?.toString() ?? json['name']?.toString() ?? '';
+    String fullName =
+        json['full_name']?.toString() ?? json['name']?.toString() ?? '';
 
     // If API doesn't send "name" or "full_name", but sends first/last, construct it.
-    if ((fullName.isEmpty || fullName == 'Unknown') && (fName.isNotEmpty || lName.isNotEmpty)) {
+    if ((fullName.isEmpty || fullName == 'Unknown') &&
+        (fName.isNotEmpty || lName.isNotEmpty)) {
       fullName = '$fName $lName'.trim();
-    } 
-    
+    }
+
     // If still empty, default to Unknown
     if (fullName.isEmpty) fullName = 'Unknown';
 
@@ -53,7 +57,8 @@ class User {
       lastName: lName,
       role: json['role']?.toString() ?? 'requestor',
       orgName: org['name']?.toString() ?? json['org_name']?.toString() ?? '',
-      orgCode: org['org_code']?.toString() ?? json['org_code']?.toString() ?? '',
+      orgCode:
+          org['org_code']?.toString() ?? json['org_code']?.toString() ?? '',
       phoneNumber: json['phone_number']?.toString() ?? '',
     );
   }

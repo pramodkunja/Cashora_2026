@@ -23,7 +23,7 @@ class AdminSetLimitsController extends GetxController {
     } else {
       _orgRepository = OrganizationRepository(Get.find<NetworkService>());
     }
-    
+
     fetchLimits();
   }
 
@@ -32,11 +32,12 @@ class AdminSetLimitsController extends GetxController {
       isLoading.value = true;
       final response = await _orgRepository.getApprovalLimits();
       if (response != null) {
-         // Backend might return 'deemed_limit' or 'deemed_approval_limit'. Handling both or checking repo.
-         // Assuming consistent naming from previous turn, user changed POST key. GET key usually matches.
-         // Safest to support 'deemed_approval_limit' based on user intent, but fallback to 'deemed_limit'.
-         var val = response['deemed_approval_limit'] ?? response['deemed_limit'] ?? 0;
-         deemedLimitController.text = val == 0 ? '' : val.toString();
+        // Backend might return 'deemed_limit' or 'deemed_approval_limit'. Handling both or checking repo.
+        // Assuming consistent naming from previous turn, user changed POST key. GET key usually matches.
+        // Safest to support 'deemed_approval_limit' based on user intent, but fallback to 'deemed_limit'.
+        var val =
+            response['deemed_approval_limit'] ?? response['deemed_limit'] ?? 0;
+        deemedLimitController.text = val == 0 ? '' : val.toString();
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to fetch limits: ${e.toString()}');
@@ -50,12 +51,10 @@ class AdminSetLimitsController extends GetxController {
 
     try {
       isSaving.value = true;
-      
+
       final deemed = int.parse(deemedLimitController.text.replaceAll(',', ''));
 
-      await _orgRepository.updateApprovalLimits(
-        deemedLimit: deemed,
-      );
+      await _orgRepository.updateApprovalLimits(deemedLimit: deemed);
 
       Get.back(); // Go back
       Get.snackbar(
@@ -69,9 +68,14 @@ class AdminSetLimitsController extends GetxController {
     } catch (e) {
       String errorMessage = 'Failed to update limits';
       if (e.toString().contains('message')) {
-         errorMessage = e.toString();
+        errorMessage = e.toString();
       }
-      Get.snackbar('Error', errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isSaving.value = false;
     }
@@ -82,13 +86,15 @@ class AdminSetLimitsController extends GetxController {
       Get.snackbar('Error', 'Please enter deemed limit');
       return false;
     }
-    if (!RegExp(r'^\d+$').hasMatch(deemedLimitController.text.replaceAll(',', ''))) { 
+    if (!RegExp(
+      r'^\d+$',
+    ).hasMatch(deemedLimitController.text.replaceAll(',', ''))) {
       Get.snackbar('Error', 'Deemed limit must be a valid number');
       return false;
     }
     return true;
   }
-  
+
   @override
   void onClose() {
     deemedLimitController.dispose();

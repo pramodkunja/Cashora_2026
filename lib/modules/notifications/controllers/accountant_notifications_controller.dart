@@ -7,8 +7,12 @@ class AccountantNotificationsController extends GetxController {
   final RxList<NotificationItem> _allNotifications = <NotificationItem>[].obs;
 
   List<NotificationItem> get allNotifications => _allNotifications;
-  List<NotificationItem> get actionRequired => _allNotifications.where((n) => n.type == NotificationType.actionRequired).toList();
-  List<NotificationItem> get updates => _allNotifications.where((n) => n.type != NotificationType.actionRequired).toList(); // Assuming others are updates
+  List<NotificationItem> get actionRequired => _allNotifications
+      .where((n) => n.type == NotificationType.actionRequired)
+      .toList();
+  List<NotificationItem> get updates => _allNotifications
+      .where((n) => n.type != NotificationType.actionRequired)
+      .toList(); // Assuming others are updates
 
   @override
   void onInit() {
@@ -77,6 +81,10 @@ class AccountantNotificationsController extends GetxController {
 
   void markAllRead() {
     _allNotifications.clear();
-    Get.snackbar('Notifications', 'All notifications cleared', snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar(
+      'Notifications',
+      'All notifications cleared',
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 }

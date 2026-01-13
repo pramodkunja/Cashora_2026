@@ -12,14 +12,8 @@ class RequestorBinding extends Bindings {
     Get.lazyPut<RequestRepository>(
       () => RequestRepository(Get.find<NetworkService>()),
     );
-    Get.lazyPut<RequestorController>(
-      () => RequestorController(),
-    );
-    Get.lazyPut<MyRequestsController>(
-      () => MyRequestsController(),
-    );
-     Get.lazyPut<ProfileController>(
-      () => ProfileController(),
-    );
+    Get.lazyPut<RequestorController>(() => RequestorController());
+    Get.lazyPut<MyRequestsController>(() => MyRequestsController());
+    Get.lazyPut<ProfileController>(() => ProfileController());
   }
 }

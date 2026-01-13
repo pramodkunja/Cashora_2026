@@ -56,7 +56,10 @@ class AdminClarificationSuccessView extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               AppText.sentBackDesc,
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSlate,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
             const Spacer(),

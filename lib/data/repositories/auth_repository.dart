@@ -187,15 +187,21 @@ class AuthRepository {
 
   Future<User?> getCurrentUser() async {
     try {
-      // In a real app, you would call an endpoint like /auth/me
-      // final response = await _networkService.get('/auth/me');
-      // return User.fromJson(response.data);
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      // CRITICAL SECURITY FIX: Removed hardcoded mock user.
-      // If the API isn't ready or fails, we must return null.
+      final response = await _networkService.get('/auth/me');
+      
+      final data = response.data;
+      if (data != null) {
+         if (data is Map<String, dynamic>) {
+            // Handle {user: {...}} or direct {...}
+            if (data.containsKey('user')) {
+              return User.fromJson(data['user']);
+            }
+            return User.fromJson(data);
+         }
+      }
       return null;
     } catch (e) {
+      // If 401, returns null, which AuthService handles by logging out
       return null;
     }
   }

@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../app_colors.dart';
 
-class AppLoader extends StatefulWidget {
+class AppSpinner extends StatefulWidget {
   final double size;
-  const AppLoader({super.key, this.size = 60});
+  const AppSpinner({super.key, this.size = 60});
 
   @override
-  State<AppLoader> createState() => _AppLoaderState();
+  State<AppSpinner> createState() => _AppSpinnerState();
 }
 
-class _AppLoaderState extends State<AppLoader> with TickerProviderStateMixin {
+class _AppSpinnerState extends State<AppSpinner> with TickerProviderStateMixin {
   late AnimationController _rotationController;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -20,13 +20,15 @@ class _AppLoaderState extends State<AppLoader> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _rotationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 2000))
-      ..repeat();
-    
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
+
     _pulseController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500))
-      ..repeat(reverse: true);
-      
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
     _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -69,8 +71,8 @@ class _AppLoaderState extends State<AppLoader> with TickerProviderStateMixin {
                       color: AppColors.primary.withOpacity(0.15),
                       blurRadius: 20,
                       spreadRadius: 0,
-                    )
-                  ]
+                    ),
+                  ],
                 ),
                 child: Image.asset(
                   'assets/images/cashora_shield.png',
@@ -93,15 +95,15 @@ class _RingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width / 2) - 2; 
-    
+    final radius = (size.width / 2) - 2;
+
     // Outer Ring (Primary Purple)
     final paint1 = Paint()
       ..color = AppColors.primary
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
-      
+
     // Inner Ring (Teal Accent)
     final paint2 = Paint()
       ..color = AppColors.teal
@@ -111,7 +113,7 @@ class _RingPainter extends CustomPainter {
 
     final startAngle1 = (progress * 2 * math.pi);
     final sweepAngle1 = math.pi * 1.5; // Large arc
-    
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       startAngle1,
@@ -119,10 +121,10 @@ class _RingPainter extends CustomPainter {
       false,
       paint1,
     );
-    
+
     final startAngle2 = -(progress * 2 * math.pi); // Opposite rotation
     final sweepAngle2 = math.pi; // Half circle
-    
+
     // Inner ring (70% size)
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius * 0.7),
@@ -134,5 +136,6 @@ class _RingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_RingPainter oldDelegate) => oldDelegate.progress != progress;
+  bool shouldRepaint(_RingPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }

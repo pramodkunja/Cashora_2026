@@ -26,11 +26,13 @@ class AdminHistoryController extends GetxController {
     }
     return historyRequests.where((item) {
       final status = item['status']?.toString().toLowerCase() ?? '';
-      if (selectedFilter.value == 'Approved') return status == 'approved' || status == 'auto_approved';
+      if (selectedFilter.value == 'Approved')
+        return status == 'approved' || status == 'auto_approved';
       if (selectedFilter.value == 'Rejected') return status == 'rejected';
       if (selectedFilter.value == 'Pending') return status == 'pending';
-      if (selectedFilter.value == 'Clarified') return status == 'clarification_required';
-      return false; 
+      if (selectedFilter.value == 'Clarified')
+        return status == 'clarification_required';
+      return false;
     }).toList();
   }
 
@@ -60,10 +62,10 @@ class AdminHistoryController extends GetxController {
       allHistory.sort((a, b) {
         final dateStrA = a['updated_at'] ?? a['created_at'] ?? '';
         final dateStrB = b['updated_at'] ?? b['created_at'] ?? '';
-        
+
         if (dateStrA.toString().isEmpty) return 1; // Push nulls to bottom
         if (dateStrB.toString().isEmpty) return -1;
-        
+
         try {
           final dateA = DateTime.parse(dateStrA);
           final dateB = DateTime.parse(dateStrB);

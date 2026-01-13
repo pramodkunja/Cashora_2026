@@ -34,9 +34,11 @@ class SecondaryButton extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppColors.infoBg, // Default light blue
+          backgroundColor:
+              backgroundColor ?? AppColors.infoBg, // Default light blue
           foregroundColor: textColor ?? AppColors.textDark,
-          padding: padding ?? EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+          padding:
+              padding ?? EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.r),
             side: border ?? BorderSide.none,
@@ -47,10 +49,7 @@ class SecondaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min, // Hug content
           children: [
-            if (icon != null) ...[
-              icon!,
-              SizedBox(width: 8.w),
-            ],
+            if (icon != null) ...[icon!, SizedBox(width: 8.w)],
             Flexible(
               child: Text(
                 text,

@@ -54,13 +54,25 @@ class AdminActionCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppTextStyles.h3.copyWith(fontSize: 16.sp)), // Responsive
+                  Text(
+                    title,
+                    style: AppTextStyles.h3.copyWith(fontSize: 16.sp),
+                  ), // Responsive
                   SizedBox(height: 2.h), // Responsive
-                  Text(subtitle, style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodySmall.color)),
+                  Text(
+                    subtitle,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppTextStyles.bodySmall.color,
+                    ),
+                  ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_rounded, color: AppTextStyles.bodySmall.color, size: 20.sp), // Responsive
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: AppTextStyles.bodySmall.color,
+              size: 20.sp,
+            ), // Responsive
           ],
         ),
       ),

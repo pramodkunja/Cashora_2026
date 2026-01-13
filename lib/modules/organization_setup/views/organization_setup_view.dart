@@ -23,10 +23,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
           icon: const Icon(Icons.close, color: AppColors.textSlate),
           onPressed: () => Get.back(),
         ),
-        title: Text(
-          AppText.setupOrganization,
-          style: AppTextStyles.h3,
-        ),
+        title: Text(AppText.setupOrganization, style: AppTextStyles.h3),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -99,7 +96,7 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 //   ),
                 // )),
                 // const SizedBox(height: 32),
-                
+
                 // Admin Details Section
                 Text(
                   AppText.adminDetails,
@@ -164,28 +161,39 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                     hintStyle: AppTextStyles.hintText,
                     filled: true,
                     fillColor: Theme.of(context).cardColor,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).dividerColor,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).dividerColor,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.primaryBlue),
+                      borderSide: const BorderSide(
+                        color: AppColors.primaryBlue,
+                      ),
                     ),
                   ),
-                  initialCountryCode: 'IN', // Default to India or US as per user preference, strictly 'IN' is a safe guess for this context, or 'US'. Let's pick 'IN' as a common default or maybe 'US'. Given the name 'Pramod' in paths, 'IN' is a good guess, but 'US' is standard default. I'll use 'IN' as it seems more likely for this user context, or just 'US'. I'll stick to 'IN' as it's often safer for international/mixed use if I'm unsure. Actually, let's use 'US' as universal default or 'IN' if I want to be localized. I'll use 'IN'. 
+                  initialCountryCode:
+                      'IN', // Default to India or US as per user preference, strictly 'IN' is a safe guess for this context, or 'US'. Let's pick 'IN' as a common default or maybe 'US'. Given the name 'Pramod' in paths, 'IN' is a good guess, but 'US' is standard default. I'll use 'IN' as it seems more likely for this user context, or just 'US'. I'll stick to 'IN' as it's often safer for international/mixed use if I'm unsure. Actually, let's use 'US' as universal default or 'IN' if I want to be localized. I'll use 'IN'.
                   onChanged: (phone) {
-                     controller.fullPhoneNumber.value = phone.completeNumber;
-                     controller.isPhoneValid.value = true; // Basic check, advanced validation happens internally but we need to trust the parser.
-                     // Actually IntlPhoneField has internal validation. We can capture it via onCountryChanged or similar?
-                     // Verify: isValid is a property of the phone object? No.
-                     // We might need to rely on the form state or just use the complete string.
-                     // Actually, we should use the `onChanged` to just store result. The validation visual is automatic.
+                    controller.fullPhoneNumber.value = phone.completeNumber;
+                    controller.isPhoneValid.value =
+                        true; // Basic check, advanced validation happens internally but we need to trust the parser.
+                    // Actually IntlPhoneField has internal validation. We can capture it via onCountryChanged or similar?
+                    // Verify: isValid is a property of the phone object? No.
+                    // We might need to rely on the form state or just use the complete string.
+                    // Actually, we should use the `onChanged` to just store result. The validation visual is automatic.
                   },
                   onCountryChanged: (country) {
                     // Update validation logic if needed
@@ -205,7 +213,11 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.info_rounded, color: AppColors.primaryBlue, size: 20),
+                      const Icon(
+                        Icons.info_rounded,
+                        color: AppColors.primaryBlue,
+                        size: 20,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -221,15 +233,19 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Secure SSL Label
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.lock_rounded, color: AppColors.borderLight, size: 14),
+                      const Icon(
+                        Icons.lock_rounded,
+                        color: AppColors.borderLight,
+                        size: 14,
+                      ),
                       const SizedBox(width: 6),
-                       Text(
+                      Text(
                         AppText.secureSSL,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.borderLight,
@@ -243,11 +259,13 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
                 const SizedBox(height: 16),
 
                 // Create Button
-                Obx(() => PrimaryButton(
-                  text: AppText.createOrganizationAction,
-                  onPressed: controller.createOrganization,
-                  isLoading: controller.isLoading,
-                )),
+                Obx(
+                  () => PrimaryButton(
+                    text: AppText.createOrganizationAction,
+                    onPressed: controller.createOrganization,
+                    isLoading: controller.isLoading,
+                  ),
+                ),
                 const SizedBox(height: 20),
               ],
             ),
@@ -285,7 +303,9 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
         Text(
           label,
           style: AppTextStyles.bodyMedium.copyWith(
-            color: isActive ? AppColors.textDark : AppTextStyles.bodyMedium.color,
+            color: isActive
+                ? AppColors.textDark
+                : AppTextStyles.bodyMedium.color,
             fontWeight: FontWeight.w500,
             fontSize: 14,
           ),
@@ -305,7 +325,11 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
     );
   }
 
-  Widget _buildTextField({required BuildContext context, required TextEditingController controller, required String hint}) {
+  Widget _buildTextField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String hint,
+  }) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -313,7 +337,10 @@ class OrganizationSetupView extends GetView<OrganizationSetupController> {
         hintStyle: AppTextStyles.hintText,
         filled: true,
         fillColor: Theme.of(context).cardColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Theme.of(context).dividerColor),

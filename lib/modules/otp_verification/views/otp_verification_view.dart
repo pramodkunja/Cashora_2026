@@ -21,7 +21,11 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppTextStyles.h3.color, size: 20.sp),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppTextStyles.h3.color,
+            size: 20.sp,
+          ),
           onPressed: () => Get.back(),
         ),
       ),
@@ -51,22 +55,32 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
               // Headings
               Text(
                 AppText.otpVerification, // "OTP Verification"
-                style: AppTextStyles.h2.copyWith(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: AppTextStyles.h2.copyWith(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 12.h),
-              
+
               Text(
                 AppText.otpSentTo(controller.email), // Dynamic message
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5, fontSize: 14.sp),
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSlate,
+                  height: 1.5,
+                  fontSize: 14.sp,
+                ),
               ),
               SizedBox(height: 48.h),
 
               // OTP Inputs
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) => _buildOtpInput(context, index)),
+                children: List.generate(
+                  6,
+                  (index) => _buildOtpInput(context, index),
+                ),
               ),
               SizedBox(height: 40.h),
 
@@ -76,7 +90,10 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 children: [
                   Text(
                     AppText.didntReceiveCode,
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 14.sp),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSlate,
+                      fontSize: 14.sp,
+                    ),
                   ),
                   Obx(() {
                     if (controller.canResend.value) {
@@ -93,7 +110,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                       );
                     } else {
                       return Text(
-                        AppText.resend, 
+                        AppText.resend,
                         style: GoogleFonts.inter(
                           color: const Color(0xFFCBD5E1),
                           fontWeight: FontWeight.w600,
@@ -105,41 +122,47 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
                 ],
               ),
               SizedBox(height: 8.h),
-              Obx(() => Text(
-                '${AppText.resendCodeIn} ${controller.formattedTime}',
-                style: GoogleFonts.inter(
-                  color: AppTextStyles.bodyMedium.color,
-                  fontSize: 14.sp,
+              Obx(
+                () => Text(
+                  '${AppText.resendCodeIn} ${controller.formattedTime}',
+                  style: GoogleFonts.inter(
+                    color: AppTextStyles.bodyMedium.color,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              )),
-              
+              ),
+
               SizedBox(height: 40.h),
 
               // Verify Button
-              Obx(() => SizedBox(
-                width: double.infinity,
-                height: 56.h,
-                child: ElevatedButton(
-                  onPressed: controller.isLoading ? null : controller.verifyOtp,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
+              Obx(
+                () => SizedBox(
+                  width: double.infinity,
+                  height: 56.h,
+                  child: ElevatedButton(
+                    onPressed: controller.isLoading
+                        ? null
+                        : controller.verifyOtp,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      elevation: 0,
                     ),
-                    elevation: 0,
-                  ),
-                  child: controller.isLoading
-                      ? const AppLoader(size: 30)
-                      : Text(
-                          AppText.verify,
-                          style: GoogleFonts.inter(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
+                    child: controller.isLoading
+                        ? const AppSpinner(size: 30)
+                        : Text(
+                            AppText.verify,
+                            style: GoogleFonts.inter(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),
@@ -149,8 +172,8 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
 
   Widget _buildOtpInput(BuildContext context, int index) {
     return Container(
-      width: 48.w, 
-      height: 56.h, 
+      width: 48.w,
+      height: 56.h,
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.r),
@@ -175,9 +198,7 @@ class OtpVerificationView extends GetView<OtpVerificationController> {
             fontWeight: FontWeight.w600,
             color: AppTextStyles.h3.color,
           ),
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: const InputDecoration(
             border: InputBorder.none,
             counterText: '',

@@ -13,7 +13,7 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], 
+      backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(24.0.w),
@@ -52,10 +52,13 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
               Text(
                 AppText.fundsTransferred,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSlate,
+                  height: 1.5,
+                ),
               ),
               SizedBox(height: 32.h),
-              
+
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -74,38 +77,64 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                   children: [
                     Text(
                       AppText.totalPaid,
-                      style: AppTextStyles.bodySmall.copyWith(letterSpacing: 1.0, color: AppColors.textSlate, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.bodySmall.copyWith(
+                        letterSpacing: 1.0,
+                        color: AppColors.textSlate,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 8.h),
                     Text(
                       '₹${Get.arguments?['amount']?.toStringAsFixed(2) ?? '0.00'}',
-                      style: AppTextStyles.h1.copyWith(fontSize: 32.sp, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.h1.copyWith(
+                        fontSize: 32.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 24.h),
                     const Divider(),
                     SizedBox(height: 24.h),
-                    _buildReceiptRow(AppText.transactionId, '${Get.arguments?['txnId'] ?? 'N/A'}', icon: Icons.copy),
+                    _buildReceiptRow(
+                      AppText.transactionId,
+                      '${Get.arguments?['txnId'] ?? 'N/A'}',
+                      icon: Icons.copy,
+                    ),
                     SizedBox(height: 16.h),
-                    Builder(builder: (context) {
-                       final dateStr = Get.arguments?['date']?.toString();
-                       String displayDate = 'Unknown Date';
-                       if (dateStr != null) {
-                           try {
-                             final dt = DateTime.parse(dateStr).toLocal();
-                             displayDate = "${dt.day}/${dt.month}/${dt.year}\n${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
-                           } catch (_) {}
-                       }
-                       return _buildReceiptRow(AppText.paymentDate, displayDate);
-                    }),
+                    Builder(
+                      builder: (context) {
+                        final dateStr = Get.arguments?['date']?.toString();
+                        String displayDate = 'Unknown Date';
+                        if (dateStr != null) {
+                          try {
+                            final dt = DateTime.parse(dateStr).toLocal();
+                            displayDate =
+                                "${dt.day}/${dt.month}/${dt.year}\n${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
+                          } catch (_) {}
+                        }
+                        return _buildReceiptRow(
+                          AppText.paymentDate,
+                          displayDate,
+                        );
+                      },
+                    ),
                     SizedBox(height: 16.h),
-                    _buildReceiptRow(AppText.paymentSource, 'UPI', isStatus: true, statusColor: Colors.green),
+                    _buildReceiptRow(
+                      AppText.paymentSource,
+                      'UPI',
+                      isStatus: true,
+                      statusColor: Colors.green,
+                    ),
                     SizedBox(height: 16.h),
-                    _buildReceiptRow(AppText.recipient, '${Get.arguments?['payee'] ?? 'Unknown'}', useLocalAvatar: true),
+                    _buildReceiptRow(
+                      AppText.recipient,
+                      '${Get.arguments?['payee'] ?? 'Unknown'}',
+                      useLocalAvatar: true,
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 48.h), // Replaces Spacer
-              
+
               SizedBox(
                 width: double.infinity,
                 height: 56.h,
@@ -115,15 +144,19 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00C853),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
                     elevation: 0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       Text(
+                      Text(
                         AppText.viewRequestDetails,
-                        style: AppTextStyles.buttonText.copyWith(fontSize: 16.sp),
+                        style: AppTextStyles.buttonText.copyWith(
+                          fontSize: 16.sp,
+                        ),
                       ),
                       SizedBox(width: 8.w),
                       const Icon(Icons.arrow_forward, color: Colors.white),
@@ -136,7 +169,10 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                 onPressed: () => controller.backToDashboard(),
                 child: Text(
                   AppText.backToDashboard,
-                  style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600, color: Colors.black),
+                  style: AppTextStyles.bodyLarge.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               SizedBox(height: 16.h),
@@ -147,7 +183,14 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
     );
   }
 
-  Widget _buildReceiptRow(String label, String value, {IconData? icon, bool isStatus = false, Color? statusColor, bool useLocalAvatar = false}) {
+  Widget _buildReceiptRow(
+    String label,
+    String value, {
+    IconData? icon,
+    bool isStatus = false,
+    Color? statusColor,
+    bool useLocalAvatar = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,15 +207,25 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                 Container(
                   width: 8.w,
                   height: 8.w,
-                  decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    shape: BoxShape.circle,
+                  ),
                 ),
                 SizedBox(width: 8.w),
               ],
-               if (useLocalAvatar) ...[
+              if (useLocalAvatar) ...[
                 CircleAvatar(
                   radius: 12.r,
                   backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                  child: Text('SJ', style: AppTextStyles.bodySmall.copyWith(color: AppColors.primaryBlue, fontWeight: FontWeight.bold, fontSize: 10.sp)),
+                  child: Text(
+                    'SJ',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primaryBlue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10.sp,
+                    ),
+                  ),
                 ),
                 SizedBox(width: 8.w),
               ],
@@ -183,14 +236,19 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                     Text(
                       value.split('\n')[0],
                       textAlign: TextAlign.right,
-                      style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.w600, fontSize: 14.sp),
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (value.contains('\n'))
                       Text(
                         value.split('\n')[1],
                         textAlign: TextAlign.right,
-                        style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate),
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSlate,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                   ],
@@ -199,7 +257,7 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
               if (icon != null) ...[
                 SizedBox(width: 8.w),
                 Icon(icon, size: 16.sp, color: AppColors.textSlate),
-              ]
+              ],
             ],
           ),
         ),

@@ -17,11 +17,12 @@ class OrganizationSetupController extends BaseController {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController(); // Can be removed if using only IntlPhoneField's internal state, but keep for safety/migration.
-  
+  final TextEditingController phoneController =
+      TextEditingController(); // Can be removed if using only IntlPhoneField's internal state, but keep for safety/migration.
+
   final RxString fullPhoneNumber = ''.obs;
   final RxBool isPhoneValid = false.obs;
-  
+
   final RxString orgCode = ''.obs;
 
   @override
@@ -42,12 +43,19 @@ class OrganizationSetupController extends BaseController {
       messageText: const Center(
         child: Text(
           'Copied',
-          style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.black87,
-      margin: const EdgeInsets.symmetric(horizontal: 140, vertical: 40), // Centered and small
+      margin: const EdgeInsets.symmetric(
+        horizontal: 140,
+        vertical: 40,
+      ), // Centered and small
       borderRadius: 30,
       duration: const Duration(seconds: 1),
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -55,16 +63,17 @@ class OrganizationSetupController extends BaseController {
   }
 
   void createOrganization() async {
-    if (orgNameController.text.isEmpty || 
-        firstNameController.text.isEmpty || 
-        lastNameController.text.isEmpty || 
+    if (orgNameController.text.isEmpty ||
+        firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
         emailController.text.isEmpty ||
-        fullPhoneNumber.value.isEmpty) { // Check fullPhoneNumber
+        fullPhoneNumber.value.isEmpty) {
+      // Check fullPhoneNumber
       Get.snackbar('Error', 'Please fill all fields');
       return;
     }
-    
-    // basic length check or rely on widget's visual feedback. 
+
+    // basic length check or rely on widget's visual feedback.
     // Ideally duplicate validation here or trust the user if the field didn't error visually.
 
     await performAsyncOperation(() async {
@@ -74,14 +83,28 @@ class OrganizationSetupController extends BaseController {
           firstName: firstNameController.text,
           lastName: lastNameController.text,
           email: emailController.text,
-          phoneNumber: fullPhoneNumber.value, // Send complete number with country code
+          phoneNumber:
+              fullPhoneNumber.value, // Send complete number with country code
         );
         Get.offNamed(AppRoutes.ORGANIZATION_SUCCESS); // Navigate to success
       } on DioException catch (e) {
-        final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'An error occurred';
-        Get.snackbar('Error', message.toString(), backgroundColor: Colors.redAccent, colorText: Colors.white);
+        final message =
+            e.response?.data['detail'] ??
+            e.response?.data['message'] ??
+            'An error occurred';
+        Get.snackbar(
+          'Error',
+          message.toString(),
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
       } catch (e) {
-        Get.snackbar('Error', 'Something went wrong', backgroundColor: Colors.redAccent, colorText: Colors.white);
+        Get.snackbar(
+          'Error',
+          'Something went wrong',
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
       }
     });
   }

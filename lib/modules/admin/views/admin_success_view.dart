@@ -29,7 +29,11 @@ class AdminSuccessView extends StatelessWidget {
                 color: AppColors.primaryBlue,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check_rounded, color: Colors.white, size: 64),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Colors.white,
+                size: 64,
+              ),
             ),
             const SizedBox(height: 32),
 
@@ -41,22 +45,25 @@ class AdminSuccessView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               AppText.approvedSuccessDesc,
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSlate,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
             const Spacer(),
-            
+
             PrimaryButton(
               text: AppText.backToApprovals,
               onPressed: () {
-                 Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
-                 // Delay to ensure controller is ready or reuse existing if not disposed
-                 Future.delayed(const Duration(milliseconds: 100), () {
-                   try {
-                     final ctrl = Get.find<AdminDashboardController>();
-                     ctrl.changeTab(1);
-                   } catch (_) {}
-                 });
+                Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
+                // Delay to ensure controller is ready or reuse existing if not disposed
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  try {
+                    final ctrl = Get.find<AdminDashboardController>();
+                    ctrl.changeTab(1);
+                  } catch (_) {}
+                });
               },
             ),
             const SizedBox(height: 24),

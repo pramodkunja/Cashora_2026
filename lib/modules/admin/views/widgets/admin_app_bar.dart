@@ -29,7 +29,11 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       leading: showBack
           ? IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_rounded, color: Theme.of(context).iconTheme.color, size: 20.sp),
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Theme.of(context).iconTheme.color,
+                size: 20.sp,
+              ),
               onPressed: onBackPressed ?? () => Get.back(),
             )
           : null,
@@ -46,5 +50,7 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(bottom != null ? (height ?? 56.h) + kToolbarHeight.h : (height ?? 56.h));
+  Size get preferredSize => Size.fromHeight(
+    bottom != null ? (height ?? 56.h) + kToolbarHeight.h : (height ?? 56.h),
+  );
 }

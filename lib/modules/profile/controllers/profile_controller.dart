@@ -6,7 +6,8 @@ import '../../../../data/models/user_model.dart';
 import '../../../../data/repositories/user_repository.dart';
 
 class ProfileController extends GetxController {
-  final UserRepository _userRepository = Get.find<UserRepository>(); // Ensure this is put in binding
+  final UserRepository _userRepository =
+      Get.find<UserRepository>(); // Ensure this is put in binding
   final AuthService _authService = Get.find<AuthService>();
 
   final rxFirstName = ''.obs;
@@ -25,7 +26,7 @@ class ProfileController extends GetxController {
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final roleController = TextEditingController();
-  
+
   final isSaving = false.obs;
   final isLoading = false.obs;
 
@@ -59,13 +60,14 @@ class ProfileController extends GetxController {
   void _updateLocalState(User user) {
     rxFirstName.value = user.firstName;
     rxLastName.value = user.lastName;
-    
+
     // Construct display name logic
     String displayName = user.name;
-    if ((displayName.isEmpty || displayName == 'Unknown') && user.firstName.isNotEmpty) {
+    if ((displayName.isEmpty || displayName == 'Unknown') &&
+        user.firstName.isNotEmpty) {
       displayName = '${user.firstName} ${user.lastName}'.trim();
     }
-    
+
     rxName.value = displayName;
     rxEmail.value = user.email;
     rxRole.value = user.role;
@@ -101,7 +103,7 @@ class ProfileController extends GetxController {
   void logout() {
     _authService.logout(); // Ensure explicit logout
   }
-  
+
   void editProfile() {
     _updateControllers();
     Get.toNamed(AppRoutes.EDIT_PROFILE);
@@ -112,25 +114,25 @@ class ProfileController extends GetxController {
     try {
       final userId = rxUserId.value;
       if (userId.isEmpty) {
-         Get.snackbar('Error', 'User ID not found');
-         return;
+        Get.snackbar('Error', 'User ID not found');
+        return;
       }
 
       final data = {
         'first_name': firstNameController.text.trim(),
         'last_name': lastNameController.text.trim(),
-        'phone_number': phoneController.text.trim(), 
+        'phone_number': phoneController.text.trim(),
       };
-      
+
       final updatedUser = await _userRepository.updateUser(userId, data);
-      
+
       if (updatedUser != null) {
         _updateLocalState(updatedUser);
       }
-      
+
       isSaving.value = false;
       Get.back();
-      
+
       Get.snackbar(
         'Success',
         'Profile updated successfully',

@@ -33,8 +33,8 @@ class RequestorDashboardView extends GetView<RequestorController> {
                   Row(
                     children: [
                       Flexible(
-                          child: Text(AppText.helloUser,
-                              style: AppTextStyles.h3)),
+                        child: Text(AppText.helloUser, style: AppTextStyles.h3),
+                      ),
                       SizedBox(width: 4.w),
                       // Dynamic user greeting
                       Flexible(
@@ -174,7 +174,10 @@ class RequestorDashboardView extends GetView<RequestorController> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('₹350.50', style: AppTextStyles.h1.copyWith(fontSize: 32.sp)),
+              Text(
+                '₹350.50',
+                style: AppTextStyles.h1.copyWith(fontSize: 32.sp),
+              ),
               const Spacer(),
               Padding(
                 padding: EdgeInsets.only(bottom: 6.h),
@@ -258,10 +261,12 @@ class RequestorDashboardView extends GetView<RequestorController> {
                     style: AppTextStyles.bodyLarge,
                   ),
                   SizedBox(height: 4.h),
-                  Obx(() => Text(
-                    '${controller.pendingCount.value} ${AppText.requestsWaiting}', // Dynamic count
-                    style: AppTextStyles.bodySmall,
-                  )),
+                  Obx(
+                    () => Text(
+                      '${controller.pendingCount.value} ${AppText.requestsWaiting}', // Dynamic count
+                      style: AppTextStyles.bodySmall,
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -24,8 +24,18 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
   PickerViewMode _viewMode = PickerViewMode.month;
 
   final List<String> _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   @override
@@ -65,8 +75,9 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: _viewMode == PickerViewMode.year 
-                          ? AppColors.primary // Blue when active
+                      color: _viewMode == PickerViewMode.year
+                          ? AppColors
+                                .primary // Blue when active
                           : const Color(0xFF0F172A),
                     ),
                   ),
@@ -80,13 +91,13 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
               ],
             ),
             const SizedBox(height: 16),
-             
-             // Content
-             Expanded(
-               child: _viewMode == PickerViewMode.month 
-                   ? _buildMonthGrid() 
-                   : _buildYearGrid(),
-             ),
+
+            // Content
+            Expanded(
+              child: _viewMode == PickerViewMode.month
+                  ? _buildMonthGrid()
+                  : _buildYearGrid(),
+            ),
 
             const SizedBox(height: 24),
 
@@ -109,10 +120,7 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
               ),
               child: const Text(
                 'Apply Filter',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -133,7 +141,7 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
       itemBuilder: (context, index) {
         final monthIndex = index + 1;
         final isSelected = _selectedMonth == monthIndex;
-        
+
         return GestureDetector(
           onTap: () {
             setState(() {
@@ -144,7 +152,9 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
             decoration: BoxDecoration(
               color: isSelected ? AppColors.primary : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
-              border: isSelected ? null : Border.all(color: const Color(0xFFE2E8F0)),
+              border: isSelected
+                  ? null
+                  : Border.all(color: const Color(0xFFE2E8F0)),
             ),
             alignment: Alignment.center,
             child: Text(
@@ -165,11 +175,11 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
     final currentYear = DateTime.now().year;
     // Years from 2022 to 2050
     final years = List.generate(2050 - 2022 + 1, (index) => 2022 + index);
-    
+
     return GridView.builder(
       itemCount: years.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3, 
+        crossAxisCount: 3,
         childAspectRatio: 1.5,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
@@ -177,7 +187,7 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
       itemBuilder: (context, index) {
         final year = years[index];
         final isSelected = _selectedYear == year;
-        
+
         return GestureDetector(
           onTap: () {
             setState(() {
@@ -189,7 +199,9 @@ class _CustomDatePickerDialogState extends State<CustomDatePickerDialog> {
             decoration: BoxDecoration(
               color: isSelected ? AppColors.primary : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
-              border: isSelected ? null : Border.all(color: const Color(0xFFE2E8F0)),
+              border: isSelected
+                  ? null
+                  : Border.all(color: const Color(0xFFE2E8F0)),
             ),
             alignment: Alignment.center,
             child: Text(

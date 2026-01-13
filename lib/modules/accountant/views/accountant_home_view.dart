@@ -307,8 +307,8 @@ class AccountantHomeView extends GetView<AccountantDashboardController> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () =>
-                          controller.navigateToPayments(), // Use navigation method to trigger fetch
+                      onPressed: () => controller
+                          .navigateToPayments(), // Use navigation method to trigger fetch
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,

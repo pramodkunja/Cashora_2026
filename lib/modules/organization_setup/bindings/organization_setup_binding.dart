@@ -7,6 +7,8 @@ class OrganizationSetupBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(() => OrganizationRepository(Get.find<NetworkService>()));
-    Get.lazyPut<OrganizationSetupController>(() => OrganizationSetupController(Get.find<OrganizationRepository>()));
+    Get.lazyPut<OrganizationSetupController>(
+      () => OrganizationSetupController(Get.find<OrganizationRepository>()),
+    );
   }
 }

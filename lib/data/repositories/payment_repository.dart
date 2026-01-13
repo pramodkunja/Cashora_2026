@@ -34,7 +34,9 @@ class PaymentRepository {
     try {
       final response = await _networkService.get('/payments/history');
       if (response.data is List) {
-        return (response.data as List).map((e) => e as Map<String, dynamic>).toList();
+        return (response.data as List)
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
       }
       return [];
     } catch (e) {
@@ -42,6 +44,7 @@ class PaymentRepository {
       return [];
     }
   }
+
   Future<Map<String, dynamic>> initiatePayment({
     required String requestId,
     required String payeeVpa,

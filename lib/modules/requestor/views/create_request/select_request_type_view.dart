@@ -41,30 +41,34 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
                 style: AppTextStyles.h3.copyWith(color: AppTextStyles.h3.color),
               ),
               const SizedBox(height: 16),
-              
+
               // Pre-approved Option
-              Obx(() => _buildOptionCard(
-                context,
-                title: AppText.preApproved,
-                subtitle: AppText.preApprovedDesc,
-                value: AppText.preApproved,
-                groupValue: controller.requestType.value,
-                icon: Icons.timelapse,
-                onChanged: (val) => controller.requestType.value = val!,
-              )),
-              
+              Obx(
+                () => _buildOptionCard(
+                  context,
+                  title: AppText.preApproved,
+                  subtitle: AppText.preApprovedDesc,
+                  value: AppText.preApproved,
+                  groupValue: controller.requestType.value,
+                  icon: Icons.timelapse,
+                  onChanged: (val) => controller.requestType.value = val!,
+                ),
+              ),
+
               const SizedBox(height: 16),
 
               // Post-approved Option
-              Obx(() => _buildOptionCard(
-                context,
-                title: AppText.postApproved,
-                subtitle: AppText.postApprovedDesc,
-                value: AppText.postApproved,
-                groupValue: controller.requestType.value,
-                icon: Icons.receipt,
-                onChanged: (val) => controller.requestType.value = val!,
-              )),
+              Obx(
+                () => _buildOptionCard(
+                  context,
+                  title: AppText.postApproved,
+                  subtitle: AppText.postApprovedDesc,
+                  value: AppText.postApproved,
+                  groupValue: controller.requestType.value,
+                  icon: Icons.receipt,
+                  onChanged: (val) => controller.requestType.value = val!,
+                ),
+              ),
 
               const Spacer(),
 
@@ -99,10 +103,16 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFE0F2FE) : Theme.of(context).cardColor,
-          border: Border.all(color: isSelected ? const Color(0xFF0EA5E9) : Theme.of(context).dividerColor),
+          color: isSelected
+              ? const Color(0xFFE0F2FE)
+              : Theme.of(context).cardColor,
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF0EA5E9)
+                : Theme.of(context).dividerColor,
+          ),
           borderRadius: BorderRadius.circular(16),
-           boxShadow: [
+          boxShadow: [
             if (!isSelected)
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -119,9 +129,22 @@ class SelectRequestTypeView extends GetView<CreateRequestController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppTextStyles.h3.color)),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: AppTextStyles.h3.color,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(fontSize: 13, color: AppTextStyles.bodyMedium.color)),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppTextStyles.bodyMedium.color,
+                    ),
+                  ),
                 ],
               ),
             ),

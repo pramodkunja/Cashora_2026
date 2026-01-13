@@ -9,7 +9,7 @@ import '../../../../utils/widgets/app_loader.dart';
 
 class AdminRequestDetailsController extends GetxController {
   late final AdminRepository _adminRepository;
-  
+
   final request = {}.obs;
   final clarificationController = TextEditingController();
   final isLoading = false.obs;
@@ -18,7 +18,7 @@ class AdminRequestDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     _adminRepository = AdminRepository(Get.find<NetworkService>());
-    if(Get.arguments != null) {
+    if (Get.arguments != null) {
       request.value = Get.arguments;
     }
   }
@@ -37,9 +37,11 @@ class AdminRequestDetailsController extends GetxController {
         Get.snackbar('Error', 'Invalid Request ID');
         return;
       }
-      
+
       await _adminRepository.approveRequest(id);
-      Get.offNamed(AppRoutes.ADMIN_SUCCESS); // Navigate to success and clear stack/history if needed or just push
+      Get.offNamed(
+        AppRoutes.ADMIN_SUCCESS,
+      ); // Navigate to success and clear stack/history if needed or just push
     } catch (e) {
       Get.snackbar('Error', 'Failed to approve: $e');
     } finally {
@@ -54,9 +56,9 @@ class AdminRequestDetailsController extends GetxController {
           try {
             isLoading.value = true;
             Get.back(); // Close sheet first
-            
+
             final id = request['id']; // Use numeric ID
-             if (id == null) {
+            if (id == null) {
               Get.snackbar('Error', 'Invalid Request ID');
               return;
             }
@@ -76,7 +78,9 @@ class AdminRequestDetailsController extends GetxController {
   }
 
   void askClarification() {
-    Get.toNamed(AppRoutes.ADMIN_CLARIFICATION); // Just navigation to input screen
+    Get.toNamed(
+      AppRoutes.ADMIN_CLARIFICATION,
+    ); // Just navigation to input screen
   }
 
   // Called from the separate Clarification Input Screen
@@ -85,14 +89,17 @@ class AdminRequestDetailsController extends GetxController {
       try {
         isLoading.value = true;
         final expense_id = request['id'];
-         if (expense_id == null) {
+        if (expense_id == null) {
           Get.snackbar('Error', 'Invalid Request ID');
           return;
         }
 
         // id is likely int from API, but safe cast if needed, though dynamic handles it if repo expects dynamic/int
         // Repo expects int.
-        await _adminRepository.askClarification(expense_id, clarificationController.text);
+        await _adminRepository.askClarification(
+          expense_id,
+          clarificationController.text,
+        );
         Get.offNamed(AppRoutes.ADMIN_CLARIFICATION_SUCCESS);
       } catch (e) {
         Get.snackbar('Error', 'Failed to send clarification: $e');
@@ -106,7 +113,7 @@ class AdminRequestDetailsController extends GetxController {
 
   void viewAttachment(String url) {
     if (url.isEmpty) return;
-    
+
     Get.dialog(
       Dialog(
         backgroundColor: Colors.transparent,
@@ -133,29 +140,36 @@ class AdminRequestDetailsController extends GetxController {
                     fit: BoxFit.contain,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
-                      return const Center(child: AppLoader());
+                      return const Center(child: AppSpinner());
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return Center(
-                         child: Column(
-                           mainAxisSize: MainAxisSize.min,
-                           children: [
-                             const Icon(Icons.broken_image, color: Colors.grey, size: 50),
-                             const SizedBox(height: 10),
-                             const Text("Unable to preview this file type."),
-                             const SizedBox(height: 10),
-                             ElevatedButton.icon(
-                               onPressed: () async {
-                                 final uri = Uri.parse(url);
-                                 if (await canLaunchUrl(uri)) {
-                                   await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                 }
-                               },
-                               icon: const Icon(Icons.open_in_new),
-                               label: const Text("Open Externally"),
-                             )
-                           ],
-                         ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.broken_image,
+                              color: Colors.grey,
+                              size: 50,
+                            ),
+                            const SizedBox(height: 10),
+                            const Text("Unable to preview this file type."),
+                            const SizedBox(height: 10),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final uri = Uri.parse(url);
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.open_in_new),
+                              label: const Text("Open Externally"),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),

@@ -27,33 +27,57 @@ class CustomListTile extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-          leading: leadingIconWidget ??
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 0,
+            vertical: 4,
+          ),
+          leading:
+              leadingIconWidget ??
               (icon != null
                   ? Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor, // Placeholder color
+                        color: Theme.of(
+                          context,
+                        ).scaffoldBackgroundColor, // Placeholder color
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(icon, color: AppColors.primaryBlue, size: 20),
                     )
                   : null), // Handle no icon case (e.g. Profile details)
-          title: Text(title,
-              style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodyMedium.color, fontSize: 13)), // Label style
+          title: Text(
+            title,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppTextStyles.bodyMedium.color,
+              fontSize: 13,
+            ),
+          ), // Label style
           subtitle: subtitle != null
               ? Padding(
                   padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(subtitle!, style: AppTextStyles.h3.copyWith(fontSize: 16)),
-              )
+                  child: Text(
+                    subtitle!,
+                    style: AppTextStyles.h3.copyWith(fontSize: 16),
+                  ),
+                )
               : null,
-          trailing: trailing ??
+          trailing:
+              trailing ??
               (onTap != null
-                  ? Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppTextStyles.bodySmall.color)
+                  ? Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: AppTextStyles.bodySmall.color,
+                    )
                   : null),
           onTap: onTap,
         ),
-        if (showDivider) Divider(height: 1, thickness: 0.5, color: Theme.of(context).dividerColor),
+        if (showDivider)
+          Divider(
+            height: 1,
+            thickness: 0.5,
+            color: Theme.of(context).dividerColor,
+          ),
       ],
     );
   }

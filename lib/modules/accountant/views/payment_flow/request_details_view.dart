@@ -14,20 +14,24 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
   Widget build(BuildContext context) {
     // Get request data from arguments or controller
     // Get request data from arguments or controller
-    final Map<String, dynamic> request = controller.currentRequest.isNotEmpty 
-        ? controller.currentRequest 
+    final Map<String, dynamic> request = controller.currentRequest.isNotEmpty
+        ? controller.currentRequest
         : (Get.arguments is Map ? (Get.arguments['request'] ?? {}) : {});
     final requestor = request['requestor'] ?? {};
     final approver = request['approver'] ?? {};
 
     final String amount = '₹${request['amount']?.toString() ?? '0.00'}';
-    final String requestId = request['request_id'] ?? (request['id'] != null ? '#REQ-${request['id']}' : '');
+    final String requestId =
+        request['request_id'] ??
+        (request['id'] != null ? '#REQ-${request['id']}' : '');
     final String date = _formatDate(request['created_at']);
     final String purpose = request['purpose'] ?? 'N/A';
     final String description = request['description'] ?? 'No Description';
-    final String requestorName = "${requestor['first_name'] ?? ''} ${requestor['last_name'] ?? ''}".trim();
+    final String requestorName =
+        "${requestor['first_name'] ?? ''} ${requestor['last_name'] ?? ''}"
+            .trim();
     final String requestorRole = requestor['role'] ?? 'Requestor';
-    
+
     // Receipt/Bill
     final String? receiptUrl = request['receipt_url'];
     final String? qrUrl = request['qr_url']; // Assuming backend key
@@ -39,7 +43,10 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).iconTheme.color,
+          ),
           onPressed: () => Get.back(),
         ),
         title: Text(
@@ -49,7 +56,10 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme.of(context).iconTheme.color,
+            ),
             onPressed: () {},
           ),
         ],
@@ -72,43 +82,67 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
               ),
             ),
             SizedBox(height: 24.h),
-            
+
             // Status Tags
-             Row(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children: [
-                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.successGreen.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(8.r),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.successGreen.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    (request['status']?.toString().toUpperCase() ?? 'APPROVED'),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.successGreen,
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: Text(
-                      (request['status']?.toString().toUpperCase() ?? 'APPROVED'),
-                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.successGreen, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.warningOrange.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    (request['payment_status']
+                            ?.toString()
+                            .replaceAll('_', ' ')
+                            .toUpperCase() ??
+                        'PENDING'),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.warningOrange,
+                      fontWeight: FontWeight.bold,
                     ),
-                 ),
-                 SizedBox(width: 10.w),
-                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.warningOrange.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Text(
-                      (request['payment_status']?.toString().replaceAll('_', ' ').toUpperCase() ?? 'PENDING'),
-                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.warningOrange, fontWeight: FontWeight.bold),
-                    ),
-                 ),
-               ],
-             ),
+                  ),
+                ),
+              ],
+            ),
 
             SizedBox(height: 24.h),
-            _buildRequesterCard(context, requestorName, requestorRole, requestId, date, purpose, description),
+            _buildRequesterCard(
+              context,
+              requestorName,
+              requestorRole,
+              requestId,
+              date,
+              purpose,
+              description,
+            ),
             SizedBox(height: 16.h),
             _buildBillAttachmentCard(context, receiptUrl, qrUrl),
             SizedBox(height: 20.h),
-            
+
             // Action Button
             SizedBox.shrink(),
           ],
@@ -116,19 +150,40 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
       ),
     );
   }
-  
+
   String _formatDate(String? dateStr) {
     if (dateStr == null) return '';
     try {
       final dt = DateTime.parse(dateStr);
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
       return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
     } catch (_) {
       return '';
     }
   }
 
-  Widget _buildRequesterCard(BuildContext context, String name, String role, String id, String date, String purpose, String description) {
+  Widget _buildRequesterCard(
+    BuildContext context,
+    String name,
+    String role,
+    String id,
+    String date,
+    String purpose,
+    String description,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -151,8 +206,11 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
                 radius: 24.r,
                 backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
                 child: Text(
-                  name.isNotEmpty ? name[0].toUpperCase() : 'U', 
-                  style: AppTextStyles.h3.copyWith(color: AppColors.primaryBlue, fontSize: 18.sp)
+                  name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                  style: AppTextStyles.h3.copyWith(
+                    color: AppColors.primaryBlue,
+                    fontSize: 18.sp,
+                  ),
                 ),
               ),
               SizedBox(width: 12.w),
@@ -162,12 +220,16 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
                   children: [
                     Text(
                       name.isNotEmpty ? name : 'Unknown User',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       role.capitalizeFirst ?? 'Requestor',
-                      style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate),
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textSlate,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -190,12 +252,18 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
           SizedBox(height: 20.h),
           Text(
             'DESCRIPTION',
-            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate, letterSpacing: 1.0, fontWeight: FontWeight.bold),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSlate,
+              letterSpacing: 1.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(height: 8.h),
           Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(height: 1.5),
           ),
         ],
       ),
@@ -208,18 +276,28 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
       children: [
         Text(
           label.toUpperCase(),
-          style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate, letterSpacing: 1.0, fontWeight: FontWeight.bold),
+          style: AppTextStyles.bodySmall.copyWith(
+            color: AppColors.textSlate,
+            letterSpacing: 1.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         SizedBox(height: 4.h),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
         ),
       ],
     );
   }
 
-  Widget _buildBillAttachmentCard(BuildContext context, String? billUrl, String? qrUrl) {
+  Widget _buildBillAttachmentCard(
+    BuildContext context,
+    String? billUrl,
+    String? qrUrl,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -242,7 +320,9 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
               SizedBox(width: 8.w),
               Text(
                 'Bill & Attachments',
-                style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+                style: AppTextStyles.bodyLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -251,44 +331,54 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
             children: [
               Expanded(
                 child: _buildAttachmentButton(
-                    context,
-                    'View Bill',
-                    Icons.receipt_long,
-                    billUrl != null ? () {
-                      controller.prepareForView(
-                        url: billUrl, 
-                        title: 'Bill Details', 
-                        isQr: false
-                      );
-                      Get.toNamed(AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS, arguments: {
-                        'url': billUrl, 
-                        'title': 'Bill Details',
-                        'isQr': false,
-                        'request': controller.currentRequest.value
-                      });
-                    } : null,
-                  ),
+                  context,
+                  'View Bill',
+                  Icons.receipt_long,
+                  billUrl != null
+                      ? () {
+                          controller.prepareForView(
+                            url: billUrl,
+                            title: 'Bill Details',
+                            isQr: false,
+                          );
+                          Get.toNamed(
+                            AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS,
+                            arguments: {
+                              'url': billUrl,
+                              'title': 'Bill Details',
+                              'isQr': false,
+                              'request': controller.currentRequest.value,
+                            },
+                          );
+                        }
+                      : null,
                 ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: _buildAttachmentButton(
-                    context,
-                    'View QR',
-                    Icons.qr_code_scanner,
-                    qrUrl != null ? () {
-                      controller.prepareForView(
-                        url: qrUrl, 
-                        title: 'Scan QR Code', 
-                        isQr: true
-                      );
-                      Get.toNamed(AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS, arguments: {
-                        'url': qrUrl, 
-                        'title': 'Scan QR Code',
-                        'isQr': true,
-                         'request': controller.currentRequest.value
-                      });
-                    } : null,
-                  ),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: _buildAttachmentButton(
+                  context,
+                  'View QR',
+                  Icons.qr_code_scanner,
+                  qrUrl != null
+                      ? () {
+                          controller.prepareForView(
+                            url: qrUrl,
+                            title: 'Scan QR Code',
+                            isQr: true,
+                          );
+                          Get.toNamed(
+                            AppRoutes.ACCOUNTANT_PAYMENT_BILL_DETAILS,
+                            arguments: {
+                              'url': qrUrl,
+                              'title': 'Scan QR Code',
+                              'isQr': true,
+                              'request': controller.currentRequest.value,
+                            },
+                          );
+                        }
+                      : null,
+                ),
               ),
             ],
           ),
@@ -297,7 +387,12 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
     );
   }
 
-  Widget _buildAttachmentButton(BuildContext context, String label, IconData icon, VoidCallback? onTap) {
+  Widget _buildAttachmentButton(
+    BuildContext context,
+    String label,
+    IconData icon,
+    VoidCallback? onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -307,7 +402,7 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(color: AppColors.primaryBlue.withOpacity(0.1)),
           boxShadow: [
-             BoxShadow(
+            BoxShadow(
               color: AppColors.primaryBlue.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
@@ -323,14 +418,16 @@ class PaymentRequestDetailsView extends GetView<PaymentFlowController> {
                 color: AppColors.primaryBlue.withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
-               child: Icon(icon, color: AppColors.primaryBlue, size: 24.sp),
+              child: Icon(icon, color: AppColors.primaryBlue, size: 24.sp),
             ),
             SizedBox(height: 8.h),
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: onTap != null ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).disabledColor,
+                color: onTap != null
+                    ? Theme.of(context).textTheme.bodyLarge?.color
+                    : Theme.of(context).disabledColor,
               ),
             ),
           ],

@@ -57,11 +57,11 @@ class AuthService extends GetxService {
     } catch (e) {
       print('Logout error: $e'); // Log but continue local cleanup
     }
-    
+
     currentUser.value = null;
     isSessionVerified.value = false;
     await _storageService.delete('auth_token');
-    
+
     // Force clear all GetX controllers and state
     if (Get.context != null) {
       Get.offAllNamed(AppRoutes.LOGIN);

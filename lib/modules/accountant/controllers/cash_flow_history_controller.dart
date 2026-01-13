@@ -6,6 +6,6 @@ class CashFlowHistoryController extends GetxController {
   void changeFilter(int index) {
     selectedFilter.value = index;
   }
-  
+
   // TODO: Add logic to fetch actual history data
 }

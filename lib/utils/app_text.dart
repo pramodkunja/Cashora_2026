@@ -30,7 +30,7 @@ class AppText {
   static const String signUp = 'Sign Up';
 
   // Requestor Dashboard
-  static const String helloUser = 'Hello,'; 
+  static const String helloUser = 'Hello,';
   static const String newRequest = 'New Request';
   static const String monthlyExpense = 'Monthly Expense';
   static const String thisMonthsSpending = 'This Month\'s Spending';
@@ -226,10 +226,13 @@ class AppText {
   // Admin Set Limits
   static const String adminSetLimits = 'Set Approval Limits';
   static const String deemedLimitLabel = 'Deemed Amount Limit';
-  static const String deemedLimitDesc = 'Expenses up to this amount are automatically approved.';
+  static const String deemedLimitDesc =
+      'Expenses up to this amount are automatically approved.';
   static const String approvalLimitLabel = 'Approval Required Amount Limit';
-  static const String approvalLimitDesc = 'Expenses exceeding this amount require manual approval.';
-  static const String limitConfigDesc = 'Configure the monetary thresholds for automatic and manual expense approvals.';
+  static const String approvalLimitDesc =
+      'Expenses exceeding this amount require manual approval.';
+  static const String limitConfigDesc =
+      'Configure the monetary thresholds for automatic and manual expense approvals.';
   static const String saveLimits = 'Save Limits';
   static const String saving = 'Saving...';
   static const String inrSuffix = 'INR';
@@ -307,7 +310,7 @@ class AppText {
   static const String makeItClear = 'Make it clear';
   static const String explainWhy =
       'Explain why the response is still insufficient...';
-  
+
   static const String provideClarification = 'PROVIDE CLARIFICATION';
   static const String approverQuestion = 'Approver Question';
   static const String yourResponse = 'YOUR RESPONSE';
@@ -318,23 +321,26 @@ class AppText {
   // New additions for Clarification Flow
   static const String reviewClarification = 'Review Clarification';
   static const String waitingForResponse = 'Waiting for Response';
-  static const String requestorUpdatedDetails = 'Requestor has updated the details.';
-  static const String pendingUserResponse = 'This request is pending a response from the user.';
-  static const String errorDisplayingDetails = 'Error displaying request details.';
+  static const String requestorUpdatedDetails =
+      'Requestor has updated the details.';
+  static const String pendingUserResponse =
+      'This request is pending a response from the user.';
+  static const String errorDisplayingDetails =
+      'Error displaying request details.';
   static const String youApprover = 'You (Approver)';
   static const String recently = 'Recently';
   static const String responseSent = 'Response Sent';
   static const String actionRequired = 'Action Required';
-  static const String clarificationSubmittedWait = 'You have submitted the clarification. Waiting for approval.';
-  static const String approverRequestedClarification = 'The approver has requested clarification on this request.';
+  static const String clarificationSubmittedWait =
+      'You have submitted the clarification. Waiting for approval.';
+  static const String approverRequestedClarification =
+      'The approver has requested clarification on this request.';
   static const String submitResponse = 'Submit Response';
   static const String approver = 'Approver';
   static const String you = 'You';
   static const String expense = 'Expense';
   static const String provideClarificationTitle = 'Provide Clarification';
   static const String yourResponseTitle = 'Your Response';
-
-
 
   // Common/Fallback
   static const String unpaid = 'Unpaid';
@@ -351,10 +357,9 @@ class AppText {
 
   static const String enterExplanation = 'Please enter your explanation';
   static const String invalidRequestId = 'Invalid Request ID';
-  static const String clarificationSubmitted = 'Clarification submitted successfully';
+  static const String clarificationSubmitted =
+      'Clarification submitted successfully';
   static String failedToSubmit(String error) => "Failed to submit: $error";
-
-
 
   // Profile & Settings
   static const String myProfile = 'My Profile';

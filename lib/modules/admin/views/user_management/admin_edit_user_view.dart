@@ -21,7 +21,7 @@ class AdminEditUserView extends GetView<AdminUserController> {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AdminAppBar(title: AppText.editUser),
-        body: const Center(child: AppLoader()),
+        body: const Center(child: AppSpinner()),
       );
     }
 

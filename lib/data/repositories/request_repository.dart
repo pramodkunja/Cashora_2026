@@ -18,7 +18,7 @@ class RequestRepository {
     } catch (e) {
       // Fallback or rethrow? For now return empty or rethrow
       print("Error fetching categories: $e");
-      return []; 
+      return [];
     }
   }
 
@@ -44,26 +44,27 @@ class RequestRepository {
       FormData formData = FormData.fromMap(fields);
 
       Future<void> addFile(String key, XFile file) async {
-          if (kIsWeb) {
-            final bytes = await file.readAsBytes();
-            formData.files.add(MapEntry(
-              key,
-              MultipartFile.fromBytes(bytes, filename: file.name),
-            ));
-          } else {
-            formData.files.add(MapEntry(
+        if (kIsWeb) {
+          final bytes = await file.readAsBytes();
+          formData.files.add(
+            MapEntry(key, MultipartFile.fromBytes(bytes, filename: file.name)),
+          );
+        } else {
+          formData.files.add(
+            MapEntry(
               key,
               await MultipartFile.fromFile(file.path, filename: file.name),
-            ));
-          }
+            ),
+          );
+        }
       }
 
       if (qrFile != null) await addFile('qr_file', qrFile);
       if (receiptFile != null) await addFile('receipt_file', receiptFile);
-      
+
       if (billFiles != null && billFiles.isNotEmpty) {
         for (var file in billFiles) {
-           await addFile('bill_files', file);
+          await addFile('bill_files', file);
         }
       }
 
@@ -71,14 +72,17 @@ class RequestRepository {
         '/requestor/submit',
         data: formData,
       );
-      
+
       return response.data;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<Map<String, dynamic>>> getMyRequests({String? status, String? paymentStatus}) async {
+  Future<List<Map<String, dynamic>>> getMyRequests({
+    String? status,
+    String? paymentStatus,
+  }) async {
     try {
       final Map<String, dynamic> queryParams = {};
       if (status != null) queryParams['status'] = status;
@@ -103,15 +107,11 @@ class RequestRepository {
   Future<void> submitClarification(int id, String remarks) async {
     try {
       await _networkService.post(
-        '/requestor/respond-clarification/$id', 
-        data: {
-          'response_text': remarks
-        }
+        '/requestor/respond-clarification/$id',
+        data: {'response_text': remarks},
       );
     } catch (e) {
       rethrow;
     }
   }
-
-
 }

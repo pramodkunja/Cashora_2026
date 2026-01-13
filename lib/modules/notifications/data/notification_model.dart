@@ -9,7 +9,7 @@ enum NotificationType {
   newRequest,
   clarification,
   update,
-  video // For potential future use
+  video, // For potential future use
 }
 
 class NotificationItem {

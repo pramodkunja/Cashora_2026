@@ -21,7 +21,7 @@ class OrganizationRepository {
           "first_name": firstName,
           "last_name": lastName,
           "phone_number": phoneNumber,
-        }
+        },
       };
 
       await _networkService.post('/auth/setup-organization', data: data);
@@ -33,19 +33,15 @@ class OrganizationRepository {
   Future<Map<String, dynamic>> getApprovalLimits() async {
     try {
       final response = await _networkService.get('/users/approval-limit');
-      return response.data; 
+      return response.data;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> updateApprovalLimits({
-    required int deemedLimit,
-  }) async {
+  Future<void> updateApprovalLimits({required int deemedLimit}) async {
     try {
-      final data = {
-        'deemed_approval_limit': deemedLimit,
-      };
+      final data = {'deemed_approval_limit': deemedLimit};
       await _networkService.patch('/users/approval-limit', data: data);
     } catch (e) {
       rethrow;

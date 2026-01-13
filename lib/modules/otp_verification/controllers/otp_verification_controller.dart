@@ -9,15 +9,12 @@ import '../../../../data/repositories/auth_repository.dart';
 class OtpVerificationController extends BaseController {
   // Array of controllers for 6 inputs
   final List<TextEditingController> otpControllers = List.generate(
-    6, 
-    (index) => TextEditingController()
+    6,
+    (index) => TextEditingController(),
   );
-  
+
   // Focus nodes for managing input flow
-  final List<FocusNode> focusNodes = List.generate(
-    6, 
-    (index) => FocusNode()
-  );
+  final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
 
   final RxInt remainingSeconds = 59.obs;
   Timer? _timer;
@@ -69,44 +66,53 @@ class OtpVerificationController extends BaseController {
 
   Future<void> resendCode() async {
     if (!canResend.value) return;
-    
+
     await performAsyncOperation(() async {
       try {
         await _authRepository.forgotPassword(email);
         Get.snackbar('Sent', 'A new code has been sent.');
         startTimer();
       } on DioException catch (e) {
-         final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Failed to resend code';
-         Get.snackbar('Error', message.toString());
+        final message =
+            e.response?.data['detail'] ??
+            e.response?.data['message'] ??
+            'Failed to resend code';
+        Get.snackbar('Error', message.toString());
       } catch (e) {
-         Get.snackbar('Error', 'Something went wrong');
+        Get.snackbar('Error', 'Something went wrong');
       }
     });
   }
 
   Future<void> verifyOtp() async {
     String otp = otpControllers.map((c) => c.text).join();
-    
+
     if (otp.length != 6) {
       Get.snackbar('Error', 'Please enter a complete 6-digit code');
       return;
     }
 
     if (!RegExp(r'^[0-9]+$').hasMatch(otp)) {
-       Get.snackbar('Error', 'OTP must contain only numbers');
-       return;
+      Get.snackbar('Error', 'OTP must contain only numbers');
+      return;
     }
 
     await performAsyncOperation(() async {
       try {
         await _authRepository.verifyOtp(email, otp);
         Get.snackbar('Success', 'OTP Verified!');
-        Get.offNamed(AppRoutes.RESET_PASSWORD, arguments: {'email': email, 'otp': otp});
+        Get.offNamed(
+          AppRoutes.RESET_PASSWORD,
+          arguments: {'email': email, 'otp': otp},
+        );
       } on DioException catch (e) {
-         final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'Verification failed';
-         Get.snackbar('Error', message.toString());
+        final message =
+            e.response?.data['detail'] ??
+            e.response?.data['message'] ??
+            'Verification failed';
+        Get.snackbar('Error', message.toString());
       } catch (e) {
-         Get.snackbar('Error', 'Something went wrong');
+        Get.snackbar('Error', 'Something went wrong');
       }
     });
   }

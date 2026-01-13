@@ -18,7 +18,6 @@ class ProvideClarificationController extends GetxController {
     _requestRepository = RequestRepository(Get.find<NetworkService>());
     if (Get.arguments != null) {
       request.value = Get.arguments;
-
     }
   }
 
@@ -27,7 +26,6 @@ class ProvideClarificationController extends GetxController {
     responseController.dispose();
     super.onClose();
   }
-  
 
   Future<void> submitClarification() async {
     if (responseController.text.trim().isEmpty) {
@@ -37,29 +35,34 @@ class ProvideClarificationController extends GetxController {
 
     try {
       isLoading.value = true;
-      final id = request['id'] ?? request['request_id']; // Ensure we use numeric ID
+      final id =
+          request['id'] ?? request['request_id']; // Ensure we use numeric ID
       if (id == null) {
         Get.snackbar(AppText.error, AppText.invalidRequestId);
         return;
       }
-      
+
       final int requestId = id is int ? id : int.parse(id.toString());
-      
+
       // Call repository method
-       await _requestRepository.submitClarification(requestId, responseController.text.trim());
-      
+      await _requestRepository.submitClarification(
+        requestId,
+        responseController.text.trim(),
+      );
+
       // Update local state in-place
       // We cannot fetch full details as endpoint is missing
       // await _fetchFullDetails();
-      
+
       // Optimistic update status if fetch failed or just to be sure
       final updatedRequest = Map<String, dynamic>.from(request);
-      updatedRequest['status'] = 'clarification_responded'; // Update status to reflect change
+      updatedRequest['status'] =
+          'clarification_responded'; // Update status to reflect change
       request.value = updatedRequest;
 
       responseController.clear();
       Get.snackbar(AppText.success, AppText.clarificationSubmitted);
-      
+
       // Ideally navigate back or refresh previous list
       // Get.back(result: true); // Optionally return result to refresh list
     } catch (e) {

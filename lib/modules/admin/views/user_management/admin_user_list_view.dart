@@ -8,6 +8,7 @@ import '../../../../routes/app_routes.dart';
 import '../../controllers/admin_user_controller.dart';
 import '../widgets/admin_app_bar.dart';
 import '../../../../utils/widgets/app_loader.dart';
+import '../../../../utils/widgets/skeletons/skeleton_loader.dart';
 
 class AdminUserListView extends GetView<AdminUserController> {
   const AdminUserListView({Key? key}) : super(key: key);
@@ -110,7 +111,7 @@ class AdminUserListView extends GetView<AdminUserController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoadingUsers.value) {
-                return const Center(child: AppLoader());
+                return const SkeletonListView();
               }
 
               if (controller.rxUsers.isEmpty) {

@@ -16,17 +16,19 @@ class HomeView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-               authService.logout();
-               Get.offAllNamed('/login');
+              authService.logout();
+              Get.offAllNamed('/login');
             },
-          )
+          ),
         ],
       ),
       body: Center(
-        child: Obx(() => Text(
-          'Welcome, ${authService.currentUser.value?.name ?? "User"}!',
-          style: const TextStyle(fontSize: 20),
-        )),
+        child: Obx(
+          () => Text(
+            'Welcome, ${authService.currentUser.value?.name ?? "User"}!',
+            style: const TextStyle(fontSize: 20),
+          ),
+        ),
       ),
     );
   }

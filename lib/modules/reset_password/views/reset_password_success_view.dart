@@ -19,9 +19,17 @@ class ResetPasswordSuccessView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle_outline, size: 80.sp, color: AppColors.successGreen),
+            Icon(
+              Icons.check_circle_outline,
+              size: 80.sp,
+              color: AppColors.successGreen,
+            ),
             SizedBox(height: 24.h),
-            Text(AppText.passwordUpdatedSuccess, style: AppTextStyles.h2.copyWith(fontSize: 24.sp), textAlign: TextAlign.center),
+            Text(
+              AppText.passwordUpdatedSuccess,
+              style: AppTextStyles.h2.copyWith(fontSize: 24.sp),
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 48.h),
             PrimaryButton(
               text: AppText.backToLogin,

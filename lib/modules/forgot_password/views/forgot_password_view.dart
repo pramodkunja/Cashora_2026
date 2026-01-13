@@ -23,11 +23,15 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
               top: 16.h,
               left: 16.w,
               child: IconButton(
-                icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 24.sp),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.black,
+                  size: 24.sp,
+                ),
                 onPressed: () => Get.back(),
               ),
             ),
-            
+
             // Main Content
             Center(
               child: SingleChildScrollView(
@@ -51,87 +55,116 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                       ),
                     ),
                     SizedBox(height: 32.h),
-                    
+
                     // Title
                     Text(
                       'Forgot Password',
-                      style: AppTextStyles.h2.copyWith(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.h2.copyWith(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 12.h),
-                    
+
                     // Subtitle
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0.w),
                       child: Text(
                         'Enter your email or phone number to receive a verification code.',
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSlate,
+                          height: 1.5,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     SizedBox(height: 40.h),
-                    
+
                     // Input Field
                     TextField(
                       controller: controller.emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.alternate_email_rounded, color: AppColors.textSlate, size: 24.sp),
+                        prefixIcon: Icon(
+                          Icons.alternate_email_rounded,
+                          color: AppColors.textSlate,
+                          size: 24.sp,
+                        ),
                         hintText: 'Email or Phone Number',
-                        hintStyle: TextStyle(color: AppColors.textSlate.withOpacity(0.7), fontSize: 14.sp),
+                        hintStyle: TextStyle(
+                          color: AppColors.textSlate.withOpacity(0.7),
+                          fontSize: 14.sp,
+                        ),
                         filled: true,
                         fillColor: Theme.of(context).cardColor,
-                        contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 20.h,
+                          horizontal: 16.w,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.r),
-                          borderSide: const BorderSide(color: AppColors.borderLight),
+                          borderSide: const BorderSide(
+                            color: AppColors.borderLight,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.r),
-                          borderSide: const BorderSide(color: AppColors.borderLight),
+                          borderSide: const BorderSide(
+                            color: AppColors.borderLight,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.r),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 40.h), 
-                    
+                    SizedBox(height: 40.h),
+
                     // Send OTP Button
-                    Obx(() => SizedBox(
-                      width: double.infinity,
-                      height: 56.h,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading ? null : controller.sendCode,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.r),
+                    Obx(
+                      () => SizedBox(
+                        width: double.infinity,
+                        height: 56.h,
+                        child: ElevatedButton(
+                          onPressed: controller.isLoading
+                              ? null
+                              : controller.sendCode,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            elevation: 0,
                           ),
-                          elevation: 0,
-                        ),
-                        child: controller.isLoading
-                            ? const AppLoader(size: 30)
-                            : Text(
-                                'Send OTP',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
+                          child: controller.isLoading
+                              ? const AppSpinner(size: 30)
+                              : Text(
+                                  'Send OTP',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
+                        ),
                       ),
-                    )),
-                    
+                    ),
+
                     SizedBox(height: 32.h),
-                    
+
                     // Footer Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'Remember your password? ',
-                          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, fontSize: 14.sp),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSlate,
+                            fontSize: 14.sp,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () => Get.back(),
@@ -155,5 +188,4 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
       ),
     );
   }
-
 }

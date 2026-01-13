@@ -9,7 +9,8 @@ import '../../../../utils/widgets/buttons/secondary_button.dart';
 class AdminRejectionDialog extends StatelessWidget {
   final Function(String) onConfirm;
 
-  const AdminRejectionDialog({Key? key, required this.onConfirm}) : super(key: key);
+  const AdminRejectionDialog({Key? key, required this.onConfirm})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +40,22 @@ class AdminRejectionDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          Text(AppText.reasonForRejection, style: AppTextStyles.h2.copyWith(fontSize: 20)),
+          Text(
+            AppText.reasonForRejection,
+            style: AppTextStyles.h2.copyWith(fontSize: 20),
+          ),
           const SizedBox(height: 8),
           Text(
             AppText.rejectionReasonHint,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSlate,
+            ),
           ),
           const SizedBox(height: 24),
-          Text(AppText.reasonLabel, style: AppTextStyles.h3.copyWith(fontSize: 14)),
+          Text(
+            AppText.reasonLabel,
+            style: AppTextStyles.h3.copyWith(fontSize: 14),
+          ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -2,7 +2,8 @@ abstract class AppRoutes {
   static const SPLASH = '/splash';
   static const LOCK = '/lock';
   // static const SPLASH = '/splash';
-  static const INITIAL = '/'; // Kept for reference but likely unused if middleware redirects or overridden
+  static const INITIAL =
+      '/'; // Kept for reference but likely unused if middleware redirects or overridden
   static const LOGIN = '/login';
   static const ORGANIZATION_SETUP = '/setup-organization';
   static const ORGANIZATION_SUCCESS = '/organization-success';
@@ -11,21 +12,24 @@ abstract class AppRoutes {
   static const RESET_PASSWORD = '/reset-password';
   static const RESET_PASSWORD_SUCCESS = '/reset-password-success';
   static const ENTERPRISE_SETUP = '/enterprise-setup';
-  
+
   // Accountant
   static const ACCOUNTANT_DASHBOARD = '/accountant-dashboard';
   static const ACCOUNTANT_PAYMENTS = '/accountant-payments';
   static const ACCOUNTANT_PROFILE = '/accountant-profile';
   static const ACCOUNTANT_REPORTS = '/accountant-reports';
-  
+
   // Payment Flow
-  static const ACCOUNTANT_PAYMENT_REQUEST_DETAILS = '/accountant/payment/request-details';
-  static const ACCOUNTANT_PAYMENT_BILL_DETAILS = '/accountant/payment/bill-details';
+  static const ACCOUNTANT_PAYMENT_REQUEST_DETAILS =
+      '/accountant/payment/request-details';
+  static const ACCOUNTANT_PAYMENT_BILL_DETAILS =
+      '/accountant/payment/bill-details';
   static const ACCOUNTANT_PAYMENT_VERIFY = '/accountant/payment/verify';
   static const ACCOUNTANT_PAYMENT_CONFIRM = '/accountant/payment/confirm';
   static const ACCOUNTANT_PAYMENT_SUCCESS = '/accountant/payment/success';
   static const ACCOUNTANT_PAYMENT_FAILED = '/accountant/payment/failed';
-  static const ACCOUNTANT_PAYMENT_COMPLETED_DETAILS = '/accountant/payment/completed-details';
+  static const ACCOUNTANT_PAYMENT_COMPLETED_DETAILS =
+      '/accountant/payment/completed-details';
   static const ACCOUNTANT_ANALYTICS = '/accountant/analytics';
   static const ACCOUNTANT_FINANCIAL_REPORTS = '/accountant/financial-reports';
 

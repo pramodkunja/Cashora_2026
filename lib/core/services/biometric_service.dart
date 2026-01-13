@@ -9,28 +9,27 @@ class BiometricService extends GetxService {
 
   Future<BiometricService> init() async {
     try {
-      // NOTE: Using `canCheckBiometrics` without parentheses just in case the compiler 
+      // NOTE: Using `canCheckBiometrics` without parentheses just in case the compiler
       // sees it as a getter/property due to library version quirks, though typically it's a method.
       // However, to be safe against "not a function" error, we can try checking type or just strict usage.
       // If the error persists, we might need to inspect the library source in node_modules equivalent.
       // For now, removing `isDeviceSupported` call if it's suspected to be missing in old versions,
       // but let's keep it and focus on the specific errors.
-      
+
       bool isDeviceSupported = await _auth.isDeviceSupported();
       bool canCheck = await _auth.canCheckBiometrics;
-      
+
       isSupported.value = isDeviceSupported;
       canUseBiometrics.value = canCheck;
-      
     } on PlatformException catch (e) {
       print('Error initializing biometrics: $e');
       isSupported.value = false;
       canUseBiometrics.value = false;
     } catch (e) {
-       // Catch generic errors like NoSuchMethodError
-       print('Generic error init biometrics: $e');
-       isSupported.value = false;
-       canUseBiometrics.value = false;
+      // Catch generic errors like NoSuchMethodError
+      print('Generic error init biometrics: $e');
+      isSupported.value = false;
+      canUseBiometrics.value = false;
     }
     return this;
   }

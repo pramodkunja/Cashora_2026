@@ -6,7 +6,6 @@ import '../../../data/repositories/request_repository.dart';
 import 'my_requests_controller.dart';
 
 class RequestorController extends GetxController {
-  
   final currentIndex = 0.obs;
   // Initialize repository (ensure it's available in bindings)
   final RequestRepository _repository = Get.find<RequestRepository>();
@@ -44,7 +43,7 @@ class RequestorController extends GetxController {
       'color': AppColors.primary.withOpacity(0.1),
       'iconColor': AppColors.primary,
     },
-     {
+    {
       'title': 'Taxi from Airport',
       'date': '08 Dec 2023',
       'amount': 25.50,
@@ -62,9 +61,9 @@ class RequestorController extends GetxController {
   String get shortName {
     final authService = Get.find<AuthService>();
     final user = authService.currentUser.value;
-    
+
     if (user == null) return 'Requestor';
-    
+
     // Prioritize firstName
     if (user.firstName.isNotEmpty) {
       return user.firstName;

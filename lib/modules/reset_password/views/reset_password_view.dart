@@ -22,11 +22,15 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
               top: 16.h,
               left: 16.w,
               child: IconButton(
-                icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 24.sp),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.black,
+                  size: 24.sp,
+                ),
                 onPressed: () => Get.back(),
               ),
             ),
-            
+
             // Main Content
             Center(
               child: SingleChildScrollView(
@@ -50,10 +54,13 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                       ),
                     ),
                     SizedBox(height: 32.h),
-                    
+
                     Text(
                       'Reset Password',
-                      style: AppTextStyles.h2.copyWith(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.h2.copyWith(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 8.h),
@@ -61,73 +68,87 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
                       padding: EdgeInsets.symmetric(horizontal: 16.0.w),
                       child: Text(
                         'Your new password must be different from previously used passwords.',
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5, fontSize: 14.sp),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSlate,
+                          height: 1.5,
+                          fontSize: 14.sp,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     SizedBox(height: 32.h),
-                    
+
                     // New Password
                     Align(
                       alignment: Alignment.centerLeft,
                       child: _buildLabel('New Password'),
                     ),
                     SizedBox(height: 8.h),
-                    Obx(() => TextField(
-                      controller: controller.newPasswordController,
-                      obscureText: controller.isNewPasswordHidden.value,
-                      decoration: _inputDecoration(
-                        hint: 'Enter new password',
-                        isObscure: controller.isNewPasswordHidden.value,
-                        onToggleVisibility: controller.toggleNewPasswordVisibility,
+                    Obx(
+                      () => TextField(
+                        controller: controller.newPasswordController,
+                        obscureText: controller.isNewPasswordHidden.value,
+                        decoration: _inputDecoration(
+                          hint: 'Enter new password',
+                          isObscure: controller.isNewPasswordHidden.value,
+                          onToggleVisibility:
+                              controller.toggleNewPasswordVisibility,
+                        ),
                       ),
-                    )),
-                    
+                    ),
+
                     SizedBox(height: 24.h),
-                    
+
                     // Confirm Password
                     Align(
                       alignment: Alignment.centerLeft,
                       child: _buildLabel('Confirm Password'),
                     ),
                     SizedBox(height: 8.h),
-                     Obx(() => TextField(
-                      controller: controller.confirmPasswordController,
-                      obscureText: controller.isConfirmPasswordHidden.value,
-                      decoration: _inputDecoration(
-                        hint: 'Confirm new password',
-                        isObscure: controller.isConfirmPasswordHidden.value,
-                        onToggleVisibility: controller.toggleConfirmPasswordVisibility,
-                      ),
-                    )),
-                    
-                    SizedBox(height: 48.h),
-                    
-                    // Update Button
-                     Obx(() => SizedBox(
-                      width: double.infinity,
-                      height: 56.h,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading ? null : controller.resetPassword,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          elevation: 0,
+                    Obx(
+                      () => TextField(
+                        controller: controller.confirmPasswordController,
+                        obscureText: controller.isConfirmPasswordHidden.value,
+                        decoration: _inputDecoration(
+                          hint: 'Confirm new password',
+                          isObscure: controller.isConfirmPasswordHidden.value,
+                          onToggleVisibility:
+                              controller.toggleConfirmPasswordVisibility,
                         ),
-                        child: controller.isLoading
-                            ? const AppLoader(size: 30)
-                            : Text(
-                                'Update Password', 
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                       ),
-                    )),
+                    ),
+
+                    SizedBox(height: 48.h),
+
+                    // Update Button
+                    Obx(
+                      () => SizedBox(
+                        width: double.infinity,
+                        height: 56.h,
+                        child: ElevatedButton(
+                          onPressed: controller.isLoading
+                              ? null
+                              : controller.resetPassword,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: controller.isLoading
+                              ? const AppSpinner(size: 30)
+                              : Text(
+                                  'Update Password',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -156,8 +177,15 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: const Color(0xFF94A3B8), fontSize: 14.sp), // Slate 400
-      prefixIcon: Icon(Icons.lock_outline_rounded, color: const Color(0xFF94A3B8), size: 24.sp),
+      hintStyle: TextStyle(
+        color: const Color(0xFF94A3B8),
+        fontSize: 14.sp,
+      ), // Slate 400
+      prefixIcon: Icon(
+        Icons.lock_outline_rounded,
+        color: const Color(0xFF94A3B8),
+        size: 24.sp,
+      ),
       suffixIcon: IconButton(
         icon: Icon(
           isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
@@ -165,21 +193,21 @@ class ResetPasswordView extends GetView<ResetPasswordController> {
           size: 24.sp,
         ),
         onPressed: onToggleVisibility,
-        color: const Color(0xFF94A3B8), 
+        color: const Color(0xFF94A3B8),
       ),
       filled: true,
       fillColor: Colors.white,
       contentPadding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r), 
+        borderRadius: BorderRadius.circular(16.r),
         borderSide: const BorderSide(color: AppColors.borderLight),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r), 
+        borderRadius: BorderRadius.circular(16.r),
         borderSide: const BorderSide(color: AppColors.borderLight),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r), 
+        borderRadius: BorderRadius.circular(16.r),
         borderSide: const BorderSide(color: AppColors.primary),
       ),
     );

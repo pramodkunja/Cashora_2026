@@ -20,9 +20,15 @@ class ForgotPasswordController extends BaseController {
     await performAsyncOperation(() async {
       try {
         await _authRepository.forgotPassword(emailController.text.trim());
-        Get.toNamed(AppRoutes.OTP_VERIFICATION, arguments: {'email': emailController.text.trim()});
+        Get.toNamed(
+          AppRoutes.OTP_VERIFICATION,
+          arguments: {'email': emailController.text.trim()},
+        );
       } on DioException catch (e) {
-        final message = e.response?.data['detail'] ?? e.response?.data['message'] ?? 'An error occurred';
+        final message =
+            e.response?.data['detail'] ??
+            e.response?.data['message'] ??
+            'An error occurred';
         Get.snackbar('Error', message.toString());
       } catch (e) {
         Get.snackbar('Error', 'Something went wrong');

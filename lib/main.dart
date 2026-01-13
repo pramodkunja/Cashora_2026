@@ -18,16 +18,22 @@ import 'modules/auth/controllers/auth_controller.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
-  
+
   // Read theme
   final storage = Get.find<StorageService>();
   String? themeIndex = await storage.read('theme_mode');
   ThemeMode initialTheme = ThemeMode.system;
   if (themeIndex != null) {
     switch (int.parse(themeIndex)) {
-      case 0: initialTheme = ThemeMode.light; break;
-      case 1: initialTheme = ThemeMode.dark; break;
-      case 2: initialTheme = ThemeMode.system; break;
+      case 0:
+        initialTheme = ThemeMode.light;
+        break;
+      case 1:
+        initialTheme = ThemeMode.dark;
+        break;
+      case 2:
+        initialTheme = ThemeMode.system;
+        break;
     }
   }
 
@@ -38,13 +44,20 @@ Future<void> initServices() async {
   await Get.putAsync(() => StorageService().init());
   await Get.putAsync(() => NetworkService().init());
   Get.lazyPut(() => AuthRepository(Get.find<NetworkService>()));
-  Get.lazyPut(() => PaymentRepository(Get.find<NetworkService>())); // Added Payment Repo
-  await Get.putAsync(() => AuthService(Get.find<AuthRepository>(), Get.find<StorageService>()).init());
+  Get.lazyPut(
+    () => PaymentRepository(Get.find<NetworkService>()),
+  ); // Added Payment Repo
+  await Get.putAsync(
+    () => AuthService(
+      Get.find<AuthRepository>(),
+      Get.find<StorageService>(),
+    ).init(),
+  );
   Get.put(UserRepository()); // Moved after AuthService
   await Get.putAsync(() => BiometricService().init());
   Get.put(AppLifecycleManager());
   // Inject AuthController to ensure it's available globally or for token logic
-  Get.lazyPut(() => AuthController(), fenix: true); 
+  Get.lazyPut(() => AuthController(), fenix: true);
 }
 
 class MyApp extends StatelessWidget {
@@ -63,7 +76,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: initialTheme, 
+          themeMode: initialTheme,
           initialRoute: AppPages.INITIAL,
           getPages: AppPages.routes,
         );

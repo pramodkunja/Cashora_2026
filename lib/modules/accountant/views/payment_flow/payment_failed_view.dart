@@ -86,17 +86,19 @@ class PaymentFailedView extends StatelessWidget {
                     showCopy: true,
                   ),
                   Divider(height: 1.h, color: Colors.grey[200]),
-                  Builder(builder: (context) {
-                       final dateStr = Get.arguments?['date']?.toString();
-                       String displayDate = 'Unknown Date';
-                       if (dateStr != null) {
-                           try {
-                             final dt = DateTime.parse(dateStr).toLocal();
-                             displayDate = "${dt.day}/${dt.month}/${dt.year}";
-                           } catch (_) {}
-                       }
-                       return _buildDetailRow(AppText.date, displayDate);
-                  }),
+                  Builder(
+                    builder: (context) {
+                      final dateStr = Get.arguments?['date']?.toString();
+                      String displayDate = 'Unknown Date';
+                      if (dateStr != null) {
+                        try {
+                          final dt = DateTime.parse(dateStr).toLocal();
+                          displayDate = "${dt.day}/${dt.month}/${dt.year}";
+                        } catch (_) {}
+                      }
+                      return _buildDetailRow(AppText.date, displayDate);
+                    },
+                  ),
                   Divider(height: 1.h, color: Colors.grey[200]),
                   _buildDetailRow(
                     AppText.recipient,
@@ -120,7 +122,7 @@ class PaymentFailedView extends StatelessWidget {
                           style: AppTextStyles.h2.copyWith(
                             color: AppColors.primaryBlue,
                           ),
-                        ), 
+                        ),
                       ],
                     ),
                   ),

@@ -39,13 +39,18 @@ class AppLifecycleManager extends GetxService with WidgetsBindingObserver {
     if (enabled == 'true') {
       // 3. Navigate to Lock Screen
       // Check if already locked to prevent stacking?
-      if (Get.currentRoute != '/lock') { // We need to define this route or just use class
-         // Using Get.to(() => LockView()) pushes it.
-         // To avoid duplicates, we can check.
-         // A simple way is to use a flag or check if top route is LockView.
-         // Since we don't have named route for LockView yet, we can push it.
-         
-         Get.to(() => const LockView(), transition: Transition.noTransition, fullscreenDialog: true);
+      if (Get.currentRoute != '/lock') {
+        // We need to define this route or just use class
+        // Using Get.to(() => LockView()) pushes it.
+        // To avoid duplicates, we can check.
+        // A simple way is to use a flag or check if top route is LockView.
+        // Since we don't have named route for LockView yet, we can push it.
+
+        Get.to(
+          () => const LockView(),
+          transition: Transition.noTransition,
+          fullscreenDialog: true,
+        );
       }
     }
   }

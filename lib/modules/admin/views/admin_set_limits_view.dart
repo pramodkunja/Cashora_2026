@@ -37,7 +37,9 @@ class AdminSetLimitsView extends GetView<AdminSetLimitsController> {
                 children: [
                   Text(
                     AppText.limitConfigDesc,
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSlate,
+                    ),
                   ),
                   SizedBox(height: 24.h),
 
@@ -60,7 +62,7 @@ class AdminSetLimitsView extends GetView<AdminSetLimitsController> {
               ),
             ),
           ),
-          
+
           // Bottom Buttons
           Container(
             padding: EdgeInsets.all(24.w),
@@ -71,10 +73,16 @@ class AdminSetLimitsView extends GetView<AdminSetLimitsController> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Obx(() => PrimaryButton(
-                  text: controller.isSaving.value ? AppText.saving : AppText.saveLimits,
-                  onPressed: controller.isSaving.value ? null : controller.saveLimits,
-                )),
+                Obx(
+                  () => PrimaryButton(
+                    text: controller.isSaving.value
+                        ? AppText.saving
+                        : AppText.saveLimits,
+                    onPressed: controller.isSaving.value
+                        ? null
+                        : controller.saveLimits,
+                  ),
+                ),
                 SizedBox(height: 12.h),
                 SizedBox(
                   width: double.infinity,
@@ -89,7 +97,9 @@ class AdminSetLimitsView extends GetView<AdminSetLimitsController> {
                     ),
                     child: Text(
                       AppText.cancel,
-                      style: AppTextStyles.buttonText.copyWith(color: AppColors.textDark),
+                      style: AppTextStyles.buttonText.copyWith(
+                        color: AppColors.textDark,
+                      ),
                     ),
                   ),
                 ),
@@ -112,32 +122,43 @@ class AdminSetLimitsView extends GetView<AdminSetLimitsController> {
       children: [
         Text(
           label,
-          style: AppTextStyles.h3.copyWith(fontSize: 14.sp), // Smaller bold label
+          style: AppTextStyles.h3.copyWith(
+            fontSize: 14.sp,
+          ), // Smaller bold label
         ),
         SizedBox(height: 16.h),
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           style: AppTextStyles.h3.copyWith(color: AppColors.textDark),
           decoration: InputDecoration(
             prefixIcon: Container(
               width: 40.w,
               alignment: Alignment.center,
-              child: Text('₹', style: AppTextStyles.h3.copyWith(color: AppColors.textSlate)),
+              child: Text(
+                '₹',
+                style: AppTextStyles.h3.copyWith(color: AppColors.textSlate),
+              ),
             ),
             suffixIcon: Container(
-               width: 50.w,
-               alignment: Alignment.center,
-               child: Text(AppText.inrSuffix, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+              width: 50.w,
+              alignment: Alignment.center,
+              child: Text(
+                AppText.inrSuffix,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSlate,
+                ),
+              ),
             ),
             hintText: '0',
             hintStyle: AppTextStyles.h3.copyWith(color: AppColors.textLight),
             filled: true,
             fillColor: AppColors.backgroundAlt,
-            contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 16.h,
+              horizontal: 16.w,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide.none,

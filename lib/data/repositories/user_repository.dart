@@ -16,13 +16,15 @@ class UserRepository {
         final userData = response.data;
         // Assuming response.data is the User Map, or nested in 'data' key?
         // Adjusting based on common pattern:
-        final userMap = userData is Map<String, dynamic> ? userData : Map<String, dynamic>.from(userData);
-        
+        final userMap = userData is Map<String, dynamic>
+            ? userData
+            : Map<String, dynamic>.from(userData);
+
         final user = User.fromJson(userMap);
-        
+
         // Update local auth service state to keep it in sync
         _authService.currentUser.value = user;
-        
+
         return user;
       }
       return null;

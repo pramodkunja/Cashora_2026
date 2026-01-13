@@ -41,16 +41,13 @@ class PrimaryButton extends StatelessWidget {
             ? SizedBox(
                 height: 20.h,
                 width: 20.h,
-                child: const AppLoader(size: 24),
+                child: const AppSpinner(size: 24),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (icon != null) ...[
-                    icon!,
-                    SizedBox(width: 8.w),
-                  ],
+                  if (icon != null) ...[icon!, SizedBox(width: 8.w)],
                   Text(
                     text,
                     style: AppTextStyles.buttonText.copyWith(fontSize: 16.sp),

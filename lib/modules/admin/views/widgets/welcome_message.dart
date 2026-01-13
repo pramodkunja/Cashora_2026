@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text_styles.dart';
 
-
 class WelcomeMessage extends StatefulWidget {
   final String name;
   final RxBool showWelcome;

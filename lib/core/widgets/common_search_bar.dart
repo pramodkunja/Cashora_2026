@@ -31,8 +31,15 @@ class CommonSearchBar extends StatelessWidget {
               style: const TextStyle(color: Color(0xFF0F172A), fontSize: 15),
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 15),
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF94A3B8), size: 22),
+                hintStyle: const TextStyle(
+                  color: Color(0xFF94A3B8),
+                  fontSize: 15,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: Color(0xFF94A3B8),
+                  size: 22,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
                 isDense: true,

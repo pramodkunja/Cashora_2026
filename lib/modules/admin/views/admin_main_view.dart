@@ -13,19 +13,23 @@ class AdminMainView extends GetView<AdminDashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() => IndexedStack(
-        index: controller.currentIndex.value,
-        children: [
-          const AdminDashboardView(),
-          const AdminApprovalsView(),
-          const AdminHistoryView(),
-          const ProfileView(isTab: true),
-        ],
-      )),
-      bottomNavigationBar: Obx(() => AdminBottomBar(
-        currentIndex: controller.currentIndex.value,
-        onTap: controller.changeTab,
-      )),
+      body: Obx(
+        () => IndexedStack(
+          index: controller.currentIndex.value,
+          children: [
+            const AdminDashboardView(),
+            const AdminApprovalsView(),
+            const AdminHistoryView(),
+            const ProfileView(isTab: true),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Obx(
+        () => AdminBottomBar(
+          currentIndex: controller.currentIndex.value,
+          onTap: controller.changeTab,
+        ),
+      ),
     );
   }
 }

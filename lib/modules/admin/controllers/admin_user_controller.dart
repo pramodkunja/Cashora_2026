@@ -26,7 +26,7 @@ class AdminUserController extends GetxController {
     try {
       isLoadingUsers.value = true;
       final users = await _authRepository.getUsers();
-      
+
       // Filter out the current logged-in user (Admin)
       final currentUserId = Get.find<AuthService>().currentUser.value?.id;
       final filteredUsers = users.where((user) {
@@ -101,10 +101,7 @@ class AdminUserController extends GetxController {
     if (!_validateForm()) return;
 
     try {
-      Get.dialog(
-        const Center(child: AppLoader()),
-        barrierDismissible: false,
-      );
+      Get.dialog(const Center(child: AppSpinner()), barrierDismissible: false);
 
       final response = await _authRepository.addStaff(
         firstName: firstNameController.text.trim(),
@@ -247,10 +244,7 @@ class AdminUserController extends GetxController {
     try {
       if (!_validateForm()) return;
 
-      Get.dialog(
-        const Center(child: AppLoader()),
-        barrierDismissible: false,
-      );
+      Get.dialog(const Center(child: AppSpinner()), barrierDismissible: false);
 
       final user = rxSelectedUser.value;
       final userId = user['id']?.toString() ?? '';
@@ -322,10 +316,7 @@ class AdminUserController extends GetxController {
 
   void toggleUserStatus() async {
     try {
-      Get.dialog(
-        const Center(child: AppLoader()),
-        barrierDismissible: false,
-      );
+      Get.dialog(const Center(child: AppSpinner()), barrierDismissible: false);
 
       final user = rxSelectedUser.value;
       final userId = user['id']?.toString() ?? '';

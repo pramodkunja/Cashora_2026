@@ -35,7 +35,9 @@ class AdminOverviewCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppTextStyles.bodySmall.color),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppTextStyles.bodySmall.color,
+            ),
           ),
           SizedBox(height: 8.h), // Responsive
           FittedBox(

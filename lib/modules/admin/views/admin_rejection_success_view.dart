@@ -22,7 +22,9 @@ class AdminRejectionSuccessView extends StatelessWidget {
           onPressed: () {
             Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
             Future.delayed(const Duration(milliseconds: 100), () {
-               try { Get.find<AdminDashboardController>().changeTab(1); } catch (_) {}
+              try {
+                Get.find<AdminDashboardController>().changeTab(1);
+              } catch (_) {}
             });
           },
         ),
@@ -37,7 +39,9 @@ class AdminRejectionSuccessView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF7F1D1D).withOpacity(0.5) : const Color(0xFFFEE2E2), // Darker red in dark mode
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF7F1D1D).withOpacity(0.5)
+                    : const Color(0xFFFEE2E2), // Darker red in dark mode
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -62,7 +66,10 @@ class AdminRejectionSuccessView extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               AppText.requestRejectedDesc,
-              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate, height: 1.5),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSlate,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
             const Spacer(),
@@ -71,7 +78,9 @@ class AdminRejectionSuccessView extends StatelessWidget {
               onPressed: () {
                 Get.offNamedUntil(AppRoutes.ADMIN_DASHBOARD, (route) => false);
                 Future.delayed(const Duration(milliseconds: 100), () {
-                   try { Get.find<AdminDashboardController>().changeTab(1); } catch (_) {}
+                  try {
+                    Get.find<AdminDashboardController>().changeTab(1);
+                  } catch (_) {}
                 });
               },
               width: double.infinity,

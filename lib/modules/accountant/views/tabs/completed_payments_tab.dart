@@ -6,6 +6,7 @@ import '../../../../utils/app_colors.dart';
 import '../../../../utils/app_text.dart';
 import '../../../../utils/app_text_styles.dart';
 import '../../../../utils/widgets/custom_search_bar.dart';
+import '../../../../utils/widgets/skeletons/skeleton_loader.dart';
 import '../../controllers/accountant_payments_controller.dart';
 
 class CompletedPaymentsTab extends StatelessWidget {
@@ -17,16 +18,22 @@ class CompletedPaymentsTab extends StatelessWidget {
 
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator()); // Use AppLoader if available import
+        return const SkeletonListView();
       }
 
       final payments = controller.completedPayments;
-      
+
       // Calculate Total Disbursed
       double totalDisbursed = 0;
       for (var item in payments) {
-         // API uses 'amount_paid' for completed payments
-         totalDisbursed += double.tryParse(item['amount_paid']?.toString() ?? item['amount']?.toString() ?? '0') ?? 0;
+        // API uses 'amount_paid' for completed payments
+        totalDisbursed +=
+            double.tryParse(
+              item['amount_paid']?.toString() ??
+                  item['amount']?.toString() ??
+                  '0',
+            ) ??
+            0;
       }
 
       return SingleChildScrollView(
@@ -34,9 +41,7 @@ class CompletedPaymentsTab extends StatelessWidget {
         child: Column(
           children: [
             // Search Bar
-            const CustomSearchBar(
-              hintText: AppText.searchByIdOrName,
-            ),
+            const CustomSearchBar(hintText: AppText.searchByIdOrName),
             SizedBox(height: 24.h),
 
             // Total Disbursed Card
@@ -65,8 +70,10 @@ class CompletedPaymentsTab extends StatelessWidget {
                               child: FittedBox(
                                 alignment: Alignment.centerLeft,
                                 fit: BoxFit.scaleDown,
-                                child:
-                                    Text('₹${totalDisbursed.toStringAsFixed(2)}', style: AppTextStyles.h1),
+                                child: Text(
+                                  '₹${totalDisbursed.toStringAsFixed(2)}',
+                                  style: AppTextStyles.h1,
+                                ),
                               ),
                             ),
                           ],
@@ -85,7 +92,7 @@ class CompletedPaymentsTab extends StatelessWidget {
                       Icons.attach_money_rounded,
                       size: 32.sp,
                       color: AppColors.primaryBlue,
-                    ), 
+                    ),
                   ),
                 ],
               ),
@@ -97,9 +104,9 @@ class CompletedPaymentsTab extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                   // Removed filters as per revert instructions/simplicity but kept method if needed.
-                   // Actually user asked to revert filters for "rejected/cancelled". 
-                   // This is "Completed" tab, so filters are harmless, but let's keep them.
+                  // Removed filters as per revert instructions/simplicity but kept method if needed.
+                  // Actually user asked to revert filters for "rejected/cancelled".
+                  // This is "Completed" tab, so filters are harmless, but let's keep them.
                   _buildFilterChip(context, 'Date Range'),
                   SizedBox(width: 8.w),
                   _buildFilterChip(context, 'Category'),
@@ -125,7 +132,12 @@ class CompletedPaymentsTab extends StatelessWidget {
             if (payments.isEmpty)
               Padding(
                 padding: EdgeInsets.only(top: 20.h),
-                child: Text("No completed payments", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+                child: Text(
+                  "No completed payments",
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textSlate,
+                  ),
+                ),
               )
             else
               ListView.separated(
@@ -134,49 +146,77 @@ class CompletedPaymentsTab extends StatelessWidget {
                 itemCount: payments.length,
                 separatorBuilder: (context, index) => SizedBox(height: 16.h),
                 itemBuilder: (context, index) {
-                   final item = payments[index];
-                   
-                   // Extract Amount
-                   final amountVal = double.tryParse(item['amount_paid']?.toString() ?? item['amount']?.toString() ?? '0') ?? 0.0;
-                   
-                   // Extract Date
-                   final dateStr = item['processed_at'] ?? item['created_at'] ?? item['updated_at'];
-                   String formattedDate = '';
-                   if (dateStr != null) {
-                      try {
-                        final dt = DateTime.parse(dateStr);
-                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                        formattedDate = '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
-                      } catch (_) {
-                        formattedDate = dateStr.toString().split('T')[0];
-                      }
-                   }
+                  final item = payments[index];
 
-                   // Extract Name / Title
-                   // 'payments' list items often lack requestor/payee details directly.
-                   // So we use request_id or payment_id as the main identifier if name is missing.
-                   String title = 'Unknown User';
-                   if (item['requestor'] != null && item['requestor'] is Map) {
-                      final req = item['requestor'];
-                      title = "${req['first_name'] ?? ''} ${req['last_name'] ?? ''}".trim();
-                      if (title.isEmpty) title = req['email'] ?? 'Unknown User';
-                   } else if (item['payee_name'] != null) {
-                      title = item['payee_name'];
-                   } else {
-                      // Fallback: Use Request ID as title
-                      title = item['request_id'] ?? 'Payment #${item['id']}';
-                   }
+                  // Extract Amount
+                  final amountVal =
+                      double.tryParse(
+                        item['amount_paid']?.toString() ??
+                            item['amount']?.toString() ??
+                            '0',
+                      ) ??
+                      0.0;
 
-                   // Extract Subtitle / Details
-                   String subtitle = item['payment_source'] ?? item['category'] ?? '';
-                   if (subtitle.isEmpty) {
-                      // If no category, show the Payment ID
-                       subtitle = item['payment_id'] ?? 'ID: ${item['id']}';
-                   }
+                  // Extract Date
+                  final dateStr =
+                      item['processed_at'] ??
+                      item['created_at'] ??
+                      item['updated_at'];
+                  String formattedDate = '';
+                  if (dateStr != null) {
+                    try {
+                      final dt = DateTime.parse(dateStr);
+                      const months = [
+                        'Jan',
+                        'Feb',
+                        'Mar',
+                        'Apr',
+                        'May',
+                        'Jun',
+                        'Jul',
+                        'Aug',
+                        'Sep',
+                        'Oct',
+                        'Nov',
+                        'Dec',
+                      ];
+                      formattedDate =
+                          '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
+                    } catch (_) {
+                      formattedDate = dateStr.toString().split('T')[0];
+                    }
+                  }
 
-                   return _buildCompletedItem(
+                  // Extract Name / Title
+                  // 'payments' list items often lack requestor/payee details directly.
+                  // So we use request_id or payment_id as the main identifier if name is missing.
+                  String title = 'Unknown User';
+                  if (item['requestor'] != null && item['requestor'] is Map) {
+                    final req = item['requestor'];
+                    title =
+                        "${req['first_name'] ?? ''} ${req['last_name'] ?? ''}"
+                            .trim();
+                    if (title.isEmpty) title = req['email'] ?? 'Unknown User';
+                  } else if (item['payee_name'] != null) {
+                    title = item['payee_name'];
+                  } else {
+                    // Fallback: Use Request ID as title
+                    title = item['request_id'] ?? 'Payment #${item['id']}';
+                  }
+
+                  // Extract Subtitle / Details
+                  String subtitle =
+                      item['payment_source'] ?? item['category'] ?? '';
+                  if (subtitle.isEmpty) {
+                    // If no category, show the Payment ID
+                    subtitle = item['payment_id'] ?? 'ID: ${item['id']}';
+                  }
+
+                  return _buildCompletedItem(
                     context,
-                    id: (item['payment_id'] ?? item['id']?.toString() ?? '').toString().toUpperCase(),
+                    id: (item['payment_id'] ?? item['id']?.toString() ?? '')
+                        .toString()
+                        .toUpperCase(),
                     date: formattedDate,
                     name: title,
                     details: subtitle,
@@ -263,10 +303,7 @@ class CompletedPaymentsTab extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8.w,
-                    vertical: 4.h,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE0F2FE),
                     borderRadius: BorderRadius.circular(6.r),

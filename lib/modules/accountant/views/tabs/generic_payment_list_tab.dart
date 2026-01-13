@@ -27,9 +27,18 @@ class GenericPaymentListTab extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.inbox_outlined, size: 48.sp, color: AppColors.textSlate.withOpacity(0.5)),
+              Icon(
+                Icons.inbox_outlined,
+                size: 48.sp,
+                color: AppColors.textSlate.withOpacity(0.5),
+              ),
               SizedBox(height: 16.h),
-              Text(emptyMessage, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSlate)),
+              Text(
+                emptyMessage,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSlate,
+                ),
+              ),
             ],
           ),
         );
@@ -42,14 +51,18 @@ class GenericPaymentListTab extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = dataList[index];
           final request = item['requestor'] ?? {};
-          final String name = "${request['first_name'] ?? ''} ${request['last_name'] ?? ''}".trim();
-          
+          final String name =
+              "${request['first_name'] ?? ''} ${request['last_name'] ?? ''}"
+                  .trim();
+
           return Container(
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withOpacity(0.5),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,36 +72,52 @@ class GenericPaymentListTab extends StatelessWidget {
                   children: [
                     Text(
                       '#REQ-${item['id']}',
-                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textSlate),
+                      style: AppTextStyles.bodySmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSlate,
+                      ),
                     ),
                     Text(
                       '₹${item['amount']?.toString() ?? '0.00'}',
-                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.primaryBlue, fontWeight: FontWeight.bold),
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        color: AppColors.primaryBlue,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
                 SizedBox(height: 8.h),
                 Text(
                   name.isNotEmpty ? name : (request['email'] ?? 'Unknown User'),
-                  style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   item['category'] ?? 'General',
-                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSlate),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSlate,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: Text(
                     statusLabel,
-                    style: AppTextStyles.bodySmall.copyWith(color: statusColor, fontWeight: FontWeight.w600),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           );
