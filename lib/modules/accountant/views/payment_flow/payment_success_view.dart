@@ -120,7 +120,7 @@ class PaymentSuccessView extends GetView<PaymentFlowController> {
                     SizedBox(height: 16.h),
                     _buildReceiptRow(
                       AppText.paymentSource,
-                      'UPI',
+                      'PhonePe',
                       isStatus: true,
                       statusColor: Colors.green,
                     ),

@@ -11,8 +11,8 @@ class SkeletonLoader extends StatelessWidget {
   Widget build(BuildContext context) {
     // Determine shimmer colors based on theme brightness
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
-    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+    final baseColor = isDark ? (Colors.grey[800] ?? Colors.grey.shade800) : (Colors.grey[300] ?? Colors.grey.shade300);
+    final highlightColor = isDark ? (Colors.grey[700] ?? Colors.grey.shade700) : (Colors.grey[100] ?? Colors.grey.shade100);
 
     return Shimmer.fromColors(
       baseColor: baseColor,

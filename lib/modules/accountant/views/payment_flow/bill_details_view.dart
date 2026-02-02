@@ -319,7 +319,7 @@ class BillDetailsView extends GetView<PaymentFlowController> {
                       onPressed: controller.isLoading.value
                           ? null
                           : () {
-                              controller.startUpiPaymentFlow();
+                              Get.toNamed('/accountant/payment/confirm');
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1aa3df),

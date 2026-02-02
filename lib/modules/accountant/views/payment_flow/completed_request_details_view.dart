@@ -339,7 +339,7 @@ class CompletedRequestDetailsView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  side: BorderSide(color: Colors.grey[300]!),
+                  side: BorderSide(color: Colors.grey[300] ?? Colors.grey.shade300),
                   backgroundColor: Colors.white,
                 ),
                 child: Row(

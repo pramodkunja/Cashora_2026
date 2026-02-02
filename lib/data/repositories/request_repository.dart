@@ -104,6 +104,35 @@ class RequestRepository {
     }
   }
 
+  /// Process payment QR code and extract payment details
+  /// 
+  /// [expenseId] - ID of the expense
+  /// [qrImageUrl] - Cloudinary URL of the uploaded QR image
+  /// [qrData] - Raw QR code data extracted from the image
+  /// 
+  /// Returns extracted payment details including payee name, VPA/account, etc.
+  Future<Map<String, dynamic>> processPaymentQR({
+    required int expenseId,
+    required String qrImageUrl,
+    required String qrData,
+  }) async {
+    try {
+      final response = await _networkService.post(
+        '/api/v1/expenses/process-payment-qr',
+        data: {
+          'expense_id': expenseId,
+          'qr_image_url': qrImageUrl,
+          'qr_data': qrData,
+        },
+      );
+
+      return response.data;
+    } catch (e) {
+      print('Error processing payment QR: $e');
+      rethrow;
+    }
+  }
+
   Future<void> submitClarification(int id, String remarks) async {
     try {
       await _networkService.post(

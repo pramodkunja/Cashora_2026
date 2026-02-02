@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:cash/data/repositories/request_repository.dart';
 import 'package:cash/data/repositories/organization_repository.dart';
 import '../../../../core/services/network_service.dart';
+import '../../../utils/validators.dart';
 
 class CreateRequestController extends GetxController {
   late final RequestRepository _requestRepository;
@@ -256,6 +257,19 @@ class CreateRequestController extends GetxController {
     // Process picked file
     if (pickedFile != null) {
       if (isQr) {
+        // Validate QR file before accepting
+        final validation = await FileValidator.validateQRUploadWithSize(pickedFile);
+        if (!validation.isValid) {
+          Get.snackbar(
+            'Invalid QR Image',
+            validation.errors.join('\n'),
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red[100],
+            colorText: Colors.red[900],
+            duration: const Duration(seconds: 4),
+          );
+          return;
+        }
         qrFile.value = pickedFile;
       } else if (isReceipt) {
         receiptFile.value = pickedFile;

@@ -113,7 +113,7 @@ class RequestorNotificationView
           child: _buildNotificationItem(
             context,
             icon: item.icon ?? Icons.notifications,
-            iconBg: item.iconBg ?? Colors.grey[200]!,
+            iconBg: item.iconBg ?? (Colors.grey[200] ?? Colors.grey.shade200),
             iconColor: item.iconColor ?? Colors.grey,
             title: item.title,
             ref: item.ref,

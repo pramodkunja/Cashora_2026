@@ -52,10 +52,57 @@ class PaymentFailedView extends StatelessWidget {
                 color: AppColors.textSlate,
               ),
             ),
+            SizedBox(height: 24.h),
+            // Error Message Display
+            if (Get.arguments?['error'] != null)
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: AppColors.errorRed.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: AppColors.errorRed.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: AppColors.errorRed,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Error Details',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.errorRed,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            '${Get.arguments?['error']}',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.errorRed.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             SizedBox(height: 40.h),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: Colors.grey[200] ?? Colors.grey.shade200),
                 borderRadius: BorderRadius.circular(24.r),
               ),
               child: Column(

@@ -320,7 +320,7 @@ class RequestDetailsReadView extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 border: Border(
-                  left: BorderSide(color: Colors.grey[300]!, width: 2),
+                  left: BorderSide(color: Colors.grey[300] ?? Colors.grey.shade300, width: 2),
                 ),
               ),
               margin: const EdgeInsets.only(left: 12),
